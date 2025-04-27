@@ -94,7 +94,7 @@ export const Login = () => {
                             value={senha}
                             handle={(e) => setSenha(e.target.value)}
                         />
-                        <S.PEsqueciSenha onClick={() => navigate('/colaborador/esqueciSenha')}>
+                        <S.PEsqueciSenha onClick={() => navigate('/esqueciSenha')}>
                             Esqueci a senha
                         </S.PEsqueciSenha>
                         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}

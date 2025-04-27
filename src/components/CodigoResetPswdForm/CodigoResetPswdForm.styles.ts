@@ -1,26 +1,5 @@
 import styled from "styled-components";
 
-export const DivWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    gap: 2vh;
-    background: linear-gradient(#FCFCFC, #5EB1BF);
-`
-
-export const ImgLogo = styled.img`
-    height: 16vh;
-    object-fit: contain;
-    margin: 40px;
-
-
-    @media (max-width: 650px) {
-        height: 10vh;
-        margin: 10px;
-    }
-`
-
 export const BoxForm = styled.div`
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -68,3 +47,40 @@ export const PVoltar = styled.p`
     text-decoration: underline;
     cursor: pointer;
 `
+
+export const SpanStyled = styled.span`
+    font-weight: 500;
+    color: black;
+`
+
+export const FormInputCode = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
+
+export const DivInputCode = styled.form`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 80%;
+  margin-top: 15px;
+`;
+
+export const InputCode = styled.input`
+  width: 70px;
+  height: 90px;
+  border: 2px solid #000000;
+  text-align: center;
+  font-size: 5vw;
+
+  -moz-appearance: textfield;
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
