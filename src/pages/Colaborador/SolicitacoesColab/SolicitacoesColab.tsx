@@ -1,5 +1,5 @@
 import { Paper } from '@mui/material';
-import * as S from './SolicitacoesFunc.styles';
+import * as S from './SolicitacoesColab.styles';
 import { Searchbar } from '../../../components/Searchbar/Searchbar';
 import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { OpenModalIcon } from '../../../components/OpenModalIcon/OpenModalIcon';

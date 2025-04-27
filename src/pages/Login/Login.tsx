@@ -54,7 +54,7 @@ export const Login = () => {
                     break;
                 case 'Colaborador':
                     toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/funcionario/solicitacoes');
+                    navigate('/colaborador/solicitacoes');
                     break;
                 case 'Almoxarifado':
                     toast.success("Logado com sucesso! Redirecionando...");
@@ -94,7 +94,7 @@ export const Login = () => {
                             value={senha}
                             handle={(e) => setSenha(e.target.value)}
                         />
-                        <S.PEsqueciSenha onClick={() => navigate('/funcionario/esqueciSenha')}>
+                        <S.PEsqueciSenha onClick={() => navigate('/colaborador/esqueciSenha')}>
                             Esqueci a senha
                         </S.PEsqueciSenha>
                         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}

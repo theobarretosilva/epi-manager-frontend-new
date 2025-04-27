@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router"
 import * as S from "./Usuarios.styles"
 import AlmoxarifadoImg from "../../assets/img/almoxarifado.png";
-import FuncionarioImg from "../../assets/img/funcionario.png";
+import ColaboradorImg from "../../assets/img/colaborador.png";
 import AdminImg from "../../assets/img/admin.png";
 import AsideLoginImg from "../../assets/img/aside_login.jpg";
 import LogoImg from "../../assets/img/logo.png";
@@ -36,7 +36,7 @@ export const Usuarios = () => {
 
     const userOptions = [
         { label: 'Almoxarifado', role: UserRoles.ALMOXARIFADO, img: AlmoxarifadoImg },
-        { label: 'Funcionário', role: UserRoles.COLABORADOR, img: FuncionarioImg },
+        { label: 'Colaborador', role: UserRoles.COLABORADOR, img: ColaboradorImg },
         { label: 'Administrador', role: UserRoles.ADMINISTRADOR, img: AdminImg },
     ];
 

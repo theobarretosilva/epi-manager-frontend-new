@@ -10,12 +10,12 @@ export function FuncLayout() {
     const linksFuncLayout = [
         { 
             title: 'Solicitações',
-            href: '/funcionario/solicitacoes',
+            href: '/colaborador/solicitacoes',
             image: '../../src/assets/img/document.png',
         },
         {
             title: 'Solicitar EPI',
-            href: '/funcionario/solicitarEPI',
+            href: '/colaborador/solicitarEPI',
             image: '../../src/assets/img/setting.png',
             onclick: () => {
                 if (EPIsCadastrados === "[]") {

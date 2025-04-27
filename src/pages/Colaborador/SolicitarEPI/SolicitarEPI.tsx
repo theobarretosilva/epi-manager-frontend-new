@@ -41,7 +41,7 @@ export const SolicitarEPI = () => {
 
         submitForm();
         toast.success('EPI solicitado com sucesso!');
-        navigate('/funcionario/solicitacoes');
+        navigate('/colaborador/solicitacoes');
     };
 
     return (
@@ -96,7 +96,7 @@ export const SolicitarEPI = () => {
                 </S.DivFlex>
                 <br />
                 <BtnStyled text='Solicitar' onClick={handleSubmit} />
-                <S.PVoltar onClick={() => navigate('/funcionario/solicitacoes')}>Voltar</S.PVoltar>
+                <S.PVoltar onClick={() => navigate('/colaborador/solicitacoes')}>Voltar</S.PVoltar>
             </S.DivMainSolicitar>
         </S.MainStyled>
     );
