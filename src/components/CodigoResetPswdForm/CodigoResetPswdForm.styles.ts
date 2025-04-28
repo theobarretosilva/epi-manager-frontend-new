@@ -68,6 +68,7 @@ export const DivInputCode = styled.form`
   justify-content: space-between;
   width: 80%;
   margin-top: 15px;
+  margin-bottom: 5vh;
 `;
 
 export const InputCode = styled.input`
@@ -83,4 +84,12 @@ export const InputCode = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
+`;
+
+export const PResendEmail = styled.p`
+  font-weight: 400;
+  font-size: 17px;
+  color: #303030;
+  margin-top: 2.2vh;
+  align-self: center;
 `;

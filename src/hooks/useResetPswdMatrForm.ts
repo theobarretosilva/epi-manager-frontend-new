@@ -8,8 +8,8 @@ import { AxiosError } from "axios";
 
 export const useResetPswdMatrForm = () => {
     const defaultValues = { matricula: "" };
-    const [checkedEmail, setCheckedEmail] = useState();
-    const [matricula, setMatricula] = useState("");
+    const [checkedEmail, setCheckedEmail] = useState<number | undefined>(undefined);
+    const [email, setEmail] = useState("");
     const [responseError, setResponseError] = useState("");
     const [codigo, setCodigo] = useState();
 
@@ -31,14 +31,13 @@ export const useResetPswdMatrForm = () => {
             );
             setCheckedEmail(responseData.code);
             setCodigo(responseData.resetPasswordCode);
+            setEmail(responseData.email);
         },
-        onSuccess: (_, { matricula: formMatricula }) => {
-            setMatricula(formMatricula);
+        onSuccess: () => {
+            
         },
         onError: (error: AxiosError<{ message: string }>) => {
-            const errorMessage = error.response?.data.message
-                ? error.response.data.message
-                : "Algo não deu certo, tente novamente mais tarde!";
+            const errorMessage = error.response?.data?.message ?? "Algo não deu certo, tente novamente mais tarde!";
             setResponseError(errorMessage);
         },
     });
@@ -56,7 +55,7 @@ export const useResetPswdMatrForm = () => {
         responseError,
         control,
         checkedEmail,
-        matricula,
+        email,
         codigo,
     }
 }

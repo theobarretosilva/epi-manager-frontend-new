@@ -6,6 +6,7 @@ import { useResetPswdMatrForm } from '../../hooks/useResetPswdMatrForm'
 import { CircularProgress } from '@mui/material'
 import { Controller } from 'react-hook-form'
 import { CodigoResetPswdForm } from '../../components/CodigoResetPswdForm/CodigoResetPswdForm'
+import { ErrorMessage } from '../Login/Login.styles'
 
 export const EsqueciSenha = () => {
     const {
@@ -15,7 +16,7 @@ export const EsqueciSenha = () => {
         responseError,
         control,
         checkedEmail,
-        matricula,
+        email,
         codigo,
     } = useResetPswdMatrForm();
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ export const EsqueciSenha = () => {
             <S.ImgLogo src='../../src/assets/img/logo.png' />
             <S.SpaceDivider/>
             {checkedEmail === 200 ? (
-                <CodigoResetPswdForm codigo={codigo} matricula={matricula} />
+                <CodigoResetPswdForm email={email} codigo={codigo} />
             ) : (
                 <>
                     <S.BoxForm>
@@ -40,18 +41,26 @@ export const EsqueciSenha = () => {
                             <S.SubtituloBox>Não se preocupe, nós lhe enviaremos as instruções para recuperar sua senha!</S.SubtituloBox>
                             <S.SpaceDivider/>
                             <Controller
+                                name="matricula"
+                                control={control}
                                 render={({ field }) => (
                                     <InputStyled
-                                        {...field}
-                                        titulo='Insira sua matrícula'
-                                        tipo='text' placeholder=''
+                                        titulo="Insira sua matrícula"
+                                        tipo="text"
+                                        placeholder=""
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        onBlur={field.onBlur}
+                                        inputRef={field.ref}
                                     />
                                 )}
-                                name='matricula'
-                                control={control}
                             />
                             <S.SpaceDivider/>
-                            <BtnStyled disabled={isLoading} text='Recuperar senha'/>
+                            {errors?.matricula?.message && (
+                                <ErrorMessage>{errors.matricula.message}</ErrorMessage>
+                            )}
+                            <BtnStyled disabled={isLoading}>{ContinueButtonLabel}</BtnStyled>
+                            {responseError && <ErrorMessage>{responseError}</ErrorMessage>}
                         </form>
                     </S.BoxForm>
                     <S.PVoltar onClick={() => navigate('/login')}>Voltar</S.PVoltar>
