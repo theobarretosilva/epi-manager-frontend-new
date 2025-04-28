@@ -133,7 +133,9 @@ export const SolicitacoesFunc = () => {
           </Paper>
         </>
       ) : (
-        <NoDataToShow mainText='Não foram feitas solicitações!' />
+        <>
+          <NoDataToShow mainText='Não foram feitas solicitações!' />
+        </>
       )}
       
       <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>

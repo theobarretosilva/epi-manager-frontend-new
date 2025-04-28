@@ -1,29 +1,33 @@
 import { Outlet } from "react-router";
 import { Headerbar } from "../../components/Headerbar/Headerbar";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
-import * as S from './FuncLayout.styles';
+import * as S from './ColabLayout.styles';
 import { toast } from "react-toastify";
 
-export function FuncLayout() {
+import documentIcon from "../../assets/img/document.png";
+import settingIcon from "../../assets/img/setting.png";
+
+export function ColabLayout() {
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
-    const linksFuncLayout = [
+    const linksColabLayout = [
         { 
             title: 'Solicitações',
             href: '/colaborador/solicitacoes',
-            image: '../../src/assets/img/document.png',
+            image: documentIcon,
+            onClick: undefined
         },
         {
             title: 'Solicitar EPI',
             href: '/colaborador/solicitarEPI',
-            image: '../../src/assets/img/setting.png',
-            onclick: () => {
-                if (EPIsCadastrados === "[]") {
+            image: settingIcon,
+            onClick: () => {
+                if (EPIsCadastrados.length === 0) {
                     toast.error("Não existem EPI's cadastrados, contate o Administrador!");
                 } else {
-                    toast.success("Abrindo solicitação de EPI!")
+                    toast.success("Abrindo solicitação de EPI!");
                 }
-            } 
+            }
         }
     ];
 
@@ -31,7 +35,7 @@ export function FuncLayout() {
         <>
             <Headerbar />
             <S.DivRow>
-                <Sidebar links={linksFuncLayout} />
+                <Sidebar links={linksColabLayout} />
                 <Outlet />
             </S.DivRow>
         </>
