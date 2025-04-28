@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router"
-import { SidebarProps } from "./Sidebar.styles"
 import * as S from "./Sidebar.styles"
 import { toast } from "react-toastify";
+import { SidebarProps } from "./Sidebar.types";
 
 export const Sidebar: React.FC<SidebarProps> = ({links, onClick}) => {
     const navigate = useNavigate();
