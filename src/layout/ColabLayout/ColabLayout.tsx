@@ -1,16 +1,16 @@
 import { Outlet } from "react-router";
 import { Headerbar } from "../../components/Headerbar/Headerbar";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
-import * as S from './FuncLayout.styles';
+import * as S from './ColabLayout.styles';
 import { toast } from "react-toastify";
 
 import documentIcon from "../../assets/img/document.png";
 import settingIcon from "../../assets/img/setting.png";
 
-export function FuncLayout() {
+export function ColabLayout() {
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
-    const linksFuncLayout = [
+    const linksColabLayout = [
         { 
             title: 'Solicitações',
             href: '/colaborador/solicitacoes',
@@ -35,7 +35,7 @@ export function FuncLayout() {
         <>
             <Headerbar />
             <S.DivRow>
-                <Sidebar links={linksFuncLayout} />
+                <Sidebar links={linksColabLayout} />
                 <Outlet />
             </S.DivRow>
         </>
