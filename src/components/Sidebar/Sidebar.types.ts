@@ -1,4 +1,10 @@
-export interface SidebarProps {
-    links: { title: string; href: string; image: string }[];
+export interface SidebarLink {
+    title: string;
+    href: string;
+    image: string;
     onClick?: () => void;
+}
+
+export interface SidebarProps {
+    links: SidebarLink[];
 }

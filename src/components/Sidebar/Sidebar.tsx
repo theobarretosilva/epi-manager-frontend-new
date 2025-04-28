@@ -3,35 +3,44 @@ import * as S from "./Sidebar.styles"
 import { toast } from "react-toastify";
 import { SidebarProps } from "./Sidebar.types";
 
-export const Sidebar: React.FC<SidebarProps> = ({links, onClick}) => {
+export const Sidebar: React.FC<SidebarProps> = ({ links }) => {
     const navigate = useNavigate();
 
     const logout = () => {
-        toast.success("Fazendo logout em 3.. 2.. 1..", { autoClose: 2000 })
+        toast.success("Fazendo logout em 3.. 2.. 1..", { autoClose: 2000 });
         sessionStorage.setItem('TipoAcesso', "");
-        setTimeout( () => navigate("/"), 2500);
+        setTimeout(() => navigate("/"), 2500);
+    };
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, onClick?: () => void) => {
+        if (onClick) {
+            e.preventDefault(); // impede o <a> de redirecionar
+            onClick();
+        }
     };
 
     return (
         <S.SidebarWrapper>
             <S.SidebarContent>
-                <S.SidebarTitle>Atividades</S.SidebarTitle>
-                <S.SidebarHr/>
+                <S.SidebarTitle>Funções</S.SidebarTitle>
+                <S.SidebarHr />
                 <ul>
-                {links.map((elements, index)=> (
-                        <S.LinkSidebarWrapper key={index} onClick={onClick}>
-                            <S.LinkSidebarContent href={elements.href}>
-                            <S.ImageContent>
-                                    <S.Image src={elements.image} />
-                            </S.ImageContent>
-                            <S.TextLink>{elements.title}</S.TextLink>
+                    {links.map((element, index) => (
+                        <S.LinkSidebarWrapper key={index}>
+                            <S.LinkSidebarContent
+                                href={element.href}
+                                onClick={(e) => handleClick(e, element.onClick)}
+                            >
+                                <S.ImageContent>
+                                    <S.Image src={element.image} />
+                                </S.ImageContent>
+                                <S.TextLink>{element.title}</S.TextLink>
                             </S.LinkSidebarContent>
-                            
                         </S.LinkSidebarWrapper>
-                ))}
+                    ))}
                 </ul>
-            <S.Logout onClick={logout}>Encerrar Sessão</S.Logout> 
+                <S.Logout onClick={logout}>Encerrar Sessão</S.Logout>
             </S.SidebarContent>
         </S.SidebarWrapper>
-    )
-}
+    );
+};

@@ -133,7 +133,10 @@ export const SolicitacoesFunc = () => {
           </Paper>
         </>
       ) : (
-        <NoDataToShow mainText='Não foram feitas solicitações!' />
+        <>
+          <NoDataToShow mainText='Não foram feitas solicitações!' />
+          {/* <S.ButtonStyled onClick={() => setModalIsOpenAddColaborador(true)}>+ Fazer solicitação de EPI</S.ButtonStyled> */}
+        </>
       )}
       
       <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
