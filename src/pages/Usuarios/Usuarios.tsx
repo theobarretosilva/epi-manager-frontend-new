@@ -35,8 +35,8 @@ export const Usuarios = () => {
     
 
     const userOptions = [
-        { label: 'Almoxarifado', role: UserRoles.ALMOXARIFADO, img: AlmoxarifadoImg },
         { label: 'Colaborador', role: UserRoles.COLABORADOR, img: ColaboradorImg },
+        { label: 'Almoxarifado', role: UserRoles.ALMOXARIFADO, img: AlmoxarifadoImg },
         { label: 'Administrador', role: UserRoles.ADMINISTRADOR, img: AdminImg },
     ];
 

@@ -1,13 +1,15 @@
 import { useNavigate } from "react-router"
 import { SidebarProps } from "./Sidebar.styles"
 import * as S from "./Sidebar.styles"
+import { toast } from "react-toastify";
 
 export const Sidebar: React.FC<SidebarProps> = ({links, onClick}) => {
     const navigate = useNavigate();
 
     const logout = () => {
+        toast.success("Fazendo logout em 3.. 2.. 1..", { autoClose: 2000 })
         sessionStorage.setItem('TipoAcesso', "");
-        navigate("/");
+        setTimeout( () => navigate("/"), 2500);
     };
 
     return (

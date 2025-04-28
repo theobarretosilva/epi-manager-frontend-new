@@ -49,16 +49,16 @@ export const Login = () => {
             const cargo = await handleLogin(matricula, senha);
             switch (cargo) {
                 case 'Administrador':
-                    toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/administrador/solicitacoes');
+                    toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+                    setTimeout( () => navigate('/administrador/solicitacoes'), 2500);
                     break;
                 case 'Colaborador':
-                    toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/colaborador/solicitacoes');
+                    toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+                    setTimeout( () => navigate('/colaborador/solicitacoes'), 2500);
                     break;
                 case 'Almoxarifado':
-                    toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/almoxarifado/dashboardAlmox');
+                    toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+                    setTimeout( () => navigate('/almoxarifado/dashboardAlmox'), 2500);
                     break;
                 default:
                     toast.error("Cargo não reconhecido.");
