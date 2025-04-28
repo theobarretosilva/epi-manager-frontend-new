@@ -63,11 +63,16 @@ export const Login = () => {
                 default:
                     toast.error("Cargo não reconhecido.");
             }
-        } catch (err: any) {
-            setError(err.message);
-            toast.error(err.message);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+                toast.error(err.message);
+            } else {
+                setError("Ocorreu um erro inesperado.");
+                toast.error("Ocorreu um erro inesperado.");
+            }
         }
-    };
+    }
 
     return (
         <S.DivGeral>
@@ -98,9 +103,9 @@ export const Login = () => {
                             Esqueci a senha
                         </S.PEsqueciSenha>
                         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
-                        <br />
                         <BtnStyled text='Entrar' type='submit' />
                     </form>
+                    <S.PVoltar onClick={() => navigate("/")}>Voltar para seleção de usuário</S.PVoltar>
                 </S.BoxForm>
             </S.MainStyled>
         </S.DivGeral>
