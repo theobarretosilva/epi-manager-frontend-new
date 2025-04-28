@@ -49,25 +49,30 @@ export const Login = () => {
             const cargo = await handleLogin(matricula, senha);
             switch (cargo) {
                 case 'Administrador':
-                    toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/administrador/solicitacoes');
+                    toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+                    setTimeout( () => navigate('/administrador/solicitacoes'), 2500);
                     break;
                 case 'Colaborador':
-                    toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/colaborador/solicitacoes');
+                    toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+                    setTimeout( () => navigate('/colaborador/solicitacoes'), 2500);
                     break;
                 case 'Almoxarifado':
-                    toast.success("Logado com sucesso! Redirecionando...");
-                    navigate('/almoxarifado/dashboardAlmox');
+                    toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+                    setTimeout( () => navigate('/almoxarifado/dashboardAlmox'), 2500);
                     break;
                 default:
                     toast.error("Cargo não reconhecido.");
             }
-        } catch (err: any) {
-            setError(err.message);
-            toast.error(err.message);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+                toast.error(err.message);
+            } else {
+                setError("Ocorreu um erro inesperado.");
+                toast.error("Ocorreu um erro inesperado.");
+            }
         }
-    };
+    }
 
     return (
         <S.DivGeral>
@@ -98,9 +103,9 @@ export const Login = () => {
                             Esqueci a senha
                         </S.PEsqueciSenha>
                         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
-                        <br />
                         <BtnStyled text='Entrar' type='submit' />
                     </form>
+                    <S.PVoltar onClick={() => navigate("/")}>Voltar para seleção de usuário</S.PVoltar>
                 </S.BoxForm>
             </S.MainStyled>
         </S.DivGeral>

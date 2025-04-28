@@ -109,5 +109,16 @@ export const PEsqueciSenha = styled.p`
 export const ErrorMessage = styled.p`
     color: red;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 1vh;
 `;
+
+export const PVoltar = styled.p`
+    font-size: 1.08rem;
+    font-weight: 300;
+    color: #FFDD4A;
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 3vh;
+    position: fixed;
+`

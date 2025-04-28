@@ -1,13 +1,5 @@
 import * as S from './SelectStyled.styles';
-
-interface SelectStyledProps {
-    titulo: string;
-    value?: string;
-    disabled?: boolean;
-    options: Array<string>;
-    onChange?: (value) => void;
-    name: string;
-}
+import { SelectStyledProps } from './SelectStyled.types';
 
 export const SelectStyled = ({ titulo, value, disabled, options, onChange, name }: SelectStyledProps) => {
     return (
@@ -16,7 +8,7 @@ export const SelectStyled = ({ titulo, value, disabled, options, onChange, name 
             <S.SelectStyled 
                 value={value} 
                 disabled={disabled} 
-                onChange={(e) => onChange?.(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange?.(e.target.value)}
                 name={name}
             >
                 <option value="" disabled>Selecione uma opção</option>

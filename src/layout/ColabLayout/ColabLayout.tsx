@@ -4,6 +4,9 @@ import { Sidebar } from "../../components/Sidebar/Sidebar";
 import * as S from './ColabLayout.styles';
 import { toast } from "react-toastify";
 
+import documentIcon from "../../assets/img/document.png";
+import settingIcon from "../../assets/img/setting.png";
+
 export function ColabLayout() {
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
@@ -11,19 +14,20 @@ export function ColabLayout() {
         { 
             title: 'Solicitações',
             href: '/colaborador/solicitacoes',
-            image: '../../src/assets/img/document.png',
+            image: documentIcon,
+            onClick: undefined
         },
         {
             title: 'Solicitar EPI',
             href: '/colaborador/solicitarEPI',
-            image: '../../src/assets/img/setting.png',
-            onclick: () => {
-                if (EPIsCadastrados === "[]") {
+            image: settingIcon,
+            onClick: () => {
+                if (EPIsCadastrados.length === 0) {
                     toast.error("Não existem EPI's cadastrados, contate o Administrador!");
                 } else {
-                    toast.success("Abrindo solicitação de EPI!")
+                    toast.success("Abrindo solicitação de EPI!");
                 }
-            } 
+            }
         }
     ];
 

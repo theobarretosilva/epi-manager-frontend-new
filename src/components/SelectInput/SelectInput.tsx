@@ -1,5 +1,5 @@
 import * as S from "./SelectInput.styles"
-import { SelectInputProps } from "./SelectInput.styles"
+import { SelectInputProps } from "./SelectInput.types"
 
 export const SelectInput: React.FC<SelectInputProps> = ({text , title, disable, handle}) => {
 
