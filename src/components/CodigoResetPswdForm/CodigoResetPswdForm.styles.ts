@@ -88,7 +88,7 @@ export const InputCode = styled.input`
 
 export const PResendEmail = styled.p`
   font-weight: 400;
-  font-size: 17px;
+  font-size: 1rem;
   color: #303030;
   margin-top: 2.2vh;
   align-self: center;
