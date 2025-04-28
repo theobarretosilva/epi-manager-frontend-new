@@ -5,7 +5,7 @@ import { SolicitarEPI } from "../pages/Colaborador/SolicitarEPI/SolicitarEPI";
 import { DashboardAlmox } from "../pages/Almoxarifado/DashboardAlmox/DashboardAlmox";
 import { DashboardEPI } from "../pages/Administrador/DashboardEPI/DashboardEPI";
 import { DashboardColab } from "../pages/Administrador/DashboardColab/DashboardColab";
-import { FuncLayout } from "../layout/FuncLayout/FuncLayout";
+import { FuncLayout } from "../layout/ColabLayout/ColabLayout";
 import { AlmoxLayout } from "../layout/AlmoxLayout/AlmoxLayout";
 import { Solicitacoes } from "../pages/Administrador/Solicitacoes/Solicitacoes";
 import { ConsultColab } from "../pages/Almoxarifado/ConsultColab/ConsultColab";

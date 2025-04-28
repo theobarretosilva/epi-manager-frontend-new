@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 import { Headerbar } from "../../components/Headerbar/Headerbar";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
-import * as S from './FuncLayout.styles';
+import * as S from './ColabLayout.styles';
 import { toast } from "react-toastify";
 
 export function FuncLayout() {
