@@ -14,7 +14,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ links }) => {
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, onClick?: () => void) => {
         if (onClick) {
-            e.preventDefault(); // impede o <a> de redirecionar
+            e.preventDefault();
             onClick();
         }
     };

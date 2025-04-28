@@ -135,7 +135,6 @@ export const SolicitacoesFunc = () => {
       ) : (
         <>
           <NoDataToShow mainText='Não foram feitas solicitações!' />
-          {/* <S.ButtonStyled onClick={() => setModalIsOpenAddColaborador(true)}>+ Fazer solicitação de EPI</S.ButtonStyled> */}
         </>
       )}
       

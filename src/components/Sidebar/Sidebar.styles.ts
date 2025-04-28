@@ -8,28 +8,27 @@ export const SidebarWrapper = styled.nav`
   width: 390px;
   background-color: #90C9D3;
 
-    @media (max-width: 768px) {
+  @media (max-width: 768px) {
     width: 100vw;
     height: 75vh;
-    }
+  }
 
-    @media (max-height: 600px) {
+  @media (max-height: 600px) {
     width: 100vw;
     height: 90vh;
-    }
+  }
 
-    li {
-        list-style-type: none;
+  li {
+    list-style-type: none;
 
-    }
+  }
 
-    ul {
-        padding: 0;
-        :hover {
-            transform: scale(0.95); 
-        }
+  ul {
+    padding: 0;
+    :hover {
+      transform: scale(0.95); 
     }
-    
+  }
 `
 export const SidebarContent = styled.div`
   display: flex;
@@ -40,17 +39,17 @@ export const SidebarContent = styled.div`
 
 export const SidebarTitle = styled.h1`
   font-style: normal;
-  font-weight: 600;
-  font-size: 20px;
+  font-weight: 700;
+  font-size: 1.3rem;
   line-height: 24px;
   text-align: start;
-  color: #FFDD4A;
+  color: black;
   margin-block-end: 0;
 `
 
 export const SidebarHr = styled.hr`
-  border: 1px solid #FFDD4A;
-  margin: 20px 0;
+  border: 1px solid black;
+  margin: 2vh 0;
 `
 
 export const LinkSidebarWrapper = styled.li`
@@ -95,12 +94,12 @@ export const Logout = styled.a`
   font-size: 18px;
   margin: 20px;
   text-align: end;
-  font-style: italic;
   text-decoration: underline;
   font-weight: 500;
   font-size: 16px;
   line-height: 19px;
   color: #042A2B;
+  
 
   &:hover {
     color: #FFDD4A;
