@@ -4,10 +4,10 @@ import { Sidebar } from "../../components/Sidebar/Sidebar";
 import * as S from './ColabLayout.styles';
 import { toast } from "react-toastify";
 
-export function FuncLayout() {
+export function ColabLayout() {
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
-    const linksFuncLayout = [
+    const linksColabLayout = [
         { 
             title: 'Solicitações',
             href: '/colaborador/solicitacoes',
@@ -31,7 +31,7 @@ export function FuncLayout() {
         <>
             <Headerbar />
             <S.DivRow>
-                <Sidebar links={linksFuncLayout} />
+                <Sidebar links={linksColabLayout} />
                 <Outlet />
             </S.DivRow>
         </>

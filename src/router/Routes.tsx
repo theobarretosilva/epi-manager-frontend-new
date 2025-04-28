@@ -5,7 +5,6 @@ import { SolicitarEPI } from "../pages/Colaborador/SolicitarEPI/SolicitarEPI";
 import { DashboardAlmox } from "../pages/Almoxarifado/DashboardAlmox/DashboardAlmox";
 import { DashboardEPI } from "../pages/Administrador/DashboardEPI/DashboardEPI";
 import { DashboardColab } from "../pages/Administrador/DashboardColab/DashboardColab";
-import { FuncLayout } from "../layout/ColabLayout/ColabLayout";
 import { AlmoxLayout } from "../layout/AlmoxLayout/AlmoxLayout";
 import { Solicitacoes } from "../pages/Administrador/Solicitacoes/Solicitacoes";
 import { ConsultColab } from "../pages/Almoxarifado/ConsultColab/ConsultColab";
@@ -14,6 +13,7 @@ import { Usuarios } from "../pages/Usuarios/Usuarios";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { SolicitacoesFunc } from "../pages/Colaborador/SolicitacoesColab/SolicitacoesColab";
 import { EsqueciSenha } from "../pages/EsqueciSenha/EsqueciSennha";
+import { ColabLayout } from "../layout/ColabLayout/ColabLayout";
 
 export const Router = () => {
     return(
@@ -21,7 +21,7 @@ export const Router = () => {
             <Route index path="/" element={<Usuarios/>} />
             <Route path="/login" element={<Login/>} />
             <Route path="/esqueciSenha" element={<EsqueciSenha/>} />
-            <Route path="/colaborador" element={<ProtectedRoute element={<FuncLayout />} roles={['Colaborador']} />}>
+            <Route path="/colaborador" element={<ProtectedRoute element={<ColabLayout />} roles={['Colaborador']} />}>
                 <Route path="solicitacoes" element={<SolicitacoesFunc />} />
                 <Route path="solicitarEPI" element={<SolicitarEPI />} />
             </Route>
