@@ -82,3 +82,12 @@ export const ButtonStyled = styled.button`
     padding-right: 1.5vw;
     margin-top: 4vh;
 `
+
+export const DivLayoutDash = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    margin-top: 2vh;
+`

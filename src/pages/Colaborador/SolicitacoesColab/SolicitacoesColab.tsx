@@ -9,6 +9,7 @@ import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { useModalDetalhesSolicitacao } from '../../../hooks/useModalDetalhesSolicitacao';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
+import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
 
 interface SolicitacaoProps {
   id: string;
@@ -148,6 +149,11 @@ export const SolicitacoesFunc = () => {
       ) : (
         <NoDataToShow mainText='Não foram feitas solicitações!' />
       )}
+
+      <S.DivLayoutDash>
+        <ModuloNSoliciDash />
+        <ModuloNSoliciDash />
+      </S.DivLayoutDash>
       
       <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
         <S.MainWrapper>
