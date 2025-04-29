@@ -6,7 +6,7 @@ export const MainStyled = styled.main`
     align-items: center;
     justify-content: center;
     width: 66.6vw;
-    padding: 7vh 3vw 7vh 3vw;
+    padding: 3vh 3vw 3vh 3vw;
     margin-left: 25.4vw;
 `
 

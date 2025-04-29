@@ -67,7 +67,7 @@ export const SolicitacoesFunc = () => {
           key={0}
           icon={<OpenModalIcon />}
           label="Abrir"
-          onClick={() => openModal(getSolicitacao(params.row))}
+          onClick={() => openModal(getSolicitacao(params.row as SolicitacaoProps))}
         />,
       ],
       width: 100,
@@ -87,15 +87,15 @@ export const SolicitacoesFunc = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRows, setFilteredRows] = useState(rows);
+  
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setFilteredRows(
-      rows.filter(
-        (row) =>
-          row.descricaoItem.toLowerCase().includes(value.toLowerCase()) ||
-          row.id.toLowerCase().includes(value.toLowerCase())
-      )
+    const filtered = rows.filter(
+      (row) =>
+        row.descricaoItem.toLowerCase().includes(value.toLowerCase()) ||
+        row.id.toLowerCase().includes(value.toLowerCase())
     );
+    setFilteredRows(filtered);
   };
 
   const customStyles = {
@@ -116,26 +116,37 @@ export const SolicitacoesFunc = () => {
 
   return (
     <S.MainStyled>
-      {filteredRows.length > 0 ? (
+      {solicitacoes.length > 0 ? (
         <>
-          <Searchbar onSearch={handleSearch} />
-          <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
-            <DataGrid
-              rows={filteredRows}
-              columns={columns}
-              pageSizeOptions={[5, 10]}
-              sx={{
-                border: 0,
-                '& .MuiDataGrid-cell': { textAlign: 'center' },
-                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-              }}
-            />
-          </Paper>
+          {filteredRows.length > 0 ? (
+            <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+              <Searchbar onSearch={handleSearch} />
+              <DataGrid
+                rows={filteredRows}
+                columns={columns}
+                pageSizeOptions={[5, 10]}
+                autoHeight
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 3, page: 0 },
+                  },
+                }}
+                sx={{
+                  border: 0,
+                  '& .MuiDataGrid-cell': { textAlign: 'center'},
+                  '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                }}
+              />
+            </Paper>
+          ) : (
+            <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+              <Searchbar onSearch={handleSearch} />
+              <NoDataToShow mainText={`Nenhuma solicitação encontrada para "${searchTerm}"`} />
+            </Paper>
+          )}
         </>
       ) : (
-        <>
-          <NoDataToShow mainText='Não foram feitas solicitações!' />
-        </>
+        <NoDataToShow mainText='Não foram feitas solicitações!' />
       )}
       
       <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>

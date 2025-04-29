@@ -12,4 +12,5 @@ export const ImgNoData = styled.img`
     width: 40vw;
     height: 40vh;
     object-fit: contain;
+    align-self: center;
 `

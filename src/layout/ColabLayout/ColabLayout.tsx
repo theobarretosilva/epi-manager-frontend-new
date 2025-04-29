@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { Headerbar } from "../../components/Headerbar/Headerbar";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import * as S from './ColabLayout.styles';
@@ -8,6 +8,7 @@ import documentIcon from "../../assets/img/document.png";
 import settingIcon from "../../assets/img/setting.png";
 
 export function ColabLayout() {
+    const navigate = useNavigate();
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
     const linksColabLayout = [
@@ -25,7 +26,8 @@ export function ColabLayout() {
                 if (EPIsCadastrados.length === 0) {
                     toast.error("Não existem EPI's cadastrados, contate o Administrador!");
                 } else {
-                    toast.success("Abrindo solicitação de EPI!");
+                    toast.success("Abrindo solicitação de EPI!", { autoClose: 2000 });
+                    navigate('/colaborador/solicitarEPI');
                 }
             }
         }
