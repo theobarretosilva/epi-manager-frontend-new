@@ -5,8 +5,8 @@ export const MainStyled = styled.main`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 66.6vw;
-    padding: 3vh 3vw 3vh 3vw;
+    width: 71.5vw;
+    padding: 1.5vh 1.5vw 1.5vh 1.5vw;
     margin-left: 25.4vw;
 `
 

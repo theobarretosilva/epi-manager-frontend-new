@@ -181,7 +181,7 @@ export const DashboardColab = () => {
                             autoHeight
                             initialState={{
                                 pagination: {
-                                    paginationModel: { pageSize: 2, page: 0 },
+                                    paginationModel: { pageSize: 3, page: 0 },
                                 },
                             }}
                             sx={{

@@ -2,7 +2,7 @@ import styled from "styled-components"
 
 export const BoxStyled = styled.div`
     background-color: white;
-    width: 26vw;
+    width: 31vw;
     height: 33.4vh;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 1px 4px;
     border-radius: 6px;
