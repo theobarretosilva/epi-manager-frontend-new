@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const DivInput = styled.div`
-    width: auto;
+    width: 100%;
     height: 5vh;
     border-bottom: 2px solid #FFDD4A;
     display: flex;
@@ -10,7 +10,7 @@ export const DivInput = styled.div`
     margin-bottom: 0;
     margin-top: 2vh;
     margin-left: 2vw;
-    margin-right: 2vw;
+    margin-right: 1vw;
 `
 
 export const SearchInputStyled = styled.input`
