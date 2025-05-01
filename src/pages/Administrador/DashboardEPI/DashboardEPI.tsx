@@ -155,11 +155,11 @@ export const DashboardEPI = () => {
         <>
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
-                    <Searchbar placeholder="Pesquise pela nome ou código" onSearch={handleSearch} />
-                ) : ("")}
-                <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
-                {filteredRows.length > 0 ? (
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                        <S.DivBtnSearch>
+                            <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                            <Searchbar placeholder="Pesquise pela nome ou código" onSearch={handleSearch} />
+                        </S.DivBtnSearch>
                         <DataGrid
                             rows={filteredRows}
                             columns={columns}
@@ -172,7 +172,10 @@ export const DashboardEPI = () => {
                         />
                     </Paper>
                 ) : (
-                    <NoDataToShow mainText="Não foram adicionados EPI's!" />
+                    <>
+                        <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                        <NoDataToShow mainText="Não foram adicionados EPI's!" />
+                    </>
                 )}
             </S.MainStyled>
             <ToastContainer position="top-right" />

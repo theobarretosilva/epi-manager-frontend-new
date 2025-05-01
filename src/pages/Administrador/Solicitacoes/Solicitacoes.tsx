@@ -11,6 +11,7 @@ import ReactModal from 'react-modal';
 import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
+import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
 
 interface SolicitacaoProps {
     id: string;
@@ -163,12 +164,15 @@ export const Solicitacoes = () => {
         <S.MainStyled>
             {filteredRows.length > 0 ? (
                 <>
-                    <Searchbar onSearch={handleSearch} />
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                        <S.DivBtnSearch>
+                            <S.ButtonStyled onClick={() => openModal()}>+ Fazer Solicitação</S.ButtonStyled>
+                            <Searchbar onSearch={handleSearch} />
+                        </S.DivBtnSearch>
                         <DataGrid
                             rows={filteredRows}
                             columns={columns}
-                            pageSizeOptions={[5, 10]}
+                            pageSizeOptions={[0, 0]}
                             sx={{
                                 border: 0,
                                 '& .MuiDataGrid-cell': { textAlign: 'center' },
@@ -176,6 +180,10 @@ export const Solicitacoes = () => {
                             }}
                         />
                     </Paper>
+                    <S.DivLayoutDash>
+                        <ModuloNSoliciDash />
+                        <ModuloNSoliciDash />
+                    </S.DivLayoutDash>
                 </>
             ) : (
                 <NoDataToShow mainText="Não foram adicionadas solicitações!" />

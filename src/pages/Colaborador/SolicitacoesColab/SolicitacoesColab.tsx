@@ -120,25 +120,31 @@ export const SolicitacoesFunc = () => {
       {solicitacoes.length > 0 ? (
         <>
           {filteredRows.length > 0 ? (
-            <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
-              <Searchbar onSearch={handleSearch} />
-              <DataGrid
-                rows={filteredRows}
-                columns={columns}
-                pageSizeOptions={[5, 10]}
-                autoHeight
-                initialState={{
-                  pagination: {
-                    paginationModel: { pageSize: 3, page: 0 },
-                  },
-                }}
-                sx={{
-                  border: 0,
-                  '& .MuiDataGrid-cell': { textAlign: 'center'},
-                  '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                }}
-              />
-            </Paper>
+            <>
+              <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+                <Searchbar onSearch={handleSearch} />
+                <DataGrid
+                  rows={filteredRows}
+                  columns={columns}
+                  pageSizeOptions={[5, 10]}
+                  autoHeight
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 3, page: 0 },
+                    },
+                  }}
+                  sx={{
+                    border: 0,
+                    '& .MuiDataGrid-cell': { textAlign: 'center'},
+                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                  }}
+                />
+              </Paper>
+              <S.DivLayoutDash>
+                <ModuloNSoliciDash />
+                <ModuloNSoliciDash />
+              </S.DivLayoutDash>
+            </>
           ) : (
             <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
               <Searchbar onSearch={handleSearch} />
@@ -150,11 +156,6 @@ export const SolicitacoesFunc = () => {
         <NoDataToShow mainText='Não foram feitas solicitações!' />
       )}
 
-      <S.DivLayoutDash>
-        <ModuloNSoliciDash />
-        <ModuloNSoliciDash />
-      </S.DivLayoutDash>
-      
       <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
         <S.MainWrapper>
           <S.ImageContent onClick={closeModal}>
