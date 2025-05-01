@@ -10,7 +10,6 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x
 import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
-import { ModuloNSoliciDash } from "../../../components/ModuloNSoliciDash/ModuloNSoliciDash";
 import { ModuloColabSetDash } from "../../../components/ModuloColabSetDash/ModuloColabSetDash";
 import { ModuloIndicNume } from "../../../components/ModuloIndicNume/ModuloIndicNume";
 
@@ -28,14 +27,19 @@ interface ColaboradorProps {
 export const DashboardColab = () => {
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
-    const [idColaborador, setIdColaborador] = useState('0');
+    const [idColaborador, setIdColaborador] = useState<string | null>(null);
 
     const closeModal = () => {
         setModalIsOpenAddColaborador(false);
         setIdColaborador('');
     }
 
-    const openModal = (id: string) => {
+    const openModal = () => {
+        setModalIsOpenAddColaborador(true);
+        setIdColaborador(null)
+    }
+
+    const openModalEdit = (id: string) => {
         setModalIsOpenAddColaborador(true);
         setIdColaborador(id);
     }
@@ -110,15 +114,15 @@ export const DashboardColab = () => {
                     key={0}
                     icon={<EditColabIcon />}
                     label="Editar"
-                    onClick={() => openModal(params.row.id)}
+                    onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
-            width: 80,
+            width: 100,
         },
-        { field: 'id', headerName: 'Matricula', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'matricula', headerName: 'Matricula', width: 100, align: 'center', headerAlign: 'center' },
         { field: 'nome', headerName: 'Nome', width: 350, align: 'center', headerAlign: 'center' },
-        { field: 'cargo', headerName: 'Cargo', width: 200, align: 'center', headerAlign: 'center'},
-        { field: 'setor', headerName: 'Setor', width: 200, align: 'center', headerAlign: 'center' },
+        { field: 'cargo', headerName: 'Cargo', width: 210, align: 'center', headerAlign: 'center'},
+        { field: 'setor', headerName: 'Setor', width: 210, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',
@@ -131,7 +135,7 @@ export const DashboardColab = () => {
                     onClick={() => openModalDelete(params.row.id)}
                 />,
             ],
-            width: 80,
+            width: 100,
             align: 'center',
             headerAlign: 'center'
         }
@@ -172,7 +176,7 @@ export const DashboardColab = () => {
                 {filteredRows.length > 0 ? (
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
                         <S.DivBtnSearch>
-                            <S.ButtonStyled onClick={() => setModalIsOpenAddColaborador(true)}>+ Adicionar Colaborador</S.ButtonStyled>
+                            <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
                             <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />
                         </S.DivBtnSearch>
                         <DataGrid
@@ -223,7 +227,7 @@ export const DashboardColab = () => {
                     <S.ImageContent onClick={() => closeModal()}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <AdicionarColaborador modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} onAdd={handleAddColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
+                    <AdicionarColaborador setIdColab={setIdColaborador} modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} onAdd={handleAddColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
                 </S.MainWrapper>
             </ReactModal>
         </>
