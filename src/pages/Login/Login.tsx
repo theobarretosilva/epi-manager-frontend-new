@@ -13,7 +13,7 @@ export const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const colaboradores = JSON.parse(sessionStorage.getItem("ColaboradoresCadastrados") || "[]");
-    console.log(colaboradores)
+    const tipoUser = sessionStorage.getItem("TipoAcesso");
 
     const calculateHash = async (password: string, salt: string) => {
         const encoder = new TextEncoder();
@@ -82,7 +82,7 @@ export const Login = () => {
                 <S.ImgLogo src={logoImage} />
                 <S.BoxForm>
                     <S.TituloBox>Bem-vindo(a) de volta!</S.TituloBox>
-                    <S.SubtituloBox>Insira seus dados nos campos abaixo para logar:</S.SubtituloBox>
+                    <S.SubtituloBox>Insira seus dados nos campos abaixo para logar como {tipoUser?.toLowerCase()}:</S.SubtituloBox>
                     <br />
                     <form onSubmit={onSubmit}>
                         <InputStyled
