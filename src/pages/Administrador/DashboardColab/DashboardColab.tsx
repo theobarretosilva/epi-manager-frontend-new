@@ -1,6 +1,6 @@
 import ReactModal from "react-modal";
 import AdicionarColaborador from "../../../components/AdicionarColaborador/AdicionarColaborador";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as S from './DashboardColab.styles';
 import { ToastContainer } from "react-toastify";
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
@@ -169,7 +169,37 @@ export const DashboardColab = () => {
             )
         );
     };
+    
+    const hoje = new Date();
 
+    const colaboradoresCadastradosNoMes = useMemo(() => {
+        return colaboradores.filter(colab => {
+            const data = new Date(colab.dataCadastro);
+            return (
+            data.getMonth() === hoje.getMonth() &&
+            data.getFullYear() === hoje.getFullYear()
+            );
+        }).length;
+    }, [colaboradores]);
+
+    const colaboradoresComEPIsVencendo = useMemo(() => {
+        return colaboradores.filter(colab =>
+            colab.epis.some(epi => new Date(epi.validade) < hoje)
+        ).length;
+    }, [colaboradores]);
+
+    const colaboradoresComEPIsVencendo30Dias = useMemo(() => {
+        const daqui30Dias = new Date();
+        daqui30Dias.setDate(hoje.getDate() + 30);
+
+        return colaboradores.filter(colab =>
+            colab.epis.some(epi => {
+            const validade = new Date(epi.validade);
+            return validade >= hoje && validade <= daqui30Dias;
+            })
+        ).length;
+    }, [colaboradores]);
+    
     return (
         <>
             <S.MainStyled>
@@ -201,7 +231,12 @@ export const DashboardColab = () => {
 
                 <S.DivLayoutDash>
                     <ModuloColabSetDash />
-                    <ModuloIndicNume />
+                    <ModuloIndicNume 
+                        total={colaboradores.length}
+                        vencendo={colaboradoresComEPIsVencendo}
+                        cadastradosMes={colaboradoresCadastradosNoMes}
+                        vencendo30dias={colaboradoresComEPIsVencendo30Dias}
+                        />
                 </S.DivLayoutDash>
 
             </S.MainStyled>
