@@ -96,13 +96,13 @@ export const Solicitacoes = () => {
                     onClick={() => openModal(getSolicitacao(params.row))}
                 />,
             ],
-            width: 80,
+            width: 90,
         },
         { field: 'id', headerName: 'ID', width: 200, align: 'center', headerAlign: 'center' },
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 255, align: 'center', headerAlign: 'center' },
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
         { field: 'prioridade', headerName: 'Prioridade', width: 130, align: 'center', headerAlign: 'center'},
         { field: 'status', headerName: 'Status', width: 130, align: 'center', headerAlign: 'center' },
-        { field: 'validadeEPI', headerName: 'Validade EPI', width: 130, align: 'center', headerAlign: 'center' },
+        { field: 'validadeEPI', headerName: 'Validade EPI', width: 150, align: 'center', headerAlign: 'center' },
         { 
             field: 'download',
             type: 'actions',
@@ -115,7 +115,7 @@ export const Solicitacoes = () => {
                     onClick={() => generatePDF(getSolicitacao(params.row))}
                 />,
             ],
-            width: 80,
+            width: 90,
             align: 'center',
             headerAlign: 'center'
         }
