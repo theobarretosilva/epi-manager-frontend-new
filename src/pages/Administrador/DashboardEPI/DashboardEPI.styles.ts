@@ -12,7 +12,7 @@ export const MainStyled = styled.main`
 
 export const ButtonStyled = styled.button`
     background-color: #FFDD4A;
-    width: 20vw;
+    width: 13vw;
     height: 4.9vh;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     border-radius: 5px;

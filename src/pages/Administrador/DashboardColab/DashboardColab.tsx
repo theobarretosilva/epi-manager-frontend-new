@@ -170,35 +170,35 @@ export const DashboardColab = () => {
         );
     };
     
-    const hoje = new Date();
+    // const hoje = new Date();
 
-    const colaboradoresCadastradosNoMes = useMemo(() => {
-        return colaboradores.filter(colab => {
-            const data = new Date(colab.dataCadastro);
-            return (
-            data.getMonth() === hoje.getMonth() &&
-            data.getFullYear() === hoje.getFullYear()
-            );
-        }).length;
-    }, [colaboradores]);
+    // const colaboradoresCadastradosNoMes = useMemo(() => {
+    //     return colaboradores.filter(colab => {
+    //         const data = new Date(colab.dataCadastro);
+    //         return (
+    //         data.getMonth() === hoje.getMonth() &&
+    //         data.getFullYear() === hoje.getFullYear()
+    //         );
+    //     }).length;
+    // }, [colaboradores]);
 
-    const colaboradoresComEPIsVencendo = useMemo(() => {
-        return colaboradores.filter(colab =>
-            colab.epis.some(epi => new Date(epi.validade) < hoje)
-        ).length;
-    }, [colaboradores]);
+    // const colaboradoresComEPIsVencendo = useMemo(() => {
+    //     return colaboradores.filter(colab =>
+    //         colab.epis.some(epi => new Date(epi.validade) < hoje)
+    //     ).length;
+    // }, [colaboradores]);
 
-    const colaboradoresComEPIsVencendo30Dias = useMemo(() => {
-        const daqui30Dias = new Date();
-        daqui30Dias.setDate(hoje.getDate() + 30);
+    // const colaboradoresComEPIsVencendo30Dias = useMemo(() => {
+    //     const daqui30Dias = new Date();
+    //     daqui30Dias.setDate(hoje.getDate() + 30);
 
-        return colaboradores.filter(colab =>
-            colab.epis.some(epi => {
-            const validade = new Date(epi.validade);
-            return validade >= hoje && validade <= daqui30Dias;
-            })
-        ).length;
-    }, [colaboradores]);
+    //     return colaboradores.filter(colab =>
+    //         colab.epis.some(epi => {
+    //         const validade = new Date(epi.validade);
+    //         return validade >= hoje && validade <= daqui30Dias;
+    //         })
+    //     ).length;
+    // }, [colaboradores]);
     
     return (
         <>
@@ -231,12 +231,12 @@ export const DashboardColab = () => {
 
                 <S.DivLayoutDash>
                     <ModuloColabSetDash />
-                    <ModuloIndicNume 
+                    {/* <ModuloIndicNume 
                         total={colaboradores.length}
                         vencendo={colaboradoresComEPIsVencendo}
                         cadastradosMes={colaboradoresCadastradosNoMes}
                         vencendo30dias={colaboradoresComEPIsVencendo30Dias}
-                        />
+                        /> */}
                 </S.DivLayoutDash>
 
             </S.MainStyled>

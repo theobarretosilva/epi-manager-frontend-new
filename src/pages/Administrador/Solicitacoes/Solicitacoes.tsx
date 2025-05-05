@@ -12,6 +12,7 @@ import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
 import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
+import { ModuloEPIVencProx } from '../../../components/ModuloEPIVencProx/ModuloEPIVencProx';
 
 interface SolicitacaoProps {
     id: string;
@@ -19,6 +20,7 @@ interface SolicitacaoProps {
     status: string;
     codigoEPI: string;
     prioridade: string;
+    solicitante: string;
 }
   
 interface EPIProps {
@@ -45,7 +47,7 @@ export const Solicitacoes = () => {
         closeModal 
     } = useModalDetalhesSolicitacao();
 
-    const solicitacoes = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
+    const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
     const getValidadeEPI = (cod: string) => {
@@ -172,7 +174,12 @@ export const Solicitacoes = () => {
                         <DataGrid
                             rows={filteredRows}
                             columns={columns}
-                            pageSizeOptions={[0, 0]}
+                            autoHeight
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { pageSize: 3, page: 0 },
+                                },
+                            }}
                             sx={{
                                 border: 0,
                                 '& .MuiDataGrid-cell': { textAlign: 'center' },
@@ -181,8 +188,8 @@ export const Solicitacoes = () => {
                         />
                     </Paper>
                     <S.DivLayoutDash>
-                        <ModuloNSoliciDash />
-                        <ModuloNSoliciDash />
+                        <ModuloNSoliciDash solicitacoes={solicitacoes} />
+                        <ModuloEPIVencProx />
                     </S.DivLayoutDash>
                 </>
             ) : (

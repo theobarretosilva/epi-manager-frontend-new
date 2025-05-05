@@ -141,8 +141,8 @@ export const SolicitacoesFunc = () => {
                 />
               </Paper>
               <S.DivLayoutDash>
-                <ModuloNSoliciDash />
-                <ModuloNSoliciDash />
+                <ModuloNSoliciDash solicitacoes={solicitacoes} />
+                <ModuloNSoliciDash solicitacoes={solicitacoes} />
               </S.DivLayoutDash>
             </>
           ) : (

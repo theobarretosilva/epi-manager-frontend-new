@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const DivInput = styled.div`
-    width: 100%;
+    width: 88%;
     height: 5vh;
     border-bottom: 2px solid #FFDD4A;
     display: flex;
