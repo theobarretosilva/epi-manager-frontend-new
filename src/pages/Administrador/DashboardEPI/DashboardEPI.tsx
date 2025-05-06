@@ -158,7 +158,7 @@ export const DashboardEPI = () => {
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
                     <>
-                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
                                 <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
                                 <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch} />

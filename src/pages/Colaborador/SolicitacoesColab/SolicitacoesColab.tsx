@@ -73,8 +73,8 @@ export const SolicitacoesFunc = () => {
       ],
       width: 100,
     },
-    { field: 'id', headerName: 'ID', width: 220, align: 'center', headerAlign: 'center' },
-    { field: 'descricaoItem', headerName: 'Descrição do Item', width: 220, align: 'center', headerAlign: 'center' },
+    { field: 'id', headerName: 'ID', width: 230, align: 'center', headerAlign: 'center' },
+    { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
     { field: 'status', headerName: 'Status', width: 220, align: 'center', headerAlign: 'center' },
     { field: 'validadeEPI', headerName: 'Validade EPI', width: 220, align: 'center', headerAlign: 'center' },
   ];
