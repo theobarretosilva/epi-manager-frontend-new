@@ -24,7 +24,7 @@ export const ModuloNSoliciDash = ({ solicitacoes }: Props) => {
       const status = s.status.toLowerCase();
       if (status === 'pendente') {
         pendentes += 1;
-      } else if (status === 'aprovada' || status === 'aprovada') {
+      } else if (status === 'aprovada') {
         aprovadas += 1;
       } else if (status === 'recusada') {
         recusadas += 1;

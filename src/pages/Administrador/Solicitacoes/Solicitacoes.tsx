@@ -13,6 +13,7 @@ import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
 import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
 import { ModuloEPIVencProx } from '../../../components/ModuloEPIVencProx/ModuloEPIVencProx';
+import { ModuloNStatSoli } from '../../../components/ModuloNStatSoli/ModuloNStatSoli';
 
 interface SolicitacaoProps {
     id: string;
@@ -189,7 +190,7 @@ export const Solicitacoes = () => {
                     </Paper>
                     <S.DivLayoutDash>
                         <ModuloNSoliciDash solicitacoes={solicitacoes} />
-                        <ModuloEPIVencProx />
+                        <ModuloNStatSoli solicitacoes={solicitacoes} />
                     </S.DivLayoutDash>
                 </>
             ) : (

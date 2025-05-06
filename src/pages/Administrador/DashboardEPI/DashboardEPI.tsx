@@ -10,6 +10,7 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x
 import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
+import { ModuloEPIVencProx } from "../../../components/ModuloEPIVencProx/ModuloEPIVencProx";
 
 interface EPIProps {
     descricaoItem: string;
@@ -155,22 +156,33 @@ export const DashboardEPI = () => {
         <>
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
-                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
-                        <S.DivBtnSearch>
-                            <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
-                            <Searchbar placeholder="Pesquise pela nome ou código" onSearch={handleSearch} />
-                        </S.DivBtnSearch>
-                        <DataGrid
-                            rows={filteredRows}
-                            columns={columns}
-                            pageSizeOptions={[5, 10]}
-                            sx={{
-                                border: 0,
-                                '& .MuiDataGrid-cell': { textAlign: 'center' },
-                                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                            }}
-                        />
-                    </Paper>
+                    <>
+                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                            <S.DivBtnSearch>
+                                <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                                <Searchbar placeholder="Pesquise pela nome ou código" onSearch={handleSearch} />
+                            </S.DivBtnSearch>
+                            <DataGrid
+                                rows={filteredRows}
+                                columns={columns}
+                                autoHeight
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: { pageSize: 3, page: 0 },
+                                    },
+                                }}
+                                sx={{
+                                    border: 0,
+                                    '& .MuiDataGrid-cell': { textAlign: 'center' },
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                                }}
+                            />
+                        </Paper>
+                        <S.DivLayoutDash>
+                            <ModuloEPIVencProx />
+                        </S.DivLayoutDash>
+                    </>
+                    
                 ) : (
                     <>
                         <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>

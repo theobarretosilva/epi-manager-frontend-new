@@ -54,3 +54,12 @@ export const DivBtnSearch = styled.div`
     height: auto;
     width: 100%;
 `
+
+export const DivLayoutDash = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    margin-top: 2vh;
+`
