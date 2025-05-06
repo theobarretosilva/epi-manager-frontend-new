@@ -11,6 +11,7 @@ import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
 import { ModuloEPIVencProx } from "../../../components/ModuloEPIVencProx/ModuloEPIVencProx";
+import { ModuloEPIEstoBaix } from "../../../components/ModuloEPIEstoBaix/ModuloEPIEstoBaix";
 
 interface EPIProps {
     descricaoItem: string;
@@ -115,10 +116,8 @@ export const DashboardEPI = () => {
         }
     ];
 
-    const [searchTerm, setSearchTerm] = useState('');
     const [filteredRows, setFilteredRows] = useState(rows);
     const handleSearch = (value: string) => {
-        setSearchTerm(value);
         setFilteredRows(
             rows.filter(
                 (row) =>
@@ -160,7 +159,7 @@ export const DashboardEPI = () => {
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
                             <S.DivBtnSearch>
                                 <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
-                                <Searchbar placeholder="Pesquise pela nome ou código" onSearch={handleSearch} />
+                                <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch} />
                             </S.DivBtnSearch>
                             <DataGrid
                                 rows={filteredRows}
@@ -180,6 +179,7 @@ export const DashboardEPI = () => {
                         </Paper>
                         <S.DivLayoutDash>
                             <ModuloEPIVencProx />
+                            <ModuloEPIEstoBaix />
                         </S.DivLayoutDash>
                     </>
                     

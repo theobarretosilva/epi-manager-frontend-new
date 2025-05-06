@@ -38,11 +38,26 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
         setCodigo(value);
         break;
       case "certificadoAprovacao":
-        setCertificadoAprovacao(value);
+        {
+          const sanitized = value.startsWith("CA") ? value : `CA${value.replace(/^CA/i, "")}`;
+          setCertificadoAprovacao(sanitized);
+        }
         break;
-      case "validade":
-        setValidade(value);
-        break;
+        case "validade":
+          {
+            let input = value.replace(/\D/g, '');
+            if (input.length > 8) input = input.slice(0, 8);
+          
+            let formatted = input;
+            if (input.length > 4) {
+              formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}/${input.slice(4)}`;
+            } else if (input.length > 2) {
+              formatted = `${input.slice(0, 2)}/${input.slice(2)}`;
+            }
+          
+            setValidade(formatted);
+          }
+          break;
       default:
         break;
     }
@@ -117,7 +132,7 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
           handle={handleChange}
         />
       </S.DivWrapper>
-      <BtnStyled onClick={handleSave} type="submit" text="Salvar" />
+      <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>
   );
 };
