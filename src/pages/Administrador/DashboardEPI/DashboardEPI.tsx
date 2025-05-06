@@ -12,13 +12,9 @@ import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
 import { ModuloEPIVencProx } from "../../../components/ModuloEPIVencProx/ModuloEPIVencProx";
 import { ModuloEPIEstoBaix } from "../../../components/ModuloEPIEstoBaix/ModuloEPIEstoBaix";
+import { EPIProps } from "./DashboardEPI.types";
 
-interface EPIProps {
-    descricaoItem: string;
-    codigo: string;
-    certificadoAprovacao: string;
-    validade: string;
-}
+ReactModal.setAppElement('#root');
 
 export const DashboardEPI = () => {
     const EPIList = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
@@ -37,7 +33,9 @@ export const DashboardEPI = () => {
             codigo: epi.codigo,
             descricaoItem: epi.descricaoItem,
             certificadoAprovacao: epi.certificadoAprovacao,
-            validade: epi.validade
+            validade: epi.validade,
+            estoque: epi.estoque,
+            estoqueMinimo: epi.estoqueMinimo
         }));
     })
 
@@ -86,7 +84,7 @@ export const DashboardEPI = () => {
             headerName: 'Editar',
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
-                    key={0}
+                    key={`editar-${params.row.id}`}
                     icon={<EditColabIcon />}
                     label="Editar"
                     onClick={() => openModal(params.row.id)}
@@ -94,17 +92,19 @@ export const DashboardEPI = () => {
             ],
             width: 80,
         },
-        { field: 'id', headerName: 'Código', width: 100, align: 'center', headerAlign: 'center'},
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 350, align: 'center', headerAlign: 'center' },
-        { field: 'certificadoAprovacao', headerName: 'Certificado de Aprovação', width: 200, align: 'center', headerAlign: 'center' },
-        { field: 'validade', headerName: 'Validade', width: 200, align: 'center', headerAlign: 'center'},
+        { field: 'id', headerName: 'Código', width: 90, align: 'center', headerAlign: 'center'},
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 270, align: 'center', headerAlign: 'center' },
+        { field: 'certificadoAprovacao', headerName: 'Certificado de Aprovação', width: 190, align: 'center', headerAlign: 'center' },
+        { field: 'validade', headerName: 'Validade', width: 120, align: 'center', headerAlign: 'center'},
+        { field: 'estoque', headerName: 'Estoque', width: 120, align: 'center', headerAlign: 'center'},
+        { field: 'estoqueMinimo', headerName: 'Estoque Mínimo', width: 130, align: 'center', headerAlign: 'center'},
         { 
             field: 'deletar',
             type: 'actions',
             headerName: 'Deletar', 
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
-                    key={0}
+                    key={`deletar-${params.row.id}`}
                     icon={<DeleteIcon />}
                     label="Deletar"
                     onClick={()=> openModalDelete(params.row.id)}
@@ -147,7 +147,9 @@ export const DashboardEPI = () => {
             codigo: epi.codigo,
             descricaoItem: epi.descricaoItem,
             certificadoAprovacao: epi.certificadoAprovacao,
-            validade: epi.validade
+            validade: epi.validade,
+            estoque: epi.estoque,
+            estoqueMinimo: epi.estoqueMinimo,
         })));
     };
 
