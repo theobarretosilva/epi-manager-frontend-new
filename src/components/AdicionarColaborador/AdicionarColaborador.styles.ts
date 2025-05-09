@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 
 export const FormContainer = styled.form`
@@ -39,9 +40,9 @@ export interface Colaborador {
 
 
 export interface AddColaboradorProps {
-  setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onAdd: (e: Colaborador) => void;
-  idColab?: string;
+  setModalIsOpen: (value: boolean) => void;
+  onAdd: (colaborador: any) => void;
+  idColab: string | null;
+  setIdColab: Dispatch<SetStateAction<string | null>>;
   modalIsOpen: boolean;
 }
-

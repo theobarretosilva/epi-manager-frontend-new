@@ -1,6 +1,6 @@
 import ReactModal from "react-modal";
 import AdicionarColaborador from "../../../components/AdicionarColaborador/AdicionarColaborador";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as S from './DashboardColab.styles';
 import { ToastContainer } from "react-toastify";
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
@@ -10,6 +10,8 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x
 import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
+import { ModuloColabSetDash } from "../../../components/ModuloColabSetDash/ModuloColabSetDash";
+import { ModuloIndicNume } from "../../../components/ModuloIndicNume/ModuloIndicNume";
 
 interface ColaboradorProps {
     id: string;
@@ -20,19 +22,82 @@ interface ColaboradorProps {
     email: string;
     hash: string;
     salt: string;
+    dataCadastro: string;
+    epis: { nome: string; validade: string }[];
 }
 
 export const DashboardColab = () => {
+    const mockData: ColaboradorProps[] = [
+        {
+            id: "1",
+            nome: "João Silva",
+            matricula: "001",
+            setor: "Almoxarifado",
+            cargo: "Auxiliar",
+            email: "joao@email.com",
+            hash: "abc",
+            salt: "123",
+            dataCadastro: new Date().toISOString(),
+            epis: [
+                { nome: "Capacete", validade: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString() } // vencido
+            ]
+        },
+        {
+            id: "2",
+            nome: "Maria Souza",
+            matricula: "002",
+            setor: "Produção",
+            cargo: "Operadora",
+            email: "maria@email.com",
+            hash: "def",
+            salt: "456",
+            dataCadastro: new Date().toISOString(),
+            epis: [
+                { nome: "Luvas", validade: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString() } // vence em 10 dias
+            ]
+        },
+        {
+            id: "3",
+            nome: "Carlos Lima",
+            matricula: "003",
+            setor: "Manutenção",
+            cargo: "Técnico",
+            email: "carlos@email.com",
+            hash: "ghi",
+            salt: "789",
+            dataCadastro: new Date().toISOString(),
+            epis: [
+                { nome: "Botina", validade: new Date(new Date().setDate(new Date().getDate() + 40)).toISOString() } // vence em 40 dias
+            ]
+        },
+        {
+            id: "4",
+            nome: "Ana Paula",
+            matricula: "004",
+            setor: "RH",
+            cargo: "Analista",
+            email: "ana@email.com",
+            hash: "jkl",
+            salt: "012",
+            dataCadastro: new Date().toISOString(),
+            epis: [] // sem EPIs
+        }
+    ];
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
-    const [idColaborador, setIdColaborador] = useState('0');
+    const [idColaborador, setIdColaborador] = useState<string | null>(null);
 
     const closeModal = () => {
         setModalIsOpenAddColaborador(false);
         setIdColaborador('');
     }
 
-    const openModal = (id: string) => {
+    const openModal = () => {
+        setModalIsOpenAddColaborador(true);
+        setIdColaborador(null)
+    }
+
+    const openModalEdit = (id: string) => {
         setModalIsOpenAddColaborador(true);
         setIdColaborador(id);
     }
@@ -107,15 +172,15 @@ export const DashboardColab = () => {
                     key={0}
                     icon={<EditColabIcon />}
                     label="Editar"
-                    onClick={() => openModal(params.row.id)}
+                    onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
-            width: 80,
+            width: 100,
         },
-        { field: 'id', headerName: 'Matricula', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'matricula', headerName: 'Matricula', width: 100, align: 'center', headerAlign: 'center' },
         { field: 'nome', headerName: 'Nome', width: 350, align: 'center', headerAlign: 'center' },
-        { field: 'cargo', headerName: 'Cargo', width: 200, align: 'center', headerAlign: 'center'},
-        { field: 'setor', headerName: 'Setor', width: 200, align: 'center', headerAlign: 'center' },
+        { field: 'cargo', headerName: 'Cargo', width: 210, align: 'center', headerAlign: 'center'},
+        { field: 'setor', headerName: 'Setor', width: 210, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',
@@ -128,7 +193,7 @@ export const DashboardColab = () => {
                     onClick={() => openModalDelete(params.row.id)}
                 />,
             ],
-            width: 80,
+            width: 100,
             align: 'center',
             headerAlign: 'center'
         }
@@ -153,10 +218,8 @@ export const DashboardColab = () => {
         setFilteredRows(rows);
     }, [rows, colaboradores]);
 
-    const [searchTerm, setSearchTerm] = useState('');
     const [filteredRows, setFilteredRows] = useState(rows);
     const handleSearch = (value: string) => {
-        setSearchTerm(value);
         setFilteredRows(
             rows.filter(row => 
                 row.matricula.toLowerCase().includes(value.toLowerCase()) ||
@@ -164,20 +227,55 @@ export const DashboardColab = () => {
             )
         );
     };
+    
+    const hoje = new Date();
 
+    const colaboradoresCadastradosNoMes = useMemo(() => {
+        return mockData.filter(colab => {
+            const data = new Date(colab.dataCadastro);
+            return (
+            data.getMonth() === hoje.getMonth() &&
+            data.getFullYear() === hoje.getFullYear()
+            );
+        }).length;
+    }, [colaboradores]);
+
+    const colaboradoresComEPIsVencendo = useMemo(() => {
+        return mockData.filter(colab =>
+            colab.epis.some(epi => new Date(epi.validade) < hoje)
+        ).length;
+    }, [colaboradores]);
+
+    const colaboradoresComEPIsVencendo30Dias = useMemo(() => {
+        const daqui30Dias = new Date();
+        daqui30Dias.setDate(hoje.getDate() + 30);
+
+        return mockData.filter(colab =>
+            colab.epis.some(epi => {
+            const validade = new Date(epi.validade);
+            return validade >= hoje && validade <= daqui30Dias;
+            })
+        ).length;
+    }, [colaboradores]);
+    
     return (
         <>
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
-                    <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />
-                ) : ("")}
-                <S.ButtonStyled onClick={() => setModalIsOpenAddColaborador(true)}>+ Adicionar Colaborador</S.ButtonStyled>
-                {filteredRows.length > 0 ? (
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                        <S.DivBtnSearch>
+                            <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                            <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />
+                        </S.DivBtnSearch>
                         <DataGrid
                             rows={filteredRows}
                             columns={columns}
-                            pageSizeOptions={[5, 10]}
+                            autoHeight
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { pageSize: 3, page: 0 },
+                                },
+                            }}
                             sx={{
                                 border: 0,
                                 '& .MuiDataGrid-cell': { textAlign: 'center' },
@@ -188,6 +286,17 @@ export const DashboardColab = () => {
                 ) : (
                     <NoDataToShow mainText="Não foram adicionados colaboradores!" />
                 )}
+
+                <S.DivLayoutDash>
+                    <ModuloColabSetDash />
+                    <ModuloIndicNume 
+                        total={colaboradores.length}
+                        vencendo={colaboradoresComEPIsVencendo}
+                        cadastradosMes={colaboradoresCadastradosNoMes}
+                        vencendo30dias={colaboradoresComEPIsVencendo30Dias}
+                    />
+                </S.DivLayoutDash>
+
             </S.MainStyled>
             <ToastContainer position="top-right" />
             <ReactModal
@@ -211,7 +320,7 @@ export const DashboardColab = () => {
                     <S.ImageContent onClick={() => closeModal()}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <AdicionarColaborador modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} onAdd={handleAddColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
+                    <AdicionarColaborador setIdColab={setIdColaborador} modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} onAdd={handleAddColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
                 </S.MainWrapper>
             </ReactModal>
         </>

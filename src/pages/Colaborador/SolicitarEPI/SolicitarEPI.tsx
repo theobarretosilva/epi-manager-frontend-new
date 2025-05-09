@@ -21,9 +21,10 @@ export const SolicitarEPI = () => {
         value: epi.codigo,
     }));
 
+    const pad = (num: number) => num.toString().padStart(2, '0');
     const generateUniqueID = () => {
         const now = new Date();
-        return `SOL-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
+        return `SOL-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
     };
 
     const [id] = useState(() => generateUniqueID());
@@ -91,7 +92,10 @@ export const SolicitarEPI = () => {
                         tipo='number'
                         titulo='Quantidade'
                         value={formData.quantidade}
-                        handle={e => updateField('quantidade', parseInt(e.target.value) || 0)}
+                        handle={e => {
+                            const value = parseInt(e.target.value, 10);
+                            updateField('quantidade', isNaN(value) ? 0 : value);
+                        }}
                     />
                 </S.DivFlex>
                 <br />

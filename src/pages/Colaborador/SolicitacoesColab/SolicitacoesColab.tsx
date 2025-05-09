@@ -9,6 +9,7 @@ import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { useModalDetalhesSolicitacao } from '../../../hooks/useModalDetalhesSolicitacao';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
+import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
 
 interface SolicitacaoProps {
   id: string;
@@ -67,13 +68,13 @@ export const SolicitacoesFunc = () => {
           key={0}
           icon={<OpenModalIcon />}
           label="Abrir"
-          onClick={() => openModal(getSolicitacao(params.row))}
+          onClick={() => openModal(getSolicitacao(params.row as SolicitacaoProps))}
         />,
       ],
       width: 100,
     },
-    { field: 'id', headerName: 'ID', width: 220, align: 'center', headerAlign: 'center' },
-    { field: 'descricaoItem', headerName: 'Descrição do Item', width: 220, align: 'center', headerAlign: 'center' },
+    { field: 'id', headerName: 'ID', width: 230, align: 'center', headerAlign: 'center' },
+    { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
     { field: 'status', headerName: 'Status', width: 220, align: 'center', headerAlign: 'center' },
     { field: 'validadeEPI', headerName: 'Validade EPI', width: 220, align: 'center', headerAlign: 'center' },
   ];
@@ -87,15 +88,15 @@ export const SolicitacoesFunc = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRows, setFilteredRows] = useState(rows);
+  
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setFilteredRows(
-      rows.filter(
-        (row) =>
-          row.descricaoItem.toLowerCase().includes(value.toLowerCase()) ||
-          row.id.toLowerCase().includes(value.toLowerCase())
-      )
+    const filtered = rows.filter(
+      (row) =>
+        row.descricaoItem.toLowerCase().includes(value.toLowerCase()) ||
+        row.id.toLowerCase().includes(value.toLowerCase())
     );
+    setFilteredRows(filtered);
   };
 
   const customStyles = {
@@ -116,26 +117,45 @@ export const SolicitacoesFunc = () => {
 
   return (
     <S.MainStyled>
-      {filteredRows.length > 0 ? (
+      {solicitacoes.length > 0 ? (
         <>
-          <Searchbar onSearch={handleSearch} />
-          <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
-            <DataGrid
-              rows={filteredRows}
-              columns={columns}
-              pageSizeOptions={[5, 10]}
-              sx={{
-                border: 0,
-                '& .MuiDataGrid-cell': { textAlign: 'center' },
-                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-              }}
-            />
-          </Paper>
+          {filteredRows.length > 0 ? (
+            <>
+              <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+                <Searchbar onSearch={handleSearch} />
+                <DataGrid
+                  rows={filteredRows}
+                  columns={columns}
+                  pageSizeOptions={[5, 10]}
+                  autoHeight
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 3, page: 0 },
+                    },
+                  }}
+                  sx={{
+                    border: 0,
+                    '& .MuiDataGrid-cell': { textAlign: 'center'},
+                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                  }}
+                />
+              </Paper>
+              <S.DivLayoutDash>
+                <ModuloNSoliciDash solicitacoes={solicitacoes} />
+                <ModuloNSoliciDash solicitacoes={solicitacoes} />
+              </S.DivLayoutDash>
+            </>
+          ) : (
+            <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+              <Searchbar onSearch={handleSearch} />
+              <NoDataToShow mainText={`Nenhuma solicitação encontrada para "${searchTerm}"`} />
+            </Paper>
+          )}
         </>
       ) : (
         <NoDataToShow mainText='Não foram feitas solicitações!' />
       )}
-      
+
       <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
         <S.MainWrapper>
           <S.ImageContent onClick={closeModal}>

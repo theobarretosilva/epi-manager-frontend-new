@@ -5,8 +5,8 @@ export const MainStyled = styled.main`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 66.6vw;
-    padding: 7vh 3vw 7vh 3vw;
+    width: 71.5vw;
+    padding: 1.5vh 1.5vw 1.5vh 1.5vw;
     margin-left: 25.4vw;
 `
 
@@ -65,4 +65,29 @@ export const DivWrapper = styled.div`
     flex-wrap: wrap;
     gap: 10px; 
     width: 700px;
+`
+
+export const ButtonStyled = styled.button`
+    background-color: #FFDD4A;
+    width: auto;
+    height: 4.9vh;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border-radius: 5px;
+    align-self: center;
+    border: none;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding-left: 1.5vw;
+    padding-right: 1.5vw;
+    margin-top: 4vh;
+`
+
+export const DivLayoutDash = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    margin-top: 2vh;
 `

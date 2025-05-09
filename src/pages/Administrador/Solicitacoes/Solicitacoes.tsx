@@ -11,6 +11,9 @@ import ReactModal from 'react-modal';
 import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
+import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
+import { ModuloEPIVencProx } from '../../../components/ModuloEPIVencProx/ModuloEPIVencProx';
+import { ModuloNStatSoli } from '../../../components/ModuloNStatSoli/ModuloNStatSoli';
 
 interface SolicitacaoProps {
     id: string;
@@ -18,6 +21,7 @@ interface SolicitacaoProps {
     status: string;
     codigoEPI: string;
     prioridade: string;
+    solicitante: string;
 }
   
 interface EPIProps {
@@ -44,7 +48,7 @@ export const Solicitacoes = () => {
         closeModal 
     } = useModalDetalhesSolicitacao();
 
-    const solicitacoes = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
+    const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
     const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
     const getValidadeEPI = (cod: string) => {
@@ -93,13 +97,13 @@ export const Solicitacoes = () => {
                     onClick={() => openModal(getSolicitacao(params.row))}
                 />,
             ],
-            width: 80,
+            width: 90,
         },
         { field: 'id', headerName: 'ID', width: 200, align: 'center', headerAlign: 'center' },
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 255, align: 'center', headerAlign: 'center' },
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
         { field: 'prioridade', headerName: 'Prioridade', width: 130, align: 'center', headerAlign: 'center'},
         { field: 'status', headerName: 'Status', width: 130, align: 'center', headerAlign: 'center' },
-        { field: 'validadeEPI', headerName: 'Validade EPI', width: 130, align: 'center', headerAlign: 'center' },
+        { field: 'validadeEPI', headerName: 'Validade EPI', width: 150, align: 'center', headerAlign: 'center' },
         { 
             field: 'download',
             type: 'actions',
@@ -112,7 +116,7 @@ export const Solicitacoes = () => {
                     onClick={() => generatePDF(getSolicitacao(params.row))}
                 />,
             ],
-            width: 80,
+            width: 90,
             align: 'center',
             headerAlign: 'center'
         }
@@ -163,12 +167,20 @@ export const Solicitacoes = () => {
         <S.MainStyled>
             {filteredRows.length > 0 ? (
                 <>
-                    <Searchbar onSearch={handleSearch} />
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                        <S.DivBtnSearch>
+                            <S.ButtonStyled onClick={() => openModal()}>+ Fazer Solicitação</S.ButtonStyled>
+                            <Searchbar onSearch={handleSearch} />
+                        </S.DivBtnSearch>
                         <DataGrid
                             rows={filteredRows}
                             columns={columns}
-                            pageSizeOptions={[5, 10]}
+                            autoHeight
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { pageSize: 3, page: 0 },
+                                },
+                            }}
                             sx={{
                                 border: 0,
                                 '& .MuiDataGrid-cell': { textAlign: 'center' },
@@ -176,6 +188,10 @@ export const Solicitacoes = () => {
                             }}
                         />
                     </Paper>
+                    <S.DivLayoutDash>
+                        <ModuloNSoliciDash solicitacoes={solicitacoes} />
+                        <ModuloNStatSoli solicitacoes={solicitacoes} />
+                    </S.DivLayoutDash>
                 </>
             ) : (
                 <NoDataToShow mainText="Não foram adicionadas solicitações!" />
