@@ -1,13 +1,17 @@
-import * as S from './BtnStyled.styles'
+import * as S from './BtnStyled.styles';
 
 interface BtnStyledProps {
-    text: string;
+    text?: string;
     type?: "button" | "submit" | "reset";
-    onClick?: (e) => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    disabled?: boolean;
+    children?: React.ReactNode;
 }
 
-export const BtnStyled: React.FC<BtnStyledProps> = ({ text, type, onClick }) => {
-    return(
-        <S.ButtonStyled onClick={onClick} type={type}>{text}</S.ButtonStyled>
-    )
-}
+export const BtnStyled: React.FC<BtnStyledProps> = ({ text, type = "button", onClick, disabled = false, children }) => {
+    return (
+        <S.ButtonStyled disabled={disabled} onClick={onClick} type={type}>
+            {text || children}
+        </S.ButtonStyled>
+    );
+};

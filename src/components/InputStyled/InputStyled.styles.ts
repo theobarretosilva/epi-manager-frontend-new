@@ -14,9 +14,9 @@ export const NameInput = styled.p`
     margin-top: 1vh;
 `
 
-export const InputStyled = styled.input`
+export const InputStyled = styled.input<{ error?: boolean }>`
     background-color: white;
-    border: 1.5px solid black;
+    border: 1.5px solid black ${({ error }) => (error ? 'red' : '#ccc')};
     height: 5vh;
     border-radius: 4px;
     margin-top: 0;
@@ -32,5 +32,9 @@ export const InputStyled = styled.input`
         background-color: #f5f5f5;
         color: #a0a0a0;
         cursor: not-allowed;
+    }
+
+    &:focus {
+        border-color: ${({ error }) => (error ? 'red' : 'blue')};
     }
 `

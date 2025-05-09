@@ -1,26 +1,5 @@
 import styled from "styled-components";
 
-export const DivWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    gap: 2vh;
-    background: linear-gradient(#FCFCFC, #5EB1BF);
-`
-
-export const ImgLogo = styled.img`
-    height: 16vh;
-    object-fit: contain;
-    margin: 40px;
-
-
-    @media (max-width: 650px) {
-        height: 10vh;
-        margin: 10px;
-    }
-`
-
 export const BoxForm = styled.div`
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
