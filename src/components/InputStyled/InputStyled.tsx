@@ -9,7 +9,7 @@ interface InputStyledProps {
     name?: string;
     disabled?: boolean;
     hidden?: boolean;
-    error?: boolean; // <-- adicionar aqui
+    error?: boolean;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
     inputRef?: React.Ref<HTMLInputElement>;
@@ -28,10 +28,17 @@ export const InputStyled = ({
     hidden,
     error,
 }: InputStyledProps) => {
+    const inputId = `input-${name || titulo?.toLowerCase().replace(/\s+/g, '-')}`;
+
     return (
         <S.DivGeral>
-            <S.NameInput>{titulo}</S.NameInput>
+            {titulo && (
+                <label htmlFor={inputId}>
+                    <S.NameInput>{titulo}</S.NameInput>
+                </label>
+            )}
             <S.InputStyled
+                id={inputId}
                 hidden={hidden}
                 disabled={disabled}
                 name={name}
@@ -42,6 +49,7 @@ export const InputStyled = ({
                 onBlur={onBlur}
                 ref={inputRef}
                 error={error}
+                aria-label={titulo}
             />
         </S.DivGeral>
     );
