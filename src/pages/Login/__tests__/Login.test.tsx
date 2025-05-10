@@ -1,7 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { Login } from './Login';
+import { MemoryRouter } from 'react-router-dom';
+import { Login } from '../Login';
 import '@testing-library/jest-dom';
+import { createHash } from 'crypto';
 
 const mockedNavigate = jest.fn();
 
@@ -32,7 +33,9 @@ describe('Login page', () => {
       ...encoder.encode(fakePassword),
       ...new Uint8Array(salt.match(/.{1,2}/g)!.map(b => parseInt(b, 16))),
     ]);
-    const buffer = await crypto.subtle.digest('SHA-256', combined);
+    const hash = createHash('sha256');
+    hash.update(combined);
+    const buffer = hash.digest();
     return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
   };
 
