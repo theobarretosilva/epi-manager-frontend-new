@@ -30,7 +30,7 @@ export const Login = () => {
     const handleLogin = async (matricula: string, senha: string) => {
         const user = colaboradores.find((u: { matricula: string }) => u.matricula === matricula);
         if (!user) {
-            throw new Error("Usuário não encontrado.");
+            setError("Usuário não encontrado.");
         }
 
         const hash = await calculateHash(senha, user.salt);
@@ -39,7 +39,7 @@ export const Login = () => {
             sessionStorage.setItem("UserLogado", JSON.stringify(user));
             return user.cargo;
         } else {
-            throw new Error("Senha incorreta.");
+            setError("Senha incorreta.");
         }
     };
 
@@ -90,14 +90,14 @@ export const Login = () => {
                             tipo='text'
                             placeholder=''
                             value={matricula}
-                            handle={(e) => setMatricula(e.target.value)}
+                            onChange={(e) => setMatricula(e.target.value)}
                         />
                         <InputStyled
                             titulo='Senha'
                             tipo='password'
                             placeholder=''
                             value={senha}
-                            handle={(e) => setSenha(e.target.value)}
+                            onChange={(e) => setSenha(e.target.value)}
                         />
                         <S.PEsqueciSenha onClick={() => navigate('/esqueciSenha')}>
                             Esqueci a senha
