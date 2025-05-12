@@ -54,7 +54,7 @@ export const SolicitarEPI = () => {
                         tipo='text'
                         titulo='ID da Solicitação'
                         value={formData.id}
-                        handle={e => updateField('id', e.target.value)}
+                        onChange={e => updateField('id', e.target.value)}
                     />
                     <InputStyled 
                         disabled={true}
@@ -92,7 +92,7 @@ export const SolicitarEPI = () => {
                         tipo='number'
                         titulo='Quantidade'
                         value={formData.quantidade}
-                        handle={e => {
+                        onChange={e => {
                             const value = parseInt(e.target.value, 10);
                             updateField('quantidade', isNaN(value) ? 0 : value);
                         }}

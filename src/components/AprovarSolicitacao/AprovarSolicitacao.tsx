@@ -162,7 +162,7 @@ export const AprovarSolicitacao: React.FC<AprovarSolicitacoesProps> = ({setModal
           tipo="text"
           titulo="Número de Patrimônio"
           name="patrimonio"
-          handle={(e) => setPatrimonio(e.target.value)}
+          onChange={(e) => setPatrimonio(e.target.value)}
         />
       </S.DivWrapper>
       <S.DivFlex>

@@ -108,28 +108,28 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
           tipo="text"
           titulo="Descrição do Item"
           name="descricaoItem"
-          handle={handleChange}
+          onChange={handleChange}
         />
         <InputStyled
           value={codigo}
           tipo="text"
           titulo="Código"
           name="codigo"
-          handle={handleChange}
+          onChange={handleChange}
         />
         <InputStyled
           value={certificadoAprovacao}
           tipo="text"
           titulo="Certificado de Aprovação"
           name="certificadoAprovacao"
-          handle={handleChange}
+          onChange={handleChange}
         />
         <InputStyled
           value={validade}
           tipo="text"
           titulo="Data de Validade"
           name="validade"
-          handle={handleChange}
+          onChange={handleChange}
         />
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />

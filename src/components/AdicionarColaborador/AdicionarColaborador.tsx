@@ -154,12 +154,12 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
   return (
     <S.FormContainer onSubmit={handleSubmit}>
       <S.DivWrapper>
-        <InputStyled value={nome} tipo="text" titulo="Nome Completo" name="nome" handle={handleChange} />
-        <InputStyled value={matricula} tipo="text" titulo="Matrícula" name="matricula" handle={handleChange} />
-        <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" handle={handleChange} />
+        <InputStyled value={nome} tipo="text" titulo="Nome Completo" name="nome" onChange={handleChange} />
+        <InputStyled value={matricula} tipo="text" titulo="Matrícula" name="matricula" onChange={handleChange} />
+        <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" onChange={handleChange} />
         <SelectStyled value={cargo} titulo="Cargo" name="cargo" onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
-        <InputStyled value={email} tipo="email" titulo="Email" name="email" handle={handleChange} />
-        {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" handle={handleChange} />}
+        <InputStyled value={email} tipo="email" titulo="Email" name="email" onChange={handleChange} />
+        {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" onChange={handleChange} />}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>
