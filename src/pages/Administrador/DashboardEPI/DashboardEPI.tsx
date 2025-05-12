@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactModal from "react-modal"
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
 import * as S from "./DashboardEPI.styles"
@@ -27,17 +27,18 @@ export const DashboardEPI = () => {
         return storedData ? JSON.parse(storedData) : [];
     });
 
-    const [rows, setRows] = useState(() => {
-        return EPIList.map((epi: EPIProps) => ({
+    const rows = useMemo(() => {
+        return epis.map((epi: EPIProps) => ({
             id: epi.codigo,
             codigo: epi.codigo,
             descricaoItem: epi.descricaoItem,
             certificadoAprovacao: epi.certificadoAprovacao,
             validade: epi.validade,
             estoque: epi.estoque,
-            estoqueMinimo: epi.estoqueMinimo
+            estoqueMinimo: epi.estoqueMinimo,
+            linkFoto: epi.linkFoto,
         }));
-    })
+    }, [epis]);
 
     const openModal = (id: string) => {
         setModalIsOpenAddEpi(true);
@@ -53,13 +54,10 @@ export const DashboardEPI = () => {
         setIdEpi(id);
     }
     const handleDeleteEPI = (id: string) => {
-        setRows(rows.filter(row => row.id !== id));
+        const updated = epis.filter(epi => epi.codigo !== id);
+        setEpis(updated);
+        sessionStorage.setItem('EPIsCadastrados', JSON.stringify(updated));
     };
-
-    useEffect(() => {
-        setFilteredRows(rows);
-        sessionStorage.setItem('EPIsCadastrados', JSON.stringify(rows));
-    }, [rows]);
 
     const customStyles = {
         overlay: {
@@ -90,13 +88,23 @@ export const DashboardEPI = () => {
                     onClick={() => openModal(params.row.id)}
                 />,
             ],
-            width: 80,
+            width: 60,
         },
-        { field: 'id', headerName: 'Código', width: 90, align: 'center', headerAlign: 'center'},
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 270, align: 'center', headerAlign: 'center' },
+        { field: 'id', headerName: 'Código', width: 70, align: 'center', headerAlign: 'center'},
+        {
+            field: 'foto',
+            headerName: 'Foto',
+            width: 100,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params: GridRowParams) => (
+                <S.FotoEPI src={params.row.linkFoto} alt="EPI" />
+            )
+        },
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 250, align: 'center', headerAlign: 'center' },
         { field: 'certificadoAprovacao', headerName: 'Certificado de Aprovação', width: 190, align: 'center', headerAlign: 'center' },
-        { field: 'validade', headerName: 'Validade', width: 120, align: 'center', headerAlign: 'center'},
-        { field: 'estoque', headerName: 'Estoque', width: 120, align: 'center', headerAlign: 'center'},
+        { field: 'validade', headerName: 'Validade', width: 110, align: 'center', headerAlign: 'center'},
+        { field: 'estoque', headerName: 'Estoque', width: 110, align: 'center', headerAlign: 'center'},
         { field: 'estoqueMinimo', headerName: 'Estoque Mínimo', width: 130, align: 'center', headerAlign: 'center'},
         { 
             field: 'deletar',
@@ -110,22 +118,23 @@ export const DashboardEPI = () => {
                     onClick={()=> openModalDelete(params.row.id)}
                 />,
             ],
-            width: 80,
+            width: 70,
             align: 'center',
             headerAlign: 'center'
         }
     ];
 
-    const [filteredRows, setFilteredRows] = useState(rows);
+    const [searchValue, setSearchValue] = useState("");
     const handleSearch = (value: string) => {
-        setFilteredRows(
-            rows.filter(
-                (row) =>
-                    row.id.toLowerCase().includes(value.toLowerCase()) ||
-                    row.descricaoItem.toLowerCase().includes(value.toLowerCase())
-            )
-        );
+        setSearchValue(value);
     };
+    const filteredRows = useMemo(() => {
+        if (!searchValue) return rows;
+        return rows.filter(row =>
+            row.id.toLowerCase().includes(searchValue.toLowerCase()) ||
+            row.descricaoItem.toLowerCase().includes(searchValue.toLowerCase())
+        );
+    }, [rows, searchValue]);
 
     const handleAddEPI = (epi: EPIProps) => {
         const storedData = sessionStorage.getItem("EPIsCadastrados");

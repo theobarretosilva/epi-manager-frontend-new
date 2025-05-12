@@ -63,3 +63,11 @@ export const DivLayoutDash = styled.div`
     height: auto;
     margin-top: 2vh;
 `
+
+export const FotoEPI = styled.img`
+    width: 64%;
+    height: 100%;
+    object-fit: cover;
+    align-self: center;
+    border-radius: 999px;
+`

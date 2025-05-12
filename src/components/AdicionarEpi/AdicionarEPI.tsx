@@ -10,6 +10,7 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
   const [codigo, setCodigo] = useState("");
   const [certificadoAprovacao, setCertificadoAprovacao] = useState("");
   const [validade, setValidade] = useState("");
+  const [linkFoto, setLinkFoto] = useState("");
 
   useEffect(() => {
     if (modalIsOpen && idEpi) {
@@ -19,12 +20,14 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
         setCodigo(epi.codigo);
         setCertificadoAprovacao(epi.certificadoAprovacao);
         setValidade(epi.validade);
+        setLinkFoto(epi.linkFoto);
       }
     } else {
-      setDescricaoItem("");
-      setCodigo("");
-      setCertificadoAprovacao("");
-      setValidade("");
+      setDescricaoItem(" ");
+      setCodigo(" ");
+      setCertificadoAprovacao(" ");
+      setValidade(" ");
+      setLinkFoto(" ")
     }
   }, [idEpi, modalIsOpen]);
 
@@ -43,21 +46,24 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
           setCertificadoAprovacao(sanitized);
         }
         break;
-        case "validade":
-          {
-            let input = value.replace(/\D/g, '');
-            if (input.length > 8) input = input.slice(0, 8);
-          
-            let formatted = input;
-            if (input.length > 4) {
-              formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}/${input.slice(4)}`;
-            } else if (input.length > 2) {
-              formatted = `${input.slice(0, 2)}/${input.slice(2)}`;
-            }
-          
-            setValidade(formatted);
+      case "validade":
+        {
+          let input = value.replace(/\D/g, '');
+          if (input.length > 8) input = input.slice(0, 8);
+        
+          let formatted = input;
+          if (input.length > 4) {
+            formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}/${input.slice(4)}`;
+          } else if (input.length > 2) {
+            formatted = `${input.slice(0, 2)}/${input.slice(2)}`;
           }
-          break;
+        
+          setValidade(formatted);
+        }
+        break;
+      case "linkFoto":
+        setLinkFoto(value);
+        break;
       default:
         break;
     }
@@ -65,7 +71,7 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!descricaoItem || !codigo || !certificadoAprovacao || !validade) {
+    if (!descricaoItem || !codigo || !certificadoAprovacao || !validade || !linkFoto) {
       toast.warning("Por favor, preencha todos os campos.", {
         autoClose: 6000,
         closeOnClick: true,
@@ -78,6 +84,7 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
           codigo,
           certificadoAprovacao,
           validade,
+          linkFoto
         };
 
         if (idEpi) {
@@ -129,6 +136,13 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
           tipo="text"
           titulo="Data de Validade"
           name="validade"
+          onChange={handleChange}
+        />
+        <InputStyled 
+          value={linkFoto}
+          tipo="url"
+          titulo="Link da foto"
+          name="linkFoto"
           onChange={handleChange}
         />
       </S.DivWrapper>

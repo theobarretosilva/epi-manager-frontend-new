@@ -5,4 +5,5 @@ export interface EPIProps {
     validade: string;
     estoque: number;
     estoqueMinimo: number;
+    linkFoto: string;
 }
