@@ -38,11 +38,26 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
         setCodigo(value);
         break;
       case "certificadoAprovacao":
-        setCertificadoAprovacao(value);
+        {
+          const sanitized = value.startsWith("CA") ? value : `CA${value.replace(/^CA/i, "")}`;
+          setCertificadoAprovacao(sanitized);
+        }
         break;
-      case "validade":
-        setValidade(value);
-        break;
+        case "validade":
+          {
+            let input = value.replace(/\D/g, '');
+            if (input.length > 8) input = input.slice(0, 8);
+          
+            let formatted = input;
+            if (input.length > 4) {
+              formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}/${input.slice(4)}`;
+            } else if (input.length > 2) {
+              formatted = `${input.slice(0, 2)}/${input.slice(2)}`;
+            }
+          
+            setValidade(formatted);
+          }
+          break;
       default:
         break;
     }
@@ -93,31 +108,31 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
           tipo="text"
           titulo="Descrição do Item"
           name="descricaoItem"
-          handle={handleChange}
+          onChange={handleChange}
         />
         <InputStyled
           value={codigo}
           tipo="text"
           titulo="Código"
           name="codigo"
-          handle={handleChange}
+          onChange={handleChange}
         />
         <InputStyled
           value={certificadoAprovacao}
           tipo="text"
           titulo="Certificado de Aprovação"
           name="certificadoAprovacao"
-          handle={handleChange}
+          onChange={handleChange}
         />
         <InputStyled
           value={validade}
           tipo="text"
           titulo="Data de Validade"
           name="validade"
-          handle={handleChange}
+          onChange={handleChange}
         />
       </S.DivWrapper>
-      <BtnStyled onClick={handleSave} type="submit" text="Salvar" />
+      <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>
   );
 };

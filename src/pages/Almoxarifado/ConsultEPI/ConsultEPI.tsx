@@ -157,7 +157,7 @@ export const ConsultEPI = () => {
             ) : ('')}
             <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)}>+ Adicionar EPI</S.ButtonStyled>
             {filteredRows.length > 0 ? (                    
-                <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                     <DataGrid
                         rows={filteredRows}
                         columns={columns}

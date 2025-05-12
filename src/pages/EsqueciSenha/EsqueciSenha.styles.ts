@@ -7,7 +7,6 @@ export const DivWrapper = styled.div`
     height: 100vh;
     gap: 2vh;
     background: linear-gradient(#FCFCFC, #5EB1BF);
-
 `
 
 export const ImgLogo = styled.img`
@@ -28,7 +27,7 @@ export const BoxForm = styled.div`
     border-radius: 15px;
     padding: 4vh 4vw 4vh 4vw;
     margin-bottom: 4vh;
-    width: 500px;
+    width: 400px;
 
     @media (max-width: 820px) {
         width: 65vw;
@@ -46,7 +45,7 @@ export const TituloBox = styled.h1`
 `
 
 export const SubtituloBox = styled.h2`
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 400;
     margin: 0;
 
@@ -58,7 +57,14 @@ export const SubtituloBox = styled.h2`
 export const SpaceDivider = styled.p`
     height: 0.5vh;
     @media (max-width: 450px) {
-    height: 0vh;
-
+        height: 0vh;
     }
+`
+
+export const PVoltar = styled.p`
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #FFDD4A;
+    text-decoration: underline;
+    cursor: pointer;
 `

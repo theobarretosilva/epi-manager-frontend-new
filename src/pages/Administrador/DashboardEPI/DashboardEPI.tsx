@@ -10,13 +10,11 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x
 import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
+import { ModuloEPIVencProx } from "../../../components/ModuloEPIVencProx/ModuloEPIVencProx";
+import { ModuloEPIEstoBaix } from "../../../components/ModuloEPIEstoBaix/ModuloEPIEstoBaix";
+import { EPIProps } from "./DashboardEPI.types";
 
-interface EPIProps {
-    descricaoItem: string;
-    codigo: string;
-    certificadoAprovacao: string;
-    validade: string;
-}
+ReactModal.setAppElement('#root');
 
 export const DashboardEPI = () => {
     const EPIList = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
@@ -35,7 +33,9 @@ export const DashboardEPI = () => {
             codigo: epi.codigo,
             descricaoItem: epi.descricaoItem,
             certificadoAprovacao: epi.certificadoAprovacao,
-            validade: epi.validade
+            validade: epi.validade,
+            estoque: epi.estoque,
+            estoqueMinimo: epi.estoqueMinimo
         }));
     })
 
@@ -84,7 +84,7 @@ export const DashboardEPI = () => {
             headerName: 'Editar',
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
-                    key={0}
+                    key={`editar-${params.row.id}`}
                     icon={<EditColabIcon />}
                     label="Editar"
                     onClick={() => openModal(params.row.id)}
@@ -92,17 +92,19 @@ export const DashboardEPI = () => {
             ],
             width: 80,
         },
-        { field: 'id', headerName: 'Código', width: 100, align: 'center', headerAlign: 'center'},
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 350, align: 'center', headerAlign: 'center' },
-        { field: 'certificadoAprovacao', headerName: 'Certificado de Aprovação', width: 200, align: 'center', headerAlign: 'center' },
-        { field: 'validade', headerName: 'Validade', width: 200, align: 'center', headerAlign: 'center'},
+        { field: 'id', headerName: 'Código', width: 90, align: 'center', headerAlign: 'center'},
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 270, align: 'center', headerAlign: 'center' },
+        { field: 'certificadoAprovacao', headerName: 'Certificado de Aprovação', width: 190, align: 'center', headerAlign: 'center' },
+        { field: 'validade', headerName: 'Validade', width: 120, align: 'center', headerAlign: 'center'},
+        { field: 'estoque', headerName: 'Estoque', width: 120, align: 'center', headerAlign: 'center'},
+        { field: 'estoqueMinimo', headerName: 'Estoque Mínimo', width: 130, align: 'center', headerAlign: 'center'},
         { 
             field: 'deletar',
             type: 'actions',
             headerName: 'Deletar', 
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
-                    key={0}
+                    key={`deletar-${params.row.id}`}
                     icon={<DeleteIcon />}
                     label="Deletar"
                     onClick={()=> openModalDelete(params.row.id)}
@@ -114,10 +116,8 @@ export const DashboardEPI = () => {
         }
     ];
 
-    const [searchTerm, setSearchTerm] = useState('');
     const [filteredRows, setFilteredRows] = useState(rows);
     const handleSearch = (value: string) => {
-        setSearchTerm(value);
         setFilteredRows(
             rows.filter(
                 (row) =>
@@ -147,7 +147,9 @@ export const DashboardEPI = () => {
             codigo: epi.codigo,
             descricaoItem: epi.descricaoItem,
             certificadoAprovacao: epi.certificadoAprovacao,
-            validade: epi.validade
+            validade: epi.validade,
+            estoque: epi.estoque,
+            estoqueMinimo: epi.estoqueMinimo,
         })));
     };
 
@@ -155,24 +157,39 @@ export const DashboardEPI = () => {
         <>
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
-                    <Searchbar placeholder="Pesquise pela nome ou código" onSearch={handleSearch} />
-                ) : ("")}
-                <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
-                {filteredRows.length > 0 ? (
-                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
-                        <DataGrid
-                            rows={filteredRows}
-                            columns={columns}
-                            pageSizeOptions={[5, 10]}
-                            sx={{
-                                border: 0,
-                                '& .MuiDataGrid-cell': { textAlign: 'center' },
-                                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                            }}
-                        />
-                    </Paper>
+                    <>
+                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+                            <S.DivBtnSearch>
+                                <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                                <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch} />
+                            </S.DivBtnSearch>
+                            <DataGrid
+                                rows={filteredRows}
+                                columns={columns}
+                                autoHeight
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: { pageSize: 3, page: 0 },
+                                    },
+                                }}
+                                sx={{
+                                    border: 0,
+                                    '& .MuiDataGrid-cell': { textAlign: 'center' },
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                                }}
+                            />
+                        </Paper>
+                        <S.DivLayoutDash>
+                            <ModuloEPIVencProx />
+                            <ModuloEPIEstoBaix />
+                        </S.DivLayoutDash>
+                    </>
+                    
                 ) : (
-                    <NoDataToShow mainText="Não foram adicionados EPI's!" />
+                    <div style={{justifyContent: 'flex-start', width: '100%'}}>
+                        <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                        <NoDataToShow mainText="Não foram adicionados EPI's!" />
+                    </div>
                 )}
             </S.MainStyled>
             <ToastContainer position="top-right" />

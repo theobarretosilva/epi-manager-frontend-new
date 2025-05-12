@@ -12,7 +12,7 @@ import { ConsultEPI } from "../pages/Almoxarifado/ConsultEPI/ConsultEPI";
 import { Usuarios } from "../pages/Usuarios/Usuarios";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { SolicitacoesFunc } from "../pages/Colaborador/SolicitacoesColab/SolicitacoesColab";
-import { EsqueciSenha } from "../pages/EsqueciSenha/EsqueciSennha";
+import { EsqueciSenha } from "../pages/EsqueciSenha/EsqueciSenha";
 import { ColabLayout } from "../layout/ColabLayout/ColabLayout";
 
 export const Router = () => {

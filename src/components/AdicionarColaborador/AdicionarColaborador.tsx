@@ -19,7 +19,7 @@ interface ColaboradorProps {
   linkFoto: string;
 }
 
-const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen, onAdd, idColab, modalIsOpen }) => {
+const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen, onAdd, idColab, modalIsOpen, setIdColab }) => {
   const colaboradores = JSON.parse(sessionStorage.getItem('ColaboradoresCadastrados') || '[]');
   const [nome, setNome] = useState("");
   const [matricula, setMatricula] = useState("");
@@ -30,27 +30,32 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
   const [linkFoto, setLinkFoto] = useState("");
 
   useEffect(() => {
-    if (modalIsOpen) {
-      if (idColab) {
-        const colaborador = colaboradores.find((colaborador: ColaboradorProps) => colaborador.id === idColab);
-        if (colaborador) {
-          setNome(colaborador.nome);
-          setMatricula(colaborador.matricula);
-          setSetor(colaborador.setor);
-          setCargo(colaborador.cargo);
-          setEmail(colaborador.email);
-          setSenha(colaborador.hash || "");
-          setLinkFoto(colaborador.linkFoto);
-        }
-      } else {
-        setNome("");
-        setMatricula("");
-        setSetor("");
-        setCargo("");
-        setEmail("");
-        setSenha("");
+    if (!modalIsOpen) return;
+  
+    const resetCampos = () => {
+      setNome("");
+      setMatricula("");
+      setSetor("");
+      setCargo("");
+      setEmail("");
+      setSenha("");
+      setLinkFoto(colaborador.linkFoto);
+    };
+  
+    if (idColab) {
+      const colaborador = colaboradores.find((c: ColaboradorProps) => c.id === idColab);
+      if (colaborador) {
+        setNome(colaborador.nome);
+        setMatricula(colaborador.matricula);
+        setSetor(colaborador.setor);
+        setCargo(colaborador.cargo);
+        setEmail(colaborador.email);
+        setSenha(colaborador.hash || "");
         setLinkFoto("");
+
       }
+    } else {
+      resetCampos();
     }
   }, [idColab, modalIsOpen]);
 
@@ -99,13 +104,20 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab) || !linkFoto) {
       toast.warning("Por favor, preencha todos os campos.", { autoClose: 6000 });
+    } else if (!emailRegex.test(email)) {
+      toast.warning("Por favor, insira um e-mail válido.");
+    } else if (!idColab && senha.length < 8) {
+      toast.warning("A senha deve ter no mínimo 8 caracteres.");
       return;
     }
 
     try {
       const { hash, salt } = senha ? await generateHashWithSalt(senha) : { hash: null, salt: null };
+      const colaboradorExistente = colaboradores.find((col: ColaboradorProps) => col.id === idColab);
 
       const colaborador = {
         id: idColab || matricula,
@@ -133,15 +145,15 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
 
       sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(colaboradores));
       onAdd(colaborador);
-      setNome(" ");
+      setNome("");
       toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
       setModalIsOpen(false);
-      setMatricula(" ");
-      setSetor(" ");
-      setCargo(" ");
-      setEmail(" ");
-      setSenha(" ");
-      setLinkFoto(" ");
+      setIdColab(null)
+      setMatricula("");
+      setSetor("");
+      setCargo("");
+      setEmail("");
+      setSenha("");
       console.log(nome)
     } catch (error) {
       console.error("Erro ao gerar o hash:", error);
@@ -152,15 +164,15 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
   return (
     <S.FormContainer onSubmit={handleSubmit}>
       <S.DivWrapper>
-        <InputStyled value={nome} tipo="text" titulo="Nome Completo" name="nome" handle={handleChange} />
-        <InputStyled value={matricula} tipo="text" titulo="Matrícula" name="matricula" handle={handleChange} />
-        <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" handle={handleChange} />
+        <InputStyled value={nome} tipo="text" titulo="Nome Completo" name="nome" onChange={handleChange} />
+        <InputStyled value={matricula} tipo="text" titulo="Matrícula" name="matricula" onChange={handleChange} />
+        <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" onChange={handleChange} />
         <SelectStyled value={cargo} titulo="Cargo" name="cargo" onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
-        <InputStyled value={email} tipo="email" titulo="Email" name="email" handle={handleChange} />
-        <InputStyled value={linkFoto} tipo="url" titulo="Link da foto" name="linkFoto" handle={handleChange} />
-        {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" handle={handleChange} />}
+        <InputStyled value={email} tipo="email" titulo="Email" name="email" onChange={handleChange} />
+        <InputStyled value={linkFoto} tipo="url" titulo="Link da foto" name="linkFoto" onChange={handleChange} />
+        {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" onChange={handleChange} />}
       </S.DivWrapper>
-      <BtnStyled onClick={handleSubmit} type="submit" text="Salvar" />
+      <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>
   );
 };

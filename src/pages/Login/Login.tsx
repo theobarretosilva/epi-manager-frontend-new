@@ -90,16 +90,16 @@ export const Login = () => {
                             tipo='text'
                             placeholder=''
                             value={matricula}
-                            handle={(e) => setMatricula(e.target.value)}
+                            onChange={(e) => setMatricula(e.target.value)}
                         />
                         <InputStyled
                             titulo='Senha'
                             tipo='password'
                             placeholder=''
                             value={senha}
-                            handle={(e) => setSenha(e.target.value)}
+                            onChange={(e) => setSenha(e.target.value)}
                         />
-                        <S.PEsqueciSenha onClick={() => navigate('/colaborador/esqueciSenha')}>
+                        <S.PEsqueciSenha onClick={() => navigate('/esqueciSenha')}>
                             Esqueci a senha
                         </S.PEsqueciSenha>
                         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}

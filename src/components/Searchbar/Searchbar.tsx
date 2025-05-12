@@ -20,10 +20,6 @@ export const Searchbar = ({ placeholder = "Pesquise sua solicitação...", onSea
                 onChange={handleInputChange} 
                 aria-label="Barra de Pesquisa"
             />
-            <S.SearchIcon 
-                src='../../src/assets/svg/Searchoutlined.svg'
-                alt="Ícone de busca"
-            />
         </S.DivInput>
     );
 };

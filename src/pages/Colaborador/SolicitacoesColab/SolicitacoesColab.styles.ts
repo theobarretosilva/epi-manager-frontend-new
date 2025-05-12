@@ -5,8 +5,8 @@ export const MainStyled = styled.main`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 66.6vw;
-    padding: 7vh 3vw 7vh 3vw;
+    width: 71.5vw;
+    padding: 1.5vh 1.5vw 1.5vh 1.5vw;
     margin-left: 25.4vw;
 `
 
@@ -81,4 +81,13 @@ export const ButtonStyled = styled.button`
     padding-left: 1.5vw;
     padding-right: 1.5vw;
     margin-top: 4vh;
+`
+
+export const DivLayoutDash = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    margin-top: 2vh;
 `
