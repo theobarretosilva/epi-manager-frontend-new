@@ -140,7 +140,7 @@ export const DashboardAlmox = () => {
                 {filteredRows.length > 0 ? (
                     <>
                         <Searchbar onSearch={handleSearch} />
-                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <DataGrid
                                 rows={filteredRows}
                                 columns={columns}

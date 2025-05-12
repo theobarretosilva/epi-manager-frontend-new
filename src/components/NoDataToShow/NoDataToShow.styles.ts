@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+export const DivStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+`
+
 export const PNoData = styled.p`
     text-align: center;
     font-size: 1.5rem;

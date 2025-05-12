@@ -27,6 +27,7 @@ interface ColaboradorProps {
 }
 
 export const DashboardColab = () => {
+    const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
     const mockData: ColaboradorProps[] = [
         {
             id: "1",
@@ -123,7 +124,6 @@ export const DashboardColab = () => {
     };
 
     const handleAddColaborador = (colaborador: ColaboradorProps) => {
-        const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
         const colaboradoresList: ColaboradorProps[] = storedData ? JSON.parse(storedData) : [];
     
         const existingIndex = colaboradoresList.findIndex(c => c.id === colaborador.id);
@@ -262,7 +262,7 @@ export const DashboardColab = () => {
         <>
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
-                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                         <S.DivBtnSearch>
                             <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
                             <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />

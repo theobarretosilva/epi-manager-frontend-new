@@ -167,7 +167,7 @@ export const Solicitacoes = () => {
         <S.MainStyled>
             {filteredRows.length > 0 ? (
                 <>
-                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 2 }}>
+                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                         <S.DivBtnSearch>
                             <S.ButtonStyled onClick={() => openModal()}>+ Fazer Solicitação</S.ButtonStyled>
                             <Searchbar onSearch={handleSearch} />

@@ -186,10 +186,10 @@ export const DashboardEPI = () => {
                     </>
                     
                 ) : (
-                    <>
+                    <div style={{justifyContent: 'flex-start', width: '100%'}}>
                         <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
                         <NoDataToShow mainText="Não foram adicionados EPI's!" />
-                    </>
+                    </div>
                 )}
             </S.MainStyled>
             <ToastContainer position="top-right" />
