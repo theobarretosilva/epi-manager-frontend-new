@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
 import { SelectStyled } from "../SelectStyled/SelectStyled";
+import { Input } from "@mui/material";
 
 interface ColaboradorProps {
   id: string;
@@ -15,6 +16,7 @@ interface ColaboradorProps {
   email: string;
   hash: string;
   salt: string;
+  linkFoto: string;
 }
 
 const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen, onAdd, idColab, modalIsOpen, setIdColab }) => {
@@ -25,6 +27,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
   const [cargo, setCargo] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [linkFoto, setLinkFoto] = useState("");
 
   useEffect(() => {
     if (!modalIsOpen) return;
@@ -36,6 +39,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
       setCargo("");
       setEmail("");
       setSenha("");
+      setLinkFoto(colaborador.linkFoto);
     };
   
     if (idColab) {
@@ -47,6 +51,8 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
         setCargo(colaborador.cargo);
         setEmail(colaborador.email);
         setSenha(colaborador.hash || "");
+        setLinkFoto("");
+
       }
     } else {
       resetCampos();
@@ -74,6 +80,9 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
       case "senha":
         setSenha(value);
         break;
+      case "linkFoto":
+        setLinkFoto(value);
+        break;
       default:
         break;
     }
@@ -97,7 +106,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
     e.preventDefault();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab)) {
+    if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab) || !linkFoto) {
       toast.warning("Por favor, preencha todos os campos.", { autoClose: 6000 });
     } else if (!emailRegex.test(email)) {
       toast.warning("Por favor, insira um e-mail válido.");
@@ -117,8 +126,9 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
         setor,
         cargo,
         email,
-        hash: hash || colaboradorExistente?.hash,
-        salt: salt || colaboradorExistente?.salt,
+        hash: hash || colaboradores.find((col: any) => col.id === idColab)?.hash,
+        salt: salt || colaboradores.find((col: any) => col.id === idColab)?.salt,
+        linkFoto,
       };
 
       if (!idColab) {
@@ -159,6 +169,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
         <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" onChange={handleChange} />
         <SelectStyled value={cargo} titulo="Cargo" name="cargo" onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
         <InputStyled value={email} tipo="email" titulo="Email" name="email" onChange={handleChange} />
+        <InputStyled value={linkFoto} tipo="url" titulo="Link da foto" name="linkFoto" onChange={handleChange} />
         {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" onChange={handleChange} />}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />

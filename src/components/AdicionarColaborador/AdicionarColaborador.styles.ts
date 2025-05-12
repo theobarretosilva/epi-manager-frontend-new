@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export const FormContainer = styled.form`
   max-width: 600px;
-  padding: 2rem;
+  padding: 4vh 1vw 4vh 1vw;
   background-color: transparent;
   border-radius: 8px;
   width: 60vw;
@@ -16,10 +16,10 @@ export const FormContainer = styled.form`
 `;
 
 export const DivWrapper = styled.div`
-  padding-bottom: 40px;
+  margin-bottom: 3vh;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 1vh;
 
   @media (max-width: 768px) {
     width: 90vw;
