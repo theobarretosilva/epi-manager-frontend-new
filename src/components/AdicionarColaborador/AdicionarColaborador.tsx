@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
 import { SelectStyled } from "../SelectStyled/SelectStyled";
+import { Input } from "@mui/material";
 
 interface ColaboradorProps {
   id: string;
@@ -15,6 +16,7 @@ interface ColaboradorProps {
   email: string;
   hash: string;
   salt: string;
+  linkFoto: string;
 }
 
 const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen, onAdd, idColab, modalIsOpen }) => {
@@ -25,6 +27,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
   const [cargo, setCargo] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [linkFoto, setLinkFoto] = useState("");
 
   useEffect(() => {
     if (modalIsOpen) {
@@ -37,6 +40,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
           setCargo(colaborador.cargo);
           setEmail(colaborador.email);
           setSenha(colaborador.hash || "");
+          setLinkFoto(colaborador.linkFoto);
         }
       } else {
         setNome("");
@@ -45,6 +49,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
         setCargo("");
         setEmail("");
         setSenha("");
+        setLinkFoto("");
       }
     }
   }, [idColab, modalIsOpen]);
@@ -70,6 +75,9 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
       case "senha":
         setSenha(value);
         break;
+      case "linkFoto":
+        setLinkFoto(value);
+        break;
       default:
         break;
     }
@@ -91,7 +99,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab)) {
+    if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab) || !linkFoto) {
       toast.warning("Por favor, preencha todos os campos.", { autoClose: 6000 });
       return;
     }
@@ -108,6 +116,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
         email,
         hash: hash || colaboradores.find((col: any) => col.id === idColab)?.hash,
         salt: salt || colaboradores.find((col: any) => col.id === idColab)?.salt,
+        linkFoto,
       };
 
       if (!idColab) {
@@ -132,6 +141,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
       setCargo(" ");
       setEmail(" ");
       setSenha(" ");
+      setLinkFoto(" ");
       console.log(nome)
     } catch (error) {
       console.error("Erro ao gerar o hash:", error);
@@ -147,6 +157,7 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
         <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" handle={handleChange} />
         <SelectStyled value={cargo} titulo="Cargo" name="cargo" onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
         <InputStyled value={email} tipo="email" titulo="Email" name="email" handle={handleChange} />
+        <InputStyled value={linkFoto} tipo="url" titulo="Link da foto" name="linkFoto" handle={handleChange} />
         {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" handle={handleChange} />}
       </S.DivWrapper>
       <BtnStyled onClick={handleSubmit} type="submit" text="Salvar" />
