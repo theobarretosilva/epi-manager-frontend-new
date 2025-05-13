@@ -12,6 +12,9 @@ import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
 import { ModuloColabSetDash } from "../../../components/ModuloColabSetDash/ModuloColabSetDash";
 import { ModuloIndicNume } from "../../../components/ModuloIndicNume/ModuloIndicNume";
+import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/DownloadSoliciIcon";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface ColaboradorProps {
     id: string;
@@ -257,6 +260,25 @@ export const DashboardColab = () => {
             })
         ).length;
     }, [colaboradores]);
+
+    const exportarColaboradoresPDF = () => {
+        const doc = new jsPDF();
+
+        doc.text("Lista de Colaboradores", 14, 15);
+
+        autoTable(doc, {
+            startY: 20,
+            head: [["Matrícula", "Nome", "Cargo", "Setor"]],
+            body: colaboradores.map(colab => [
+                colab.matricula,
+                colab.nome,
+                colab.cargo,
+                colab.setor
+            ]),
+        });
+
+        doc.save("colaboradores.pdf");
+    };
     
     return (
         <>
@@ -266,6 +288,10 @@ export const DashboardColab = () => {
                         <S.DivBtnSearch>
                             <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
                             <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />
+                            <S.DivDownload onClick={exportarColaboradoresPDF}>
+                                <DownloadSoliciIcon />
+                                <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
+                            </S.DivDownload>
                         </S.DivBtnSearch>
                         <DataGrid
                             rows={filteredRows}

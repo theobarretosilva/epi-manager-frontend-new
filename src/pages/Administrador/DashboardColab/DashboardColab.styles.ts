@@ -12,7 +12,7 @@ export const MainStyled = styled.main`
 
 export const ButtonStyled = styled.button`
     background-color: #FFDD4A;
-    width: 25vw;
+    width: 32vw;
     height: 4.9vh;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     border-radius: 5px;
@@ -62,4 +62,22 @@ export const DivBtnSearch = styled.div`
     align-items: center;
     height: auto;
     width: 100%;
+`
+
+export const DivDownload = styled.div`
+    width: 36vw;
+    height: 4.9vh;
+    border-radius: 5px;
+    border: 1px solid #FFDD4A;
+    margin-right: 1vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    cursor: pointer;
+`
+
+export const TextDownload = styled.p`
+    font-size: 1rem;
+    font-weight: 500;
 `
