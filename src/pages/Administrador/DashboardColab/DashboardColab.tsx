@@ -220,7 +220,7 @@ export const DashboardColab = () => {
                     key={0}
                     icon={<DownloadSoliciIcon />}
                     label="Deletar"
-                    onClick={() => handleDownloadSolicitacoes(colaborador.nome)}
+                    onClick={() => handleDownloadSolicitacoes(params.row.nome)}
                 />,
             ],
             width: 200,
