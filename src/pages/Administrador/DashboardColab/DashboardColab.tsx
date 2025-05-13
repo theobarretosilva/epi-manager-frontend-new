@@ -27,7 +27,18 @@ interface ColaboradorProps {
     salt: string;
     dataCadastro: string;
     epis: { nome: string; validade: string }[];
-}
+};
+
+interface SolicitacaoProps {
+    id: string;
+    descricaoItem: string;
+    status: string;
+    codigoEPI: string;
+    prioridade: string;
+    solicitante: string;
+    dataSolicitacao?: string;
+    setor?: string;
+};
 
 export const DashboardColab = () => {
     const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
@@ -180,10 +191,10 @@ export const DashboardColab = () => {
             ],
             width: 100,
         },
-        { field: 'matricula', headerName: 'Matricula', width: 100, align: 'center', headerAlign: 'center' },
-        { field: 'nome', headerName: 'Nome', width: 350, align: 'center', headerAlign: 'center' },
-        { field: 'cargo', headerName: 'Cargo', width: 210, align: 'center', headerAlign: 'center'},
-        { field: 'setor', headerName: 'Setor', width: 210, align: 'center', headerAlign: 'center' },
+        { field: 'matricula', headerName: 'Matricula', width: 90, align: 'center', headerAlign: 'center' },
+        { field: 'nome', headerName: 'Nome', width: 280, align: 'center', headerAlign: 'center' },
+        { field: 'cargo', headerName: 'Cargo', width: 160, align: 'center', headerAlign: 'center'},
+        { field: 'setor', headerName: 'Setor', width: 160, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',
@@ -196,10 +207,26 @@ export const DashboardColab = () => {
                     onClick={() => openModalDelete(params.row.id)}
                 />,
             ],
-            width: 100,
+            width: 90,
             align: 'center',
             headerAlign: 'center'
-        }
+        },
+        { 
+            field: 'downloadSolicitacoes',
+            type: 'actions',
+            headerName: 'Download de solicitações', 
+            getActions: (params: GridRowParams) => [
+                <GridActionsCellItem
+                    key={0}
+                    icon={<DownloadSoliciIcon />}
+                    label="Deletar"
+                    onClick={() => handleDownloadSolicitacoes(colaborador.nome)}
+                />,
+            ],
+            width: 200,
+            align: 'center',
+            headerAlign: 'center'
+        },
     ];
 
     const [colaboradores, setColaboradores] = useState(() => {
@@ -278,6 +305,29 @@ export const DashboardColab = () => {
         });
 
         doc.save("colaboradores.pdf");
+    };
+
+    const handleDownloadSolicitacoes = (nomeColaborador: string) => {
+        const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('solicitacoes') || '[]');
+
+        const solicitacoesDoColaborador = solicitacoes.filter(
+            (s) => s.solicitante === nomeColaborador
+        );
+
+        const doc = new jsPDF();
+        doc.text(`Solicitações de ${nomeColaborador}`, 14, 20);
+
+        autoTable(doc, {
+            startY: 30,
+            head: [['Descrição', 'Setor', 'Data']],
+            body: solicitacoesDoColaborador.map((s) => [
+                s.descricaoItem,
+                s.setor,
+                s.dataSolicitacao,
+            ]),
+        });
+
+        doc.save(`Solicitacoes_${nomeColaborador.replace(/\s+/g, '_')}.pdf`);
     };
     
     return (
