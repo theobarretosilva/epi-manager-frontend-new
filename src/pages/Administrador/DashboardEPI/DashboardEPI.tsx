@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ReactModal from "react-modal"
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
 import * as S from "./DashboardEPI.styles"
 import { ToastContainer } from "react-toastify";
 import AdicionarEpi from "../../../components/AdicionarEpi/AdicionarEPI";
 import { Searchbar } from "../../../components/Searchbar/Searchbar";
-import { Paper } from "@mui/material";
+import { Box, Modal, Paper } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
@@ -13,6 +13,8 @@ import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
 import { ModuloEPIVencProx } from "../../../components/ModuloEPIVencProx/ModuloEPIVencProx";
 import { ModuloEPIEstoBaix } from "../../../components/ModuloEPIEstoBaix/ModuloEPIEstoBaix";
 import { EPIProps } from "./DashboardEPI.types";
+import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/DownloadSoliciIcon";
+import jsPDF from "jspdf";
 
 ReactModal.setAppElement('#root');
 
@@ -59,6 +61,16 @@ export const DashboardEPI = () => {
         sessionStorage.setItem('EPIsCadastrados', JSON.stringify(updated));
     };
 
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const handleImageClick = (link: string) => {
+        setSelectedImage(link);
+    };
+
+    const handleClose = () => {
+        setSelectedImage(null);
+    };
+
     const customStyles = {
         overlay: {
           backgroundColor: "rgba(0, 0, 0, 0.5)", 
@@ -98,7 +110,11 @@ export const DashboardEPI = () => {
             align: 'center',
             headerAlign: 'center',
             renderCell: (params: GridRowParams) => (
-                <S.FotoEPI src={params.row.linkFoto} alt="EPI" />
+                <S.FotoEPI 
+                    onClick={() => handleImageClick(params.row.linkFoto)}
+                    src={params.row.linkFoto}
+                    alt="EPI"
+                />
             )
         },
         { field: 'descricaoItem', headerName: 'Descrição do Item', width: 250, align: 'center', headerAlign: 'center' },
@@ -162,6 +178,40 @@ export const DashboardEPI = () => {
         })));
     };
 
+    const generateAllEPIsPDF = () => {
+        const doc = new jsPDF();
+        let y = 10;
+
+        doc.setFontSize(18);
+        doc.text('Lista de EPIs Cadastrados', 10, y);
+        y += 10;
+
+        if (EPIList.length === 0) {
+            doc.setFontSize(12);
+            doc.text('Nenhum EPI cadastrado encontrado.', 10, y);
+        } else {
+            doc.setFontSize(12);
+            EPIList.forEach((epi: EPIProps, index: number) => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 10;
+                }
+                doc.text(`EPI #${index + 1}`, 10, y);
+                y += 7;
+                doc.text(`Descrição: ${epi.descricaoItem}`, 10, y);
+                y += 7;
+                doc.text(`Código: ${epi.codigo}`, 10, y);
+                y += 7;
+                doc.text(`Validade: ${epi.validade}`, 10, y);
+                y += 7;
+                doc.text(`CA: ${epi.certificadoAprovacao}`, 10, y);
+                y += 10;
+            });
+        }
+
+        doc.save('EPIsCadastrados.pdf');
+    };
+
     return(
         <>
             <S.MainStyled>
@@ -171,6 +221,10 @@ export const DashboardEPI = () => {
                             <S.DivBtnSearch>
                                 <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
                                 <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch} />
+                                <S.DivDownload onClick={generateAllEPIsPDF}>
+                                    <DownloadSoliciIcon />
+                                    <S.TextDownload>Baixar lista de EPI's</S.TextDownload>
+                                </S.DivDownload>
                             </S.DivBtnSearch>
                             <DataGrid
                                 rows={filteredRows}
@@ -227,6 +281,26 @@ export const DashboardEPI = () => {
                     <AdicionarEpi modalIsOpen={modalIsOpenAddEpi} idEpi={idEpi} onAdd={handleAddEPI} setModalIsOpen={setModalIsOpenAddEpi} />
                 </S.MainWrapper>
             </ReactModal>
+
+            <Modal open={!!selectedImage} onClose={handleClose}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 2,
+                        borderRadius: 2,
+                        maxWidth: '90vw',
+                        maxHeight: '90vh',
+                        overflow: 'auto'
+                    }}
+                >
+                    <img src={selectedImage!} alt="EPI Ampliado" style={{ width: '100%', height: 'auto' }} />
+                </Box>
+            </Modal>
         </>
     )
 }

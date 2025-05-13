@@ -12,7 +12,6 @@ import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
 import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
-import { ModuloEPIVencProx } from '../../../components/ModuloEPIVencProx/ModuloEPIVencProx';
 import { ModuloNStatSoli } from '../../../components/ModuloNStatSoli/ModuloNStatSoli';
 
 interface SolicitacaoProps {
