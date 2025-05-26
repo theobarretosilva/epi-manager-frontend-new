@@ -10,7 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { HandleLoginSuccessProps } from '../types/loginResponse';
 import { AxiosError } from 'axios';
 
-export const useHandleLogin = () => {
+export const useLoginForm = () => {
     const defaultValues = { email: '', password: '' }
     const navigate = useNavigate()
     const [responseError, setResponseError] = useState('')

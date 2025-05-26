@@ -1,49 +1,25 @@
-import { useState } from 'react';
 import { BtnStyled } from '../../components/BtnStyled/BtnStyled';
 import { InputStyled } from '../../components/InputStyled/InputStyled';
 import * as S from './Login.styles';
-import { useNavigate } from 'react-router';
 import asideImage from '../../assets/img/aside_login.jpg';
 import logoImage from '../../assets/img/logo.png';
 import { toast } from 'react-toastify';
+import { useLoginForm } from '../../hooks/useLoginForm';
+import { CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router';
 
 export const Login = () => {
-    const [matricula, setMatricula] = useState('');
-    const [senha, setSenha] = useState('');
-    const [error, setError] = useState('');
+    const { isLoading, onSubmit, errors, register, responseError } = 
+        useLoginForm();
     const navigate = useNavigate();
-    const colaboradores = JSON.parse(sessionStorage.getItem("ColaboradoresCadastrados") || "[]");
-    const tipoUser = sessionStorage.getItem("TipoAcesso");
 
-    const calculateHash = async (password: string, salt: string) => {
-        const encoder = new TextEncoder();
-        const passwordBytes = encoder.encode(password);
-        const saltBytes = new Uint8Array(
-            salt.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
-        );
-        const combined = new Uint8Array([...passwordBytes, ...saltBytes]);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", combined);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    };
+    const LoginButtonLabel = isLoading ? (
+        <CircularProgress size="1.5rem" color="inherit" />
+    ) : (
+        <BtnStyled text='Entrar' type='submit' />
+    );
 
-    const handleLogin = async (matricula: string, senha: string) => {
-        const user = colaboradores.find((u: { matricula: string }) => u.matricula === matricula);
-        if (!user) {
-            throw new Error("Usuário não encontrado.");
-        }
-
-        const hash = await calculateHash(senha, user.salt);
-        if (hash === user.hash) {
-            sessionStorage.setItem("TipoAcesso", user.cargo);
-            sessionStorage.setItem("UserLogado", JSON.stringify(user));
-            return user.cargo;
-        } else {
-            throw new Error("Senha incorreta.");
-        }
-    };
-
-    const onSubmit = async (e: React.FormEvent) => {
+    const onSubmit2 = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const cargo = await handleLogin(matricula, senha);
@@ -89,21 +65,19 @@ export const Login = () => {
                             titulo='Matrícula'
                             tipo='text'
                             placeholder=''
-                            value={matricula}
-                            onChange={(e) => setMatricula(e.target.value)}
+                            {...register('matricula')}
                         />
                         <InputStyled
                             titulo='Senha'
                             tipo='password'
                             placeholder=''
-                            value={senha}
-                            onChange={(e) => setSenha(e.target.value)}
+                            {...register('password')}
                         />
                         <S.PEsqueciSenha onClick={() => navigate('/esqueciSenha')}>
                             Esqueci a senha
                         </S.PEsqueciSenha>
-                        {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
-                        <BtnStyled text='Entrar' type='submit' />
+                        {responseError && <p>{responseError}</p>}
+                        {LoginButtonLabel}
                     </form>
                     <S.PVoltar onClick={() => navigate("/")}>Voltar para seleção de usuário</S.PVoltar>
                 </S.BoxForm>

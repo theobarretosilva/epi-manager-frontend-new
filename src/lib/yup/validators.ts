@@ -15,4 +15,7 @@ export const validators = {
     .string()
     .required(errorMessages.required)
     .min(8, errorMessages.passwordLength),
+  matricula: yup
+    .string()
+    .required(errorMessages.required)
 }
