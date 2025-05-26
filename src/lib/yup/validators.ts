@@ -17,5 +17,16 @@ export const validators = {
     .min(8, errorMessages.passwordLength),
   matricula: yup
     .string()
-    .required(errorMessages.required)
+    .required(errorMessages.required),
+  nome: yup
+    .string()
+    .required(errorMessages.required),
+  cargo: yup
+    .string()
+    .required(errorMessages.required),
+  setor: yup
+    .string()
+    .required(errorMessages.required),
+  dataCadastro: yup
+    .date().default(() => new Date()),
 }

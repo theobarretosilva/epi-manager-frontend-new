@@ -5,6 +5,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
 import { SelectStyled } from "../SelectStyled/SelectStyled";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { schemas } from "../../lib/yup/schemas";
 
 interface ColaboradorProps {
   id: string;
@@ -81,19 +84,16 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
     }
   };
 
-  const generateHashWithSalt = async (password: string) => {
-    const encoder = new TextEncoder();
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const passwordBytes = encoder.encode(password);
-    const combined = new Uint8Array([...passwordBytes, ...salt]);
-
-    const hashBuffer = await crypto.subtle.digest("SHA-256", combined);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    const saltHex = Array.from(salt).map((b) => b.toString(16).padStart(2, "0")).join("");
-
-    return { hash: hashHex, salt: saltHex };
-  };
+  const {
+    control,
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<ColaboradorForm>({
+    resolver: yupResolver(schemas.colaboradorForm),
+    defaultValues,
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

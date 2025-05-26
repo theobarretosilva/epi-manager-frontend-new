@@ -5,5 +5,12 @@ export const schemas = {
     loginForm: yup.object().shape({
         matricula: validators.matricula,
         password: validators.password,
+    }),
+    colaboradorForm: yup.object().shape({
+        matricula: validators.matricula,
+        nome: validators.nome,
+        cargo: validators.cargo,
+        setor: validators.setor,
+        
     })
 }
