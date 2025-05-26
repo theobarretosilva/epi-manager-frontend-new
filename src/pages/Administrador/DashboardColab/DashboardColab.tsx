@@ -15,30 +15,9 @@ import { ModuloIndicNume } from "../../../components/ModuloIndicNume/ModuloIndic
 import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/DownloadSoliciIcon";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { ColaboradorProps, SolicitacaoProps } from "./DashboardColab.types";
 
-interface ColaboradorProps {
-    id: string;
-    nome: string; 
-    matricula: string;
-    setor: string;
-    cargo: string;
-    email: string;
-    hash: string;
-    salt: string;
-    dataCadastro: string;
-    epis: { nome: string; validade: string }[];
-};
 
-interface SolicitacaoProps {
-    id: string;
-    descricaoItem: string;
-    status: string;
-    codigoEPI: string;
-    prioridade: string;
-    solicitante: string;
-    dataSolicitacao?: string;
-    setor?: string;
-};
 
 export const DashboardColab = () => {
     const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
@@ -229,26 +208,28 @@ export const DashboardColab = () => {
         },
     ];
 
-    const [colaboradores, setColaboradores] = useState(() => {
-        const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
-        return storedData ? JSON.parse(storedData) : [];
-    });
+    const [colaboradores, setColaboradores] = useState<ColaboradorProps[]>([]);
+    const [rows, setRows] = useState<any[]>([]);
+    const [filteredRows, setFilteredRows] = useState(rows);
 
-    const [rows, setRows] = useState(() => {
-        return colaboradores.map((colaborador: ColaboradorProps) => ({
+    useEffect(() => {
+        const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
+        const parsedData = storedData ? JSON.parse(storedData) : mockData;
+        setColaboradores(parsedData);
+    }, []);
+
+    useEffect(() => {
+        const newRows = colaboradores.map((colaborador: ColaboradorProps) => ({
             id: colaborador.id,
             matricula: colaborador.matricula,
             nome: colaborador.nome,
             cargo: colaborador.cargo,
             setor: colaborador.setor,
         }));
-    });
+        setRows(newRows);
+        setFilteredRows(newRows);
+    }, [colaboradores]);
 
-    useEffect(() => {
-        setFilteredRows(rows);
-    }, [rows, colaboradores]);
-
-    const [filteredRows, setFilteredRows] = useState(rows);
     const handleSearch = (value: string) => {
         setFilteredRows(
             rows.filter(row => 
