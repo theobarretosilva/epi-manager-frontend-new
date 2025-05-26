@@ -28,8 +28,21 @@ export const useLoginForm = () => {
         localStorage.setItem('EpiManagerToken', access_token);
         localStorage.setItem("TipoAcesso", permissao);
         axiosInstance.defaults.headers.common.Authorization = `Bearer ${access_token}`;
-        toast.success('Login bem-sucedido!');
-        navigate('/dashboard');
+        toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
+
+        switch (permissao.toLowerCase()) {
+            case 'administrador':
+                setTimeout( () => navigate('/administrador/solicitacoes'), 2500);
+                break;
+            case 'colaborador':
+                setTimeout( () => navigate('/colaborador/solicitacoes'), 2500);
+                break;
+            case 'almoxarifado':
+                setTimeout( () => navigate('/almoxarifado/dashboardAlmox'), 2500);
+                break;
+            default:
+                toast.error("Cargo não reconhecido.");
+        }
     }
 
     const loginMutation = useMutation({
