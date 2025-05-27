@@ -8,6 +8,8 @@ import { SelectStyled } from "../SelectStyled/SelectStyled";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schemas } from "../../lib/yup/schemas";
+import { ColaboradorForm } from "../../types/colaboradorForm";
+import { TipoPermissao } from "../../enums/TipoPermissao";
 
 interface ColaboradorProps {
   id: string;
@@ -82,6 +84,18 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
       default:
         break;
     }
+  };
+
+  const defaultValues = {
+    matricula: '',
+    nome: '',
+    cargo: '',
+    setor: '',
+    dataCadastro: new Date(),
+    lideranca: false,
+    matricula_lideranca: 0,
+    permissao: TipoPermissao.COLABORADOR,
+    cpf: ''
   };
 
   const {

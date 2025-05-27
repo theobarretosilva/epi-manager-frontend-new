@@ -11,6 +11,10 @@ export const schemas = {
         nome: validators.nome,
         cargo: validators.cargo,
         setor: validators.setor,
-        
+        dataCadastro: validators.dataCadastro,
+        lideranca: validators.lideranca,
+        matricula_lideranca: validators.matricula_lideranca,
+        permissao: validators.permissao,
+        cpf: validators.cpf
     })
 }
