@@ -10,6 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { schemas } from "../../lib/yup/schemas";
 import { ColaboradorForm } from "../../types/colaboradorForm";
 import { TipoPermissao } from "../../enums/TipoPermissao";
+import { boolean } from "yup";
 
 interface ColaboradorProps {
   id: string;
@@ -60,42 +61,18 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
     }
   }, [idColab, modalIsOpen]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "nome":
-        setNome(value);
-        break;
-      case "matricula":
-        setMatricula(value);
-        break;
-      case "setor":
-        setSetor(value);
-        break;
-      case "cargo":
-        setCargo(value);
-        break;
-      case "email":
-        setEmail(value);
-        break;
-      case "senha":
-        setSenha(value);
-        break;
-      default:
-        break;
-    }
-  };
-
   const defaultValues = {
     matricula: '',
     nome: '',
+    cpf: '',
     cargo: '',
     setor: '',
+    lideranca: true,
     dataCadastro: new Date(),
-    lideranca: false,
     matricula_lideranca: 0,
+    nome_lideranca: '',
     permissao: TipoPermissao.COLABORADOR,
-    cpf: ''
+    senha: ''
   };
 
   const {
@@ -109,72 +86,27 @@ const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen,
     defaultValues,
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab)) {
-      toast.warning("Por favor, preencha todos os campos.", { autoClose: 6000 });
-    } else if (!emailRegex.test(email)) {
-      toast.warning("Por favor, insira um e-mail válido.");
-    } else if (!idColab && senha.length < 8) {
-      toast.warning("A senha deve ter no mínimo 8 caracteres.");
-      return;
-    }
-
-    try {
-      const { hash, salt } = senha ? await generateHashWithSalt(senha) : { hash: null, salt: null };
-
-      const colaborador = {
-        id: idColab || matricula,
-        nome,
-        matricula,
-        setor,
-        cargo,
-        email,
-        hash: hash || colaboradores.find((col: any) => col.id === idColab)?.hash,
-        salt: salt || colaboradores.find((col: any) => col.id === idColab)?.salt,
-      };
-
-      if (!idColab) {
-        const existe = colaboradores.some((col: ColaboradorProps) => col.matricula === matricula);
-        if (existe) {
-          toast.error("Colaborador já cadastrado com esta matrícula.");
-          return;
-        }
-        colaboradores.push(colaborador);
-      } else {
-        const index = colaboradores.findIndex((col: ColaboradorProps) => col.id === idColab);
-        if (index !== -1) colaboradores[index] = colaborador;
-      }
-
-      sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(colaboradores));
-      onAdd(colaborador);
-      setNome("");
-      toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
-      setModalIsOpen(false);
-      setIdColab(null)
-      setMatricula("");
-      setSetor("");
-      setCargo("");
-      setEmail("");
-      setSenha("");
-      console.log(nome)
-    } catch (error) {
-      console.error("Erro ao gerar o hash:", error);
-      toast.error("Erro ao salvar colaborador.");
-    }
-  };
+  onAdd(colaborador);
+  setNome("");
+  toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
+  setModalIsOpen(false);
+  setIdColab(null)
+  setMatricula("");
+  setSetor("");
+  setCargo("");
+  setEmail("");
+  setSenha("");
 
   return (
     <S.FormContainer onSubmit={handleSubmit}>
       <S.DivWrapper>
-        <InputStyled value={nome} tipo="text" titulo="Nome Completo" name="nome" onChange={handleChange} />
-        <InputStyled value={matricula} tipo="text" titulo="Matrícula" name="matricula" onChange={handleChange} />
-        <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" onChange={handleChange} />
-        <SelectStyled value={cargo} titulo="Cargo" name="cargo" onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
-        <InputStyled value={email} tipo="email" titulo="Email" name="email" onChange={handleChange} />
-        {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" onChange={handleChange} />}
+        <InputStyled tipo="text" titulo="Nome Completo" {...register('nome')} />
+        <InputStyled tipo="text" titulo="Matrícula" {...register('matricula')}  />
+        <InputStyled tipo="text" titulo="CPF" {...register('cpf')}  />
+        <InputStyled tipo="text" titulo="Setor" {...register('setor')} />
+        <SelectStyled titulo="Cargo" {...register('cargo')} onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
+        <InputStyled tipo="email" titulo="Email" {...register('email')} />
+        {!idColab && <InputStyled tipo="password" titulo="Senha" {...register('senha')} />}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>

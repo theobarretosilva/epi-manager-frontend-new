@@ -47,4 +47,7 @@ export const validators = {
       /^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/,
       'CPF inválido'
     ),
+  nome_lideranca: yup
+    .string()
+    .required(errorMessages.required)
 }

@@ -9,12 +9,14 @@ export const schemas = {
     colaboradorForm: yup.object().shape({
         matricula: validators.matricula,
         nome: validators.nome,
+        cpf: validators.cpf,
         cargo: validators.cargo,
         setor: validators.setor,
-        dataCadastro: validators.dataCadastro,
         lideranca: validators.lideranca,
+        dataCadastro: validators.dataCadastro,
         matricula_lideranca: validators.matricula_lideranca,
+        nome_lideranca: validators.nome_lideranca,
         permissao: validators.permissao,
-        cpf: validators.cpf
+        senha: validators.password
     })
 }
