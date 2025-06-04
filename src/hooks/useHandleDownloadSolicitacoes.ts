@@ -1,14 +1,14 @@
 import jsPDF from "jspdf";
 import { SolicitacaoProps } from "../props/solicitacao.props";
 import autoTable from "jspdf-autotable";
-import { useGetColaboradores } from "./useGetColaboradores";
+import { useGetColaboradorPorId } from "./useGetColaboradorPorId";
 
 export const useHandleDownloadSolicitacoes = (idColaborador: string) => {
-    const { colaboradores } = useGetColaboradores(); 
-    // aqui pega todos os colaboradores. tenho que fazer outro hook para pegar somente 1 colaborador específico. verificar com a duda o endpoint correto
+    const { colaborador } = useGetColaboradorPorId(idColaborador);
+    const { solicitacoes } = useGetSolicit
 
     const solicitacoesDoColaborador = solicitacoes.filter(
-        (s) => s.solicitante === nomeColaborador
+        (s) => s.solicitante === colaborador.nome
     );
 
     const doc = new jsPDF();
