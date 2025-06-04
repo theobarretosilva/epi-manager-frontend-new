@@ -1,3 +1,5 @@
+import { SolicitacaoProps } from "./solicitacao.props";
+
 export interface ColaboradorProps {
   matricula: string;
   nome: string;
@@ -10,4 +12,5 @@ export interface ColaboradorProps {
   permissao: string;
   senha: string;
   email: string;
+  solicitacoes: SolicitacaoProps[];
 }

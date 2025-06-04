@@ -251,29 +251,6 @@ export const DashboardColab = () => {
 
         doc.save("colaboradores.pdf");
     };
-
-    const handleDownloadSolicitacoes = (nomeColaborador: string) => {
-        const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('solicitacoes') || '[]');
-
-        const solicitacoesDoColaborador = solicitacoes.filter(
-            (s) => s.solicitante === nomeColaborador
-        );
-
-        const doc = new jsPDF();
-        doc.text(`Solicitações de ${nomeColaborador}`, 14, 20);
-
-        autoTable(doc, {
-            startY: 30,
-            head: [['Descrição', 'Setor', 'Data']],
-            body: solicitacoesDoColaborador.map((s) => [
-                s.descricaoItem,
-                s.setor,
-                s.dataSolicitacao,
-            ]),
-        });
-
-        doc.save(`Solicitacoes_${nomeColaborador.replace(/\s+/g, '_')}.pdf`);
-    };
     
     return (
         <>
@@ -329,7 +306,7 @@ export const DashboardColab = () => {
                     <S.ImageContent onClick={() => setModalIsOpenDelete(false)}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <ExcluirModal setModalIsOpen={setModalIsOpenDelete} Id={idColaborador} tipo="colaborador" />
+                    <ExcluirModal setModalIsOpen={setModalIsOpenDelete} id={idColaborador} tipo="colaborador" />
                 </S.MainWrapper>
             </ReactModal>
             <ReactModal

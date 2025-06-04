@@ -3,7 +3,7 @@ import * as S from "./ExcluirModal.styles"
 import { useDeleteColaborador } from "../../hooks/useDeleteColaborador";
 import { useDeleteEPI } from "../../hooks/useDeleteEPI";
 
-export const ExcluirModal: React.FC<ExcluirProps> = ({ Id, setModalIsOpen, tipo }) => {
+export const ExcluirModal: React.FC<ExcluirProps> = ({ id, setModalIsOpen, tipo }) => {
   const { deleteColaboradorMutation } = useDeleteColaborador();
   const { deleteEPIMutation } = useDeleteEPI();
 
@@ -13,9 +13,9 @@ export const ExcluirModal: React.FC<ExcluirProps> = ({ Id, setModalIsOpen, tipo 
 
   const handleDelete = () => {
     if ( tipo == "colaborador") {
-      deleteColaboradorMutation.mutate(Id)
+      deleteColaboradorMutation.mutate(id)
     } else {
-      deleteEPIMutation.mutate(Id)
+      deleteEPIMutation.mutate(id)
     }
     setModalIsOpen(false); 
   };
