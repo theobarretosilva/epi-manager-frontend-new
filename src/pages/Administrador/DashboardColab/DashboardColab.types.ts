@@ -9,6 +9,7 @@ export interface ColaboradorProps {
     salt: string;
     dataCadastro: string;
     epis: { nome: string; validade: string }[];
+    cpf: string;
 };
 
 export interface SolicitacaoProps {

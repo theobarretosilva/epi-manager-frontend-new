@@ -1,5 +1,5 @@
 export enum TipoPermissao {
-  ADMIN = 'ADMIN',
-  ALMOXARIFADO = 'ALMOXARIFADO',
-  COLABORADOR = 'COLABORADOR',
+  ADMINISTRADOR = "Administrador",
+  ALMOXARIFADO = "Almoxarifado",
+  COLABORADOR = "Colaborador"
 }

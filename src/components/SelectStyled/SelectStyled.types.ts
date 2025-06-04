@@ -4,5 +4,5 @@ export interface SelectStyledProps {
     disabled?: boolean;
     options: Array<string>;
     onChange?: (value) => void;
-    name: string;
+    name?: string;
 };

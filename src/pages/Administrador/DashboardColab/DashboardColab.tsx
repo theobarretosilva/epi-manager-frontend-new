@@ -16,11 +16,12 @@ import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/Downl
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ColaboradorProps, SolicitacaoProps } from "./DashboardColab.types";
+import { useGetColaboradores } from "../../../hooks/useGetColaboradores";
 
 
 
 export const DashboardColab = () => {
-    const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
+    const { colaboradores } = useGetColaboradores();
     const mockData: ColaboradorProps[] = [
         {
             id: "1",
@@ -80,6 +81,9 @@ export const DashboardColab = () => {
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idColaborador, setIdColaborador] = useState<string | null>(null);
+    const [colaboradoresList, setColaboradoresList] = useState<ColaboradorProps[]>(colaboradores);
+    const [rows, setRows] = useState<any[]>([]);
+    const [filteredRows, setFilteredRows] = useState(rows);
 
     const closeModal = () => {
         setModalIsOpenAddColaborador(false);
@@ -100,44 +104,6 @@ export const DashboardColab = () => {
         setModalIsOpenDelete(true);
         setIdColaborador(id);
     }
-
-    const handleDeleteColaborador = (id: string) => {
-        const updatedColaboradores = colaboradores.filter((colaborador: ColaboradorProps) => colaborador.id !== id);
-        sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(updatedColaboradores));
-        
-        setColaboradores(updatedColaboradores);
-
-        setRows(updatedColaboradores.map((colaborador: ColaboradorProps) => ({
-            id: colaborador.id,
-            matricula: colaborador.matricula,
-            nome: colaborador.nome,
-            cargo: colaborador.cargo,
-            setor: colaborador.setor,
-        })));
-    };
-
-    const handleAddColaborador = (colaborador: ColaboradorProps) => {
-        const colaboradoresList: ColaboradorProps[] = storedData ? JSON.parse(storedData) : [];
-    
-        const existingIndex = colaboradoresList.findIndex(c => c.id === colaborador.id);
-    
-        if (existingIndex !== -1) {
-            colaboradoresList[existingIndex] = colaborador;
-        } else {
-            colaboradoresList.push(colaborador);
-        }
-    
-        setColaboradores(colaboradoresList);
-        sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(colaboradoresList));
-    
-        setRows(colaboradoresList.map(c => ({
-            id: c.id,
-            matricula: c.matricula,
-            nome: c.nome,
-            cargo: c.cargo,
-            setor: c.setor,
-        })));
-    };
 
     const customStyles = {
         overlay: {
@@ -168,12 +134,13 @@ export const DashboardColab = () => {
                     onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
-            width: 100,
+            width: 65,
         },
-        { field: 'matricula', headerName: 'Matricula', width: 90, align: 'center', headerAlign: 'center' },
-        { field: 'nome', headerName: 'Nome', width: 280, align: 'center', headerAlign: 'center' },
-        { field: 'cargo', headerName: 'Cargo', width: 160, align: 'center', headerAlign: 'center'},
-        { field: 'setor', headerName: 'Setor', width: 160, align: 'center', headerAlign: 'center' },
+        { field: 'matricula', headerName: 'Matricula', width: 80, align: 'center', headerAlign: 'center' },
+        { field: 'nome', headerName: 'Nome', width: 230, align: 'center', headerAlign: 'center' },
+        { field: 'cpf', headerName: 'CPF', width: 150, align: 'center', headerAlign: 'center'},
+        { field: 'cargo', headerName: 'Cargo', width: 140, align: 'center', headerAlign: 'center'},
+        { field: 'setor', headerName: 'Setor', width: 140, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',
@@ -193,7 +160,7 @@ export const DashboardColab = () => {
         { 
             field: 'downloadSolicitacoes',
             type: 'actions',
-            headerName: 'Download de solicitações', 
+            headerName: 'Baixar solicitações', 
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
                     key={0}
@@ -202,20 +169,16 @@ export const DashboardColab = () => {
                     onClick={() => handleDownloadSolicitacoes(params.row.nome)}
                 />,
             ],
-            width: 200,
+            width: 150,
             align: 'center',
             headerAlign: 'center'
         },
     ];
 
-    const [colaboradores, setColaboradores] = useState<ColaboradorProps[]>([]);
-    const [rows, setRows] = useState<any[]>([]);
-    const [filteredRows, setFilteredRows] = useState(rows);
-
     useEffect(() => {
         const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
         const parsedData = storedData ? JSON.parse(storedData) : mockData;
-        setColaboradores(parsedData);
+        setColaboradoresList(parsedData);
     }, []);
 
     useEffect(() => {
@@ -225,6 +188,7 @@ export const DashboardColab = () => {
             nome: colaborador.nome,
             cargo: colaborador.cargo,
             setor: colaborador.setor,
+            cpf: colaborador.cpf
         }));
         setRows(newRows);
         setFilteredRows(newRows);
@@ -242,17 +206,17 @@ export const DashboardColab = () => {
     const hoje = new Date();
 
     const colaboradoresCadastradosNoMes = useMemo(() => {
-        return mockData.filter(colab => {
+        return colaboradores.filter(colab => {
             const data = new Date(colab.dataCadastro);
             return (
-            data.getMonth() === hoje.getMonth() &&
-            data.getFullYear() === hoje.getFullYear()
+                data.getMonth() === hoje.getMonth() &&
+                data.getFullYear() === hoje.getFullYear()
             );
         }).length;
     }, [colaboradores]);
 
     const colaboradoresComEPIsVencendo = useMemo(() => {
-        return mockData.filter(colab =>
+        return colaboradores.filter(colab =>
             colab.epis.some(epi => new Date(epi.validade) < hoje)
         ).length;
     }, [colaboradores]);
@@ -261,7 +225,7 @@ export const DashboardColab = () => {
         const daqui30Dias = new Date();
         daqui30Dias.setDate(hoje.getDate() + 30);
 
-        return mockData.filter(colab =>
+        return colaboradores.filter(colab =>
             colab.epis.some(epi => {
             const validade = new Date(epi.validade);
             return validade >= hoje && validade <= daqui30Dias;
@@ -365,7 +329,7 @@ export const DashboardColab = () => {
                     <S.ImageContent onClick={() => setModalIsOpenDelete(false)}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <ExcluirModal onDelete={handleDeleteColaborador} setModalIsOpen={setModalIsOpenDelete} Id={idColaborador} tipo="colaborador" />
+                    <ExcluirModal setModalIsOpen={setModalIsOpenDelete} Id={idColaborador} tipo="colaborador" />
                 </S.MainWrapper>
             </ReactModal>
             <ReactModal
@@ -377,7 +341,7 @@ export const DashboardColab = () => {
                     <S.ImageContent onClick={() => closeModal()}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <AdicionarColaborador setIdColab={setIdColaborador} modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} onAdd={handleAddColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
+                    <AdicionarColaborador setIdColab={setIdColaborador} modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
                 </S.MainWrapper>
             </ReactModal>
         </>

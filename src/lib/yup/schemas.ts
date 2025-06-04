@@ -14,9 +14,9 @@ export const schemas = {
         setor: validators.setor,
         lideranca: validators.lideranca,
         dataCadastro: validators.dataCadastro,
-        matricula_lideranca: validators.matricula_lideranca,
         nome_lideranca: validators.nome_lideranca,
         permissao: validators.permissao,
-        senha: validators.password
+        senha: validators.password,
+        email: validators.email
     })
 }

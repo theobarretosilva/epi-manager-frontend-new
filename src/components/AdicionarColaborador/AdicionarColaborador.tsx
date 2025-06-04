@@ -1,112 +1,144 @@
-import React, { useState, useEffect } from "react";
-import * as S from "./AdicionarColaborador.styles"; 
+import React, { useEffect, useMemo } from "react";
+import * as S from "./AdicionarColaborador.styles";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
-import { SelectStyled } from "../SelectStyled/SelectStyled";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schemas } from "../../lib/yup/schemas";
 import { ColaboradorForm } from "../../types/colaboradorForm";
 import { TipoPermissao } from "../../enums/TipoPermissao";
-import { boolean } from "yup";
+import { useGetColaboradores } from "../../hooks/useGetColaboradores";
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import { AddColaboradorProps } from "../../props/addColaboradorProps";
 
-interface ColaboradorProps {
-  id: string;
-  nome: string; 
-  matricula: string;
-  setor: string;
-  cargo: string;
-  email: string;
-  hash: string;
-  salt: string;
-  linkFoto: string;
-}
+const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
+  setModalIsOpen,
+  idColab,
+  modalIsOpen,
+  setIdColab,
+}) => {
+  const { colaboradores, isError } = useGetColaboradores();
 
-const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen, onAdd, idColab, modalIsOpen, setIdColab }) => {
-  const colaboradores = JSON.parse(sessionStorage.getItem('ColaboradoresCadastrados') || '[]');
-  const [nome, setNome] = useState("");
-  const [matricula, setMatricula] = useState("");
-  const [setor, setSetor] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-
-  useEffect(() => {
-    if (!modalIsOpen) return;
-  
-    const resetCampos = () => {
-      setNome("");
-      setMatricula("");
-      setSetor("");
-      setCargo("");
-      setEmail("");
-      setSenha("");
-    };
-  
-    if (idColab) {
-      const colaborador = colaboradores.find((c: ColaboradorProps) => c.id === idColab);
-      if (colaborador) {
-        setNome(colaborador.nome);
-        setMatricula(colaborador.matricula);
-        setSetor(colaborador.setor);
-        setCargo(colaborador.cargo);
-        setEmail(colaborador.email);
-        setSenha(colaborador.hash || "");
-
-      }
-    } else {
-      resetCampos();
-    }
-  }, [idColab, modalIsOpen]);
-
-  const defaultValues = {
-    matricula: '',
-    nome: '',
-    cpf: '',
-    cargo: '',
-    setor: '',
+  const defaultValues = useMemo<ColaboradorForm>(() => ({
+    matricula: "",
+    nome: "",
+    cpf: "",
+    cargo: "",
+    setor: "",
     lideranca: true,
     dataCadastro: new Date(),
-    matricula_lideranca: 0,
-    nome_lideranca: '',
+    nome_lideranca: "",
     permissao: TipoPermissao.COLABORADOR,
-    senha: ''
-  };
+    senha: "",
+    email: "",
+  }), []);
 
   const {
-    control,
     register,
     handleSubmit,
-    setError,
+    reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<ColaboradorForm>({
     resolver: yupResolver(schemas.colaboradorForm),
     defaultValues,
-  })
+  });
 
-  onAdd(colaborador);
-  setNome("");
-  toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
-  setModalIsOpen(false);
-  setIdColab(null)
-  setMatricula("");
-  setSetor("");
-  setCargo("");
-  setEmail("");
-  setSenha("");
+  const onSubmit = (data: ColaboradorForm) => {
+    const colaborador = { ...data, dataCadastro: new Date() };
 
+    onAdd(colaborador);
+    toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
+
+    reset();
+    setModalIsOpen(false);
+    setIdColab(null);
+  };
+
+  useEffect(() => {
+  if (!modalIsOpen || !colaboradores) return;
+
+  const colaborador = colaboradores?.find(c => c.matricula === idColab);
+
+  if (idColab && colaborador) {
+    const colaboradorComPermissaoNormalizada = {
+      ...colaborador,
+      permissao: colaborador.permissao as TipoPermissao,
+    };
+
+    Object.entries(colaboradorComPermissaoNormalizada).forEach(([key, value]) => {
+      if (key in defaultValues) {
+        setValue(key as keyof ColaboradorForm, value as any);
+      }
+    });
+  } else {
+    reset(defaultValues);
+  }
+}, [idColab, modalIsOpen, colaboradores, defaultValues, setValue, reset]);
+console.log("permissao atual:", watch("permissao"));
   return (
-    <S.FormContainer onSubmit={handleSubmit}>
+    <S.FormContainer onSubmit={handleSubmit(onSubmit)}>
       <S.DivWrapper>
-        <InputStyled tipo="text" titulo="Nome Completo" {...register('nome')} />
-        <InputStyled tipo="text" titulo="Matrícula" {...register('matricula')}  />
-        <InputStyled tipo="text" titulo="CPF" {...register('cpf')}  />
-        <InputStyled tipo="text" titulo="Setor" {...register('setor')} />
-        <SelectStyled titulo="Cargo" {...register('cargo')} onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
-        <InputStyled tipo="email" titulo="Email" {...register('email')} />
-        {!idColab && <InputStyled tipo="password" titulo="Senha" {...register('senha')} />}
+        <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
+        <S.DivInputs>
+          <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
+          <InputStyled tipo="text" titulo="CPF" {...register("cpf")} />
+        </S.DivInputs>
+        <S.DivInputs>
+          <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
+          <InputStyled tipo="text" titulo="Cargo" {...register("cargo")} />
+        </S.DivInputs>
+        <S.DivInputs style={{gap: '0'}}>
+          <FormControl style={{marginTop: '1vh'}}>
+            <FormLabel>Cargo de liderança?</FormLabel>
+            <RadioGroup
+              row
+              style={{ width: '14vw'}}
+              value={watch("lideranca") ? "true" : "false"}
+              onChange={(e) => setValue("lideranca", e.target.value === "true")}
+            >
+              <FormControlLabel value="true" control={<Radio />} label="Sim" />
+              <FormControlLabel value="false" control={<Radio />} label="Não" />
+            </RadioGroup>
+          </FormControl>
+          <FormControl style={{ marginTop: "1vh" }}>
+            <FormLabel>Tipo de permissão</FormLabel>
+            <RadioGroup
+              row
+              style={{ width: "28vw"}}
+              value={watch("permissao")}
+              onChange={(e) =>
+                setValue("permissao", e.target.value as TipoPermissao)
+              }
+            >
+              <FormControlLabel
+                value={TipoPermissao.COLABORADOR}
+                control={<Radio />}
+                label="Colaborador"
+              />
+              <FormControlLabel
+                value={TipoPermissao.ALMOXARIFADO}
+                control={<Radio />}
+                label="Almoxarifado"
+              />
+              <FormControlLabel
+                value={TipoPermissao.ADMINISTRADOR}
+                control={<Radio />}
+                label="Administrador"
+              />
+            </RadioGroup>
+          </FormControl>
+        </S.DivInputs>
+        <InputStyled tipo="text" titulo="Nome liderança" {...register("nome_lideranca")} />
+        <S.DivInputs>
+          <InputStyled tipo="email" titulo="Email" {...register("email")} />
+          {!idColab && (
+            <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
+          )}
+        </S.DivInputs>
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>
