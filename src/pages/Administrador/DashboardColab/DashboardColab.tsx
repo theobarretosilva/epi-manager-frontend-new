@@ -15,8 +15,8 @@ import { ModuloIndicNume } from "../../../components/ModuloIndicNume/ModuloIndic
 import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/DownloadSoliciIcon";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { ColaboradorProps, SolicitacaoProps } from "./DashboardColab.types";
 import { useGetColaboradores } from "../../../hooks/useGetColaboradores";
+import { ColaboradorProps } from "../../../props/colaboradorProps";
 
 
 
@@ -105,22 +105,6 @@ export const DashboardColab = () => {
         setIdColaborador(id);
     }
 
-    const customStyles = {
-        overlay: {
-          backgroundColor: "rgba(0, 0, 0, 0.5)", 
-        },
-        content: {
-          top: "50%",
-          left: "50%",
-          right: "auto",
-          bottom: "auto",
-          transform: "translate(-50%, -50%)",
-          padding: "25px",
-          borderRadius: "10px",
-          backgroundColor: "#FCFCFC",
-        },
-    };
-
     const columns: GridColDef[] = [
         {
             field: 'editar',
@@ -182,7 +166,7 @@ export const DashboardColab = () => {
     }, []);
 
     useEffect(() => {
-        const newRows = colaboradores.map((colaborador: ColaboradorProps) => ({
+        const newRows = colaboradores?.map((colaborador: ColaboradorProps) => ({
             id: colaborador.id,
             matricula: colaborador.matricula,
             nome: colaborador.nome,
@@ -206,7 +190,7 @@ export const DashboardColab = () => {
     const hoje = new Date();
 
     const colaboradoresCadastradosNoMes = useMemo(() => {
-        return colaboradores.filter(colab => {
+        return colaboradores?.filter(colab => {
             const data = new Date(colab.dataCadastro);
             return (
                 data.getMonth() === hoje.getMonth() &&
@@ -216,7 +200,7 @@ export const DashboardColab = () => {
     }, [colaboradores]);
 
     const colaboradoresComEPIsVencendo = useMemo(() => {
-        return colaboradores.filter(colab =>
+        return colaboradores?.filter(colab =>
             colab.epis.some(epi => new Date(epi.validade) < hoje)
         ).length;
     }, [colaboradores]);
@@ -225,8 +209,8 @@ export const DashboardColab = () => {
         const daqui30Dias = new Date();
         daqui30Dias.setDate(hoje.getDate() + 30);
 
-        return colaboradores.filter(colab =>
-            colab.epis.some(epi => {
+        return colaboradores?.filter(colab =>
+            colab.epis?.some(epi => {
             const validade = new Date(epi.validade);
             return validade >= hoje && validade <= daqui30Dias;
             })
@@ -241,7 +225,7 @@ export const DashboardColab = () => {
         autoTable(doc, {
             startY: 20,
             head: [["Matrícula", "Nome", "Cargo", "Setor"]],
-            body: colaboradores.map(colab => [
+            body: colaboradores?.map(colab => [
                 colab.matricula,
                 colab.nome,
                 colab.cargo,
@@ -288,7 +272,7 @@ export const DashboardColab = () => {
                 <S.DivLayoutDash>
                     <ModuloColabSetDash />
                     <ModuloIndicNume 
-                        total={colaboradores.length}
+                        total={colaboradores?.length}
                         vencendo={colaboradoresComEPIsVencendo}
                         cadastradosMes={colaboradoresCadastradosNoMes}
                         vencendo30dias={colaboradoresComEPIsVencendo30Dias}
@@ -300,7 +284,7 @@ export const DashboardColab = () => {
             <ReactModal
                 isOpen={modalIsOpenDelete}
                 onRequestClose={() => setModalIsOpenDelete(false)}
-                style={customStyles}
+                style={S.modalStyle}
             >
                 <S.MainWrapper>
                     <S.ImageContent onClick={() => setModalIsOpenDelete(false)}>
@@ -312,7 +296,7 @@ export const DashboardColab = () => {
             <ReactModal
                 isOpen={modalIsOpenAddColaborador}
                 onRequestClose={() => setModalIsOpenAddColaborador(false)}
-                style={customStyles}
+                style={S.modalStyle}
             >
                 <S.MainWrapper>
                     <S.ImageContent onClick={() => closeModal()}>

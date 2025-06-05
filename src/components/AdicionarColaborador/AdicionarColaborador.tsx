@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react";
 import * as S from "./AdicionarColaborador.styles";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
@@ -19,7 +18,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   modalIsOpen,
   setIdColab,
 }) => {
-  const { colaboradores, isError } = useGetColaboradores();
+  const { colaboradores } = useGetColaboradores();
 
   const defaultValues = useMemo<ColaboradorForm>(() => ({
     matricula: "",
@@ -47,12 +46,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     defaultValues,
   });
 
-  const onSubmit = (data: ColaboradorForm) => {
-    const colaborador = { ...data, dataCadastro: new Date() };
-
-    onAdd(colaborador);
-    toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
-
+  const onSubmit = () => {
     reset();
     setModalIsOpen(false);
     setIdColab(null);
