@@ -17,6 +17,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useGetColaboradores } from "../../../hooks/useGetColaboradores";
 import { ColaboradorProps } from "../../../props/colaboradorProps";
+import { useGetColabsCadastradosMes } from "../../../hooks/useGetColabsCadastradosMes";
 
 
 
@@ -84,6 +85,7 @@ export const DashboardColab = () => {
     const [colaboradoresList, setColaboradoresList] = useState<ColaboradorProps[]>(colaboradores);
     const [rows, setRows] = useState<any[]>([]);
     const [filteredRows, setFilteredRows] = useState(rows);
+    const colabsCadastradosNoMes = useGetColabsCadastradosMes(colaboradores);
 
     const closeModal = () => {
         setModalIsOpenAddColaborador(false);
@@ -189,16 +191,6 @@ export const DashboardColab = () => {
     
     const hoje = new Date();
 
-    const colaboradoresCadastradosNoMes = useMemo(() => {
-        return colaboradores?.filter(colab => {
-            const data = new Date(colab.dataCadastro);
-            return (
-                data.getMonth() === hoje.getMonth() &&
-                data.getFullYear() === hoje.getFullYear()
-            );
-        }).length;
-    }, [colaboradores]);
-
     const colaboradoresComEPIsVencendo = useMemo(() => {
         return colaboradores?.filter(colab =>
             colab.epis.some(epi => new Date(epi.validade) < hoje)
@@ -274,7 +266,7 @@ export const DashboardColab = () => {
                     <ModuloIndicNume 
                         total={colaboradores?.length}
                         vencendo={colaboradoresComEPIsVencendo}
-                        cadastradosMes={colaboradoresCadastradosNoMes}
+                        cadastradosMes={colabsCadastradosNoMes}
                         vencendo30dias={colaboradoresComEPIsVencendo30Dias}
                     />
                 </S.DivLayoutDash>
