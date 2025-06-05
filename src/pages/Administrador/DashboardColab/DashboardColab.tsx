@@ -1,6 +1,6 @@
 import ReactModal from "react-modal";
 import AdicionarColaborador from "../../../components/AdicionarColaborador/AdicionarColaborador";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import * as S from './DashboardColab.styles';
 import { ToastContainer } from "react-toastify";
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
@@ -16,76 +16,14 @@ import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/Downl
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useGetColaboradores } from "../../../hooks/useGetColaboradores";
-import { ColaboradorProps } from "../../../props/colaboradorProps";
-import { useGetColabsCadastradosMes } from "../../../hooks/useGetColabsCadastradosMes";
-
-
+import { SolicitacaoProps } from "../../../props/solicitacao.props";
 
 export const DashboardColab = () => {
     const { colaboradores } = useGetColaboradores();
-    const mockData: ColaboradorProps[] = [
-        {
-            id: "1",
-            nome: "João Silva",
-            matricula: "001",
-            setor: "Almoxarifado",
-            cargo: "Auxiliar",
-            email: "joao@email.com",
-            hash: "abc",
-            salt: "123",
-            dataCadastro: new Date().toISOString(),
-            epis: [
-                { nome: "Capacete", validade: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString() } // vencido
-            ]
-        },
-        {
-            id: "2",
-            nome: "Maria Souza",
-            matricula: "002",
-            setor: "Produção",
-            cargo: "Operadora",
-            email: "maria@email.com",
-            hash: "def",
-            salt: "456",
-            dataCadastro: new Date().toISOString(),
-            epis: [
-                { nome: "Luvas", validade: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString() } // vence em 10 dias
-            ]
-        },
-        {
-            id: "3",
-            nome: "Carlos Lima",
-            matricula: "003",
-            setor: "Manutenção",
-            cargo: "Técnico",
-            email: "carlos@email.com",
-            hash: "ghi",
-            salt: "789",
-            dataCadastro: new Date().toISOString(),
-            epis: [
-                { nome: "Botina", validade: new Date(new Date().setDate(new Date().getDate() + 40)).toISOString() } // vence em 40 dias
-            ]
-        },
-        {
-            id: "4",
-            nome: "Ana Paula",
-            matricula: "004",
-            setor: "RH",
-            cargo: "Analista",
-            email: "ana@email.com",
-            hash: "jkl",
-            salt: "012",
-            dataCadastro: new Date().toISOString(),
-            epis: [] // sem EPIs
-        }
-    ];
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idColaborador, setIdColaborador] = useState<string | null>(null);
-    const [colaboradoresList, setColaboradoresList] = useState<ColaboradorProps[]>(colaboradores);
-    const [rows, setRows] = useState<any[]>([]);
-    const [filteredRows, setFilteredRows] = useState(rows);
-    const colabsCadastradosNoMes = useGetColabsCadastradosMes(colaboradores);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const closeModal = () => {
         setModalIsOpenAddColaborador(false);
@@ -106,6 +44,40 @@ export const DashboardColab = () => {
         setModalIsOpenDelete(true);
         setIdColaborador(id);
     }
+
+    const handleDownloadSolicitacoes = (
+        matricula: string,
+        solicitacoes: SolicitacaoProps[]
+    ) => {
+        const solicitacoesFiltradas = solicitacoes?.filter(
+            (sol) => sol.solicitante.matricula === matricula
+        );
+
+        if (!solicitacoesFiltradas || solicitacoesFiltradas.length === 0) {
+            console.error("Nenhuma solicitação encontrada para este colaborador.");
+            return;
+        }
+
+        const colaborador = solicitacoesFiltradas[0].solicitante;
+
+        const doc = new jsPDF();
+        doc.text(`Solicitações de ${colaborador.nome}`, 14, 15);
+
+        autoTable(doc, {
+            startY: 20,
+            head: [["Código", "Qtd", "Data Abertura", "Status", "Urgência", "EPI"]],
+            body: solicitacoesFiltradas.map((sol) => [
+                sol.codigo,
+                sol.qtd,
+                new Date(sol.dataAbertura).toLocaleDateString(),
+                sol.status,
+                sol.urgencia,
+                sol.epi.descricao,
+            ]),
+        });
+
+        doc.save(`solicitacoes_${colaborador.nome}.pdf`);
+    };
 
     const columns: GridColDef[] = [
         {
@@ -151,8 +123,8 @@ export const DashboardColab = () => {
                 <GridActionsCellItem
                     key={0}
                     icon={<DownloadSoliciIcon />}
-                    label="Deletar"
-                    onClick={() => handleDownloadSolicitacoes(params.row.nome)}
+                    label="Baixar"
+                    onClick={() => handleDownloadSolicitacoes(params.row.matricula)}
                 />,
             ],
             width: 150,
@@ -161,59 +133,24 @@ export const DashboardColab = () => {
         },
     ];
 
-    useEffect(() => {
-        const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
-        const parsedData = storedData ? JSON.parse(storedData) : mockData;
-        setColaboradoresList(parsedData);
-    }, []);
+    const rows = colaboradores?.map((colaborador) => ({
+        matricula: colaborador.matricula,
+        nome: colaborador.nome,
+        email: colaborador.email,
+        cpf: colaborador.cpf ?? "—",
+    }));
 
-    useEffect(() => {
-        const newRows = colaboradores?.map((colaborador: ColaboradorProps) => ({
-            id: colaborador.id,
-            matricula: colaborador.matricula,
-            nome: colaborador.nome,
-            cargo: colaborador.cargo,
-            setor: colaborador.setor,
-            cpf: colaborador.cpf
-        }));
-        setRows(newRows);
-        setFilteredRows(newRows);
-    }, [colaboradores]);
+    const filteredRows = searchTerm
+        ? rows?.filter((row) =>
+            row.nome.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : rows;
 
-    const handleSearch = (value: string) => {
-        setFilteredRows(
-            rows.filter(row => 
-                row.matricula.toLowerCase().includes(value.toLowerCase()) ||
-                row.nome.toLowerCase().includes(value.toLowerCase())
-            )
-        );
-    };
-    
-    const hoje = new Date();
-
-    const colaboradoresComEPIsVencendo = useMemo(() => {
-        return colaboradores?.filter(colab =>
-            colab.epis.some(epi => new Date(epi.validade) < hoje)
-        ).length;
-    }, [colaboradores]);
-
-    const colaboradoresComEPIsVencendo30Dias = useMemo(() => {
-        const daqui30Dias = new Date();
-        daqui30Dias.setDate(hoje.getDate() + 30);
-
-        return colaboradores?.filter(colab =>
-            colab.epis?.some(epi => {
-            const validade = new Date(epi.validade);
-            return validade >= hoje && validade <= daqui30Dias;
-            })
-        ).length;
-    }, [colaboradores]);
-
-    const exportarColaboradoresPDF = () => {
+    const exportColabsPDF = () => {
         const doc = new jsPDF();
-
+    
         doc.text("Lista de Colaboradores", 14, 15);
-
+    
         autoTable(doc, {
             startY: 20,
             head: [["Matrícula", "Nome", "Cargo", "Setor"]],
@@ -224,19 +161,19 @@ export const DashboardColab = () => {
                 colab.setor
             ]),
         });
-
+    
         doc.save("colaboradores.pdf");
-    };
+    }
     
     return (
         <>
             <S.MainStyled>
-                {filteredRows.length > 0 ? (
+                {(filteredRows || []).length > 0 ? (
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                         <S.DivBtnSearch>
                             <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
-                            <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />
-                            <S.DivDownload onClick={exportarColaboradoresPDF}>
+                            <Searchbar onSearch={setSearchTerm} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
+                            <S.DivDownload onClick={exportColabsPDF}>
                                 <DownloadSoliciIcon />
                                 <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
                             </S.DivDownload>
@@ -260,17 +197,10 @@ export const DashboardColab = () => {
                 ) : (
                     <NoDataToShow mainText="Não foram adicionados colaboradores!" />
                 )}
-
                 <S.DivLayoutDash>
                     <ModuloColabSetDash />
-                    <ModuloIndicNume 
-                        total={colaboradores?.length}
-                        vencendo={colaboradoresComEPIsVencendo}
-                        cadastradosMes={colabsCadastradosNoMes}
-                        vencendo30dias={colaboradoresComEPIsVencendo30Dias}
-                    />
+                    <ModuloIndicNume />
                 </S.DivLayoutDash>
-
             </S.MainStyled>
             <ToastContainer position="top-right" />
             <ReactModal
