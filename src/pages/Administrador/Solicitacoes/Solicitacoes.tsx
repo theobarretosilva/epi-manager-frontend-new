@@ -13,22 +13,10 @@ import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
 import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
 import { ModuloNStatSoli } from '../../../components/ModuloNStatSoli/ModuloNStatSoli';
-
-interface SolicitacaoProps {
-    id: string;
-    descricaoItem: string;
-    status: string;
-    codigoEPI: string;
-    prioridade: string;
-    solicitante: string;
-}
-  
-interface EPIProps {
-    descricaoItem: string;
-    codigo: string;
-    validade: string;
-    certificadoAprovacao: string;
-}
+import { useGetSolicitacoes } from '../../../hooks/useGetSolicitacoes';
+import { EPIProps } from '../../../props/episProps';
+import { useGetEPIS } from '../../../hooks/useGetEPIS';
+import { SolicitacaoProps } from '../../../props/solicitacao.props';
 
 export const Solicitacoes = () => {
     const { 
@@ -46,24 +34,34 @@ export const Solicitacoes = () => {
         openModal,
         closeModal 
     } = useModalDetalhesSolicitacao();
+    const { solicitacoes } = useGetSolicitacoes();
+    const { epis } = useGetEPIS();
 
-    const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
-    const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
-
-    const getValidadeEPI = (cod: string) => {
-        const epi = EPIsCadastrados.find((epi: EPIProps) => epi.codigo === cod);
-        return epi ? epi.validade : 'N/A';
+    const getValidadeEPI = (cod: number) => {
+        const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
+        return epi ? epi.dataValidade : 'N/A';
     };
 
-    const getCAEPI = (cod: string) => {
-        const epi = EPIsCadastrados.find((epi: EPIProps) => epi.codigo === cod);
+    const getCAEPI = (cod: number) => {
+        const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
         console.log(epi)
-        return epi ? epi.certificadoAprovacao : 'N/A';
+        return epi ? epi.ca : 'N/A';
     }
 
     const getSolicitacao = (params: SolicitacaoProps) => {
-        const solicitacao = solicitacoes.find((solicitacao: SolicitacaoProps) => solicitacao.id == params.id);
-        return solicitacao;
+        const solicitacao = solicitacoes?.find((solicitacao: SolicitacaoProps) => solicitacao.id == params.id);
+        return {
+            descricaoItem: solicitacao?.epi.descricao,
+            id: solicitacao?.id,
+            status: solicitacao?.status,
+            dataSolicitacao: solicitacao?.dataAbertura,
+            solicitante: solicitacao?.solicitante,
+            quantidade: solicitacao?.qtd,
+            codigoEPI: solicitacao?.epi.codigo,
+            numeroPatrimonio: solicitacao?.numeroPatrimonio,
+            prioridade
+            dataConclusao
+        }
     }
 
     const generatePDF = (solicitacao: SolicitacaoProps) => {
@@ -74,10 +72,10 @@ export const Solicitacoes = () => {
 
         doc.setFontSize(12);
         doc.text(`ID: ${solicitacao.id}`, 10, 30);
-        doc.text(`Item: ${solicitacao.descricaoItem}`, 10, 40);
+        doc.text(`Item: ${solicitacao.epi.descricao}`, 10, 40);
         doc.text(`Status: ${solicitacao.status}`, 10, 50);
-        doc.text(`Código do EPI: ${solicitacao.codigoEPI}`, 10, 60);
-        doc.text(`Prioridade: ${solicitacao.prioridade}`, 10, 70);
+        doc.text(`Código do EPI: ${solicitacao.epi.codigo}`, 10, 60);
+        doc.text(`Urgência: ${solicitacao.urgencia}`, 10, 70);
 
         doc.save(`Solicitacao-${solicitacao.id}.pdf`);
     };

@@ -15,4 +15,5 @@ export interface SolicitacaoProps {
     epi: EPIProps;
     solicitante: ColaboradorProps;
     responsavelEPI: ColaboradorProps;
+    numeroPatrimonio: number;
 };
