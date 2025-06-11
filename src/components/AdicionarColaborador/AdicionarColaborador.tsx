@@ -9,6 +9,7 @@ import { useGetColaboradores } from "../../hooks/useGetColaboradores";
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { AddColaboradorProps } from "../../props/addColaboradorProps";
 import { useCadastroNewColabForm } from "../../hooks/useCadastroNewColabForm";
+import { SelectStyled } from "../SelectStyled/SelectStyled";
 
 const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   setModalIsOpen,
@@ -18,6 +19,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
 }) => {
   const { colaboradores } = useGetColaboradores();
   const {
+    handleSubmit,
     onSubmit,
     register,
     responseError,
@@ -26,14 +28,6 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     watch,
     defaultValues
   } = useCadastroNewColabForm();
-
-  const submitForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-    reset();
-    setModalIsOpen(false);
-    setIdColab(null);
-  };
 
   useEffect(() => {
     if (!modalIsOpen || !colaboradores) return;
@@ -59,8 +53,21 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     }
   }, [idColab, modalIsOpen, colaboradores, setValue, reset, defaultValues]);
 
+  const lideres = colaboradores?.filter((c) => c.lideranca) ?? [];
+  const lideresList: string[] = lideres.map((c) => c.nome);
+
+  const submitForm = (data: ColaboradorForm) => {
+    console.log("SUBMIT DISPARADO", data);
+    onSubmit(data);
+    reset();
+    setModalIsOpen(false);
+    setIdColab(null);
+  };
+
   return (
-    <S.FormContainer onSubmit={submitForm}>
+    <S.FormContainer onSubmit={handleSubmit(submitForm, (errors) => {
+      console.log("ERROS DE VALIDAÇÃO:", errors);
+    })}>
       <S.DivWrapper>
         <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
         <S.DivInputs>
@@ -124,11 +131,15 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
             </RadioGroup>
           </FormControl>
         </S.DivInputs>
-        <InputStyled 
+        <SelectStyled
           disabled={watch("lideranca") ? true : false}
-          tipo="text"
           titulo="Nome liderança" 
-          {...register("nome_lideranca")}
+          value={watch("nome_lideranca")} 
+          options={lideresList} 
+          onChange={(e) =>
+            setValue("nome_lideranca", e.target.value)
+          } 
+          name='nome_lideranca'
         />
         <S.DivInputs>
           <InputStyled tipo="email" titulo="Email" {...register("email")} />

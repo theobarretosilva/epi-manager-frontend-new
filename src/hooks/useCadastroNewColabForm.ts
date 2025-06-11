@@ -44,6 +44,7 @@ export const useCadastroNewColabForm = () => {
 
     const createColabMutation = useMutation({
         mutationFn: (data: ColaboradorForm) => {
+            console.log('aipapai')
             setResponseError('');
             const createColaboradorPromise = axiosInstance.post('/colaboradores/create', data);
             toast.promise(createColaboradorPromise, {
@@ -76,9 +77,17 @@ export const useCadastroNewColabForm = () => {
         createColabMutation.mutate(data);
     };
 
-    const onSubmit = handleSubmit(handleCreateForm);
+    const onSubmit = (data: ColaboradorForm) => {
+        try {
+            console.log("Dados:", data);
+            handleSubmit(handleCreateForm)
+        } catch (error) {
+            console.error("Erro no envio:", error);
+        }
+    };
 
     return {
+        handleSubmit,
         onSubmit,
         register,
         responseError,

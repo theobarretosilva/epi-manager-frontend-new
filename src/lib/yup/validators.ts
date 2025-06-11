@@ -49,5 +49,4 @@ export const validators = {
     ),
   nome_lideranca: yup
     .string()
-    .required(errorMessages.required)
 }
