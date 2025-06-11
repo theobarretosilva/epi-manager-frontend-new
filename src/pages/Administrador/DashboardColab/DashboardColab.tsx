@@ -20,6 +20,7 @@ import { SolicitacaoProps } from "../../../props/solicitacao.props";
 
 export const DashboardColab = () => {
     const { colaboradores } = useGetColaboradores();
+    console.log(colaboradores);
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idColaborador, setIdColaborador] = useState<string | null>(null);
@@ -138,6 +139,8 @@ export const DashboardColab = () => {
         nome: colaborador.nome,
         email: colaborador.email,
         cpf: colaborador.cpf ?? "—",
+        cargo: colaborador.cargo,
+        setor: colaborador.setor
     }));
 
     const filteredRows = searchTerm
@@ -169,38 +172,44 @@ export const DashboardColab = () => {
         <>
             <S.MainStyled>
                 {(filteredRows || []).length > 0 ? (
-                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
-                        <S.DivBtnSearch>
-                            <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
-                            <Searchbar onSearch={setSearchTerm} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
-                            <S.DivDownload onClick={exportColabsPDF}>
-                                <DownloadSoliciIcon />
-                                <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
-                            </S.DivDownload>
-                        </S.DivBtnSearch>
-                        <DataGrid
-                            rows={filteredRows}
-                            columns={columns}
-                            autoHeight
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { pageSize: 3, page: 0 },
-                                },
-                            }}
-                            sx={{
-                                border: 0,
-                                '& .MuiDataGrid-cell': { textAlign: 'center' },
-                                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                            }}
-                        />
-                    </Paper>
+                    <>
+                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+                            <S.DivBtnSearch>
+                                <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                                <Searchbar onSearch={setSearchTerm} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
+                                <S.DivDownload onClick={exportColabsPDF}>
+                                    <DownloadSoliciIcon />
+                                    <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
+                                </S.DivDownload>
+                            </S.DivBtnSearch>
+                            <DataGrid
+                                rows={filteredRows}
+                                columns={columns}
+                                autoHeight
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: { pageSize: 3, page: 0 },
+                                    },
+                                }}
+                                sx={{
+                                    border: 0,
+                                    '& .MuiDataGrid-cell': { textAlign: 'center' },
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                                }}
+                                getRowId={(row) => row.matricula}
+                            />
+                        </Paper>
+                        <S.DivLayoutDash>
+                            <ModuloColabSetDash />
+                            <ModuloIndicNume />
+                        </S.DivLayoutDash>
+                    </>
                 ) : (
-                    <NoDataToShow mainText="Não foram adicionados colaboradores!" />
+                    <>
+                        <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                        <NoDataToShow mainText="Não foram adicionados colaboradores!" />
+                    </>
                 )}
-                <S.DivLayoutDash>
-                    <ModuloColabSetDash />
-                    <ModuloIndicNume />
-                </S.DivLayoutDash>
             </S.MainStyled>
             <ToastContainer position="top-right" />
             <ReactModal

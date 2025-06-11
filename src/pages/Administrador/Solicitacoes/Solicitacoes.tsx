@@ -17,6 +17,7 @@ import { useGetSolicitacoes } from '../../../hooks/useGetSolicitacoes';
 import { EPIProps } from '../../../props/episProps';
 import { useGetEPIS } from '../../../hooks/useGetEPIS';
 import { SolicitacaoProps } from '../../../props/solicitacao.props';
+import { SolicitacaoModalProps } from '../../../props/solicitacaoModalProps';
 
 export const Solicitacoes = () => {
     const { 
@@ -28,7 +29,6 @@ export const Solicitacoes = () => {
         solicitante,
         quantidade,
         codigoEPI,
-        numeroPatrimonio,
         prioridade,
         dataConclusao,
         openModal,
@@ -36,32 +36,39 @@ export const Solicitacoes = () => {
     } = useModalDetalhesSolicitacao();
     const { solicitacoes } = useGetSolicitacoes();
     const { epis } = useGetEPIS();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredRows, setFilteredRows] = useState();
 
-    const getValidadeEPI = (cod: number) => {
+    const getValidadeEPI = (cod: number | undefined) => {
         const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
         return epi ? epi.dataValidade : 'N/A';
     };
 
-    const getCAEPI = (cod: number) => {
+    const getCAEPI = (cod: number | undefined) => {
         const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
         console.log(epi)
         return epi ? epi.ca : 'N/A';
     }
 
-    const getSolicitacao = (params: SolicitacaoProps) => {
-        const solicitacao = solicitacoes?.find((solicitacao: SolicitacaoProps) => solicitacao.id == params.id);
-        return {
-            descricaoItem: solicitacao?.epi.descricao,
-            id: solicitacao?.id,
-            status: solicitacao?.status,
-            dataSolicitacao: solicitacao?.dataAbertura,
-            solicitante: solicitacao?.solicitante,
-            quantidade: solicitacao?.qtd,
-            codigoEPI: solicitacao?.epi.codigo,
-            numeroPatrimonio: solicitacao?.numeroPatrimonio,
-            prioridade
-            dataConclusao
+    const getSolicitacao = (idSolicitacao: number, modal: boolean) => {
+        const solicitacao = solicitacoes?.find((solicitacao: SolicitacaoProps) => solicitacao.id == idSolicitacao);
+        if (modal) {
+            const solicitacaoModal: SolicitacaoModalProps = {
+                descricaoItem: solicitacao?.epi.descricao,
+                id: solicitacao?.id,
+                status: solicitacao?.status,
+                dataSolicitacao: solicitacao?.dataAbertura,
+                solicitante: solicitacao?.solicitante,
+                quantidade: solicitacao?.qtd,
+                codigoEPI: solicitacao?.epi.codigo,
+                urgencia: solicitacao?.urgencia,
+                dataConclusao: solicitacao?.dataConclusao
+            }
+            return solicitacaoModal;
+        } else {
+            return solicitacao;
         }
+        
     }
 
     const generatePDF = (solicitacao: SolicitacaoProps) => {
@@ -91,7 +98,7 @@ export const Solicitacoes = () => {
                     key={0}
                     icon={<OpenModalIcon />}
                     label="Abrir"
-                    onClick={() => openModal(getSolicitacao(params.row))}
+                    onClick={() => openModal(getSolicitacao(params.row, true))}
                 />,
             ],
             width: 90,
@@ -110,7 +117,7 @@ export const Solicitacoes = () => {
                     key={0}
                     icon={<DownloadSoliciIcon />}
                     label="Download"
-                    onClick={() => generatePDF(getSolicitacao(params.row))}
+                    onClick={() => generatePDF(getSolicitacao(params.row, false))}
                 />,
             ],
             width: 90,
@@ -119,16 +126,14 @@ export const Solicitacoes = () => {
         }
     ];
 
-    const rows = solicitacoes.map((solicitacao: SolicitacaoProps) => ({
+    const rows = solicitacoes?.map((solicitacao: SolicitacaoProps) => ({
         id: solicitacao.id,
-        descricaoItem: solicitacao.descricaoItem,
-        prioridade: solicitacao.prioridade,
+        descricaoItem: solicitacao.epi.descricao,
+        prioridade: solicitacao.urgencia,
         status: solicitacao.status,
-        validadeEPI: getValidadeEPI(solicitacao.codigoEPI),
+        validadeEPI: getValidadeEPI(solicitacao.epi.codigo),
     }));
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredRows, setFilteredRows] = useState(rows);
     const handleSearch = (value: string) => {
         setSearchTerm(value);
         if (!value) {
@@ -139,35 +144,19 @@ export const Solicitacoes = () => {
             rows.filter(
                 (row) =>
                     row.descricaoItem.toLowerCase().includes(value.toLowerCase()) ||
-                    row.id.toLowerCase().includes(value.toLowerCase())
+                    row.id.toString().includes(value)
             )
         );
     };
 
-    const customStyles = {
-        overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        },
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          transform: 'translate(-50%, -50%)',
-          padding: '25px',
-          borderRadius: '10px',
-          backgroundColor: '#FCFCFC',
-        },
-    };
-
     return(
         <S.MainStyled>
-            {filteredRows.length > 0 ? (
+            {filteredRows.length > 0 || undefined ? (
                 <>
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                         <S.DivBtnSearch>
                             <S.ButtonStyled onClick={() => openModal()}>+ Fazer Solicitação</S.ButtonStyled>
-                            <Searchbar onSearch={handleSearch} />
+                            <Searchbar value={searchTerm} onSearch={handleSearch} />
                         </S.DivBtnSearch>
                         <DataGrid
                             rows={filteredRows}
@@ -193,7 +182,7 @@ export const Solicitacoes = () => {
             ) : (
                 <NoDataToShow mainText="Não foram adicionadas solicitações!" />
             )}
-            <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
+            <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={S.stylesModal}>
                 <S.MainWrapper>
                     <S.ImageContent onClick={closeModal}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
@@ -210,7 +199,6 @@ export const Solicitacoes = () => {
                         <SelectInput disable={true} text={prioridade} title="Prioridade" />
                         <InputDisable text={getCAEPI(codigoEPI)} title="CA" type="text" />
                         <InputDisable text={getValidadeEPI(codigoEPI)} title="Validade do EPI" type="text" />
-                        <InputDisable text={numeroPatrimonio} title="Número de Patrimônio" type="text" />
                     </S.DivWrapper>
                 </S.MainWrapper>
             </ReactModal>

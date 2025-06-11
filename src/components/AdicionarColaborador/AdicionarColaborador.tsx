@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import * as S from "./AdicionarColaborador.styles";
 import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { schemas } from "../../lib/yup/schemas";
 import { ColaboradorForm } from "../../types/colaboradorForm";
 import { TipoPermissao } from "../../enums/TipoPermissao";
 import { useGetColaboradores } from "../../hooks/useGetColaboradores";
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { AddColaboradorProps } from "../../props/addColaboradorProps";
+import { useCadastroNewColabForm } from "../../hooks/useCadastroNewColabForm";
 
 const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   setModalIsOpen,
@@ -19,67 +17,67 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   setIdColab,
 }) => {
   const { colaboradores } = useGetColaboradores();
-
-  const defaultValues = useMemo<ColaboradorForm>(() => ({
-    matricula: "",
-    nome: "",
-    cpf: "",
-    cargo: "",
-    setor: "",
-    lideranca: true,
-    dataCadastro: new Date(),
-    nome_lideranca: "",
-    permissao: TipoPermissao.COLABORADOR,
-    senha: "",
-    email: "",
-  }), []);
-
   const {
+    onSubmit,
     register,
-    handleSubmit,
+    responseError,
     reset,
     setValue,
     watch,
-    formState: { errors },
-  } = useForm<ColaboradorForm>({
-    resolver: yupResolver(schemas.colaboradorForm),
-    defaultValues,
-  });
+    defaultValues
+  } = useCadastroNewColabForm();
 
-  const onSubmit = () => {
+  const submitForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit();
     reset();
     setModalIsOpen(false);
     setIdColab(null);
   };
 
   useEffect(() => {
-  if (!modalIsOpen || !colaboradores) return;
+    if (!modalIsOpen || !colaboradores) return;
 
-  const colaborador = colaboradores?.find(c => c.matricula === idColab);
+    const colaborador = colaboradores?.find(c => c.matricula === idColab);
 
-  if (idColab && colaborador) {
-    const colaboradorComPermissaoNormalizada = {
-      ...colaborador,
-      permissao: colaborador.permissao as TipoPermissao,
-    };
+    if (idColab && colaborador) {
+      const colaboradorComPermissaoNormalizada = {
+        ...colaborador,
+        permissao: colaborador.permissao as TipoPermissao,
+      };
 
-    Object.entries(colaboradorComPermissaoNormalizada).forEach(([key, value]) => {
-      if (key in defaultValues) {
-        setValue(key as keyof ColaboradorForm, value as any);
-      }
-    });
-  } else {
-    reset(defaultValues);
-  }
-}, [idColab, modalIsOpen, colaboradores, defaultValues, setValue, reset]);
-console.log("permissao atual:", watch("permissao"));
+      Object.entries(colaboradorComPermissaoNormalizada).forEach(([key, value]) => {
+        if (key in defaultValues) {
+          setValue(
+            key as keyof ColaboradorForm,
+            value as ColaboradorForm[keyof ColaboradorForm]
+          );
+        }
+      });
+    } else {
+      reset(defaultValues);
+    }
+  }, [idColab, modalIsOpen, colaboradores, setValue, reset, defaultValues]);
+
   return (
-    <S.FormContainer onSubmit={handleSubmit(onSubmit)}>
+    <S.FormContainer onSubmit={submitForm}>
       <S.DivWrapper>
         <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
         <S.DivInputs>
           <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
-          <InputStyled tipo="text" titulo="CPF" {...register("cpf")} />
+          <InputStyled
+            tipo="text"
+            titulo="CPF"
+            {...register("cpf", {
+              onChange: (e) => {
+                let value = e.target.value.replace(/\D/g, "");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                e.target.value = value;
+              },
+            })}
+          />
         </S.DivInputs>
         <S.DivInputs>
           <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
@@ -126,13 +124,19 @@ console.log("permissao atual:", watch("permissao"));
             </RadioGroup>
           </FormControl>
         </S.DivInputs>
-        <InputStyled tipo="text" titulo="Nome liderança" {...register("nome_lideranca")} />
+        <InputStyled 
+          disabled={watch("lideranca") ? true : false}
+          tipo="text"
+          titulo="Nome liderança" 
+          {...register("nome_lideranca")}
+        />
         <S.DivInputs>
           <InputStyled tipo="email" titulo="Email" {...register("email")} />
           {!idColab && (
             <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
           )}
         </S.DivInputs>
+        {!!responseError && <p>{responseError}</p>}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>

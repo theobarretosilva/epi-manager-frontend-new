@@ -1,11 +1,11 @@
 import { EstoqueProps } from "./estoqueProps";
-import { HistoricoEntradaSaidaProps } from "./HistoricoEntradaSaidaProps";
+import { HistoricoEntradaSaidaProps } from "./historicoEntradaSaidaProps";
 import { SolicitacaoProps } from "./solicitacao.props";
 
 export interface EPIProps {
     id: number;
     codigo: number;
-    descricao: string;
+    descricao: string | undefined;
     preco: number;
     dataValidade: Date;
     ca: string;

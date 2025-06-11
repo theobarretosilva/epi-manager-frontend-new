@@ -4,8 +4,8 @@ import { ColaboradorProps } from "./colaboradorProps";
 import { EPIProps } from "./episProps";
 
 export interface SolicitacaoProps {
-    id: number;
-    codigo: string;
+    id: number | undefined;
+    codigo: number;
     qtd: number;
     dataAbertura: Date;
     dataConclusao?: Date;
@@ -15,5 +15,4 @@ export interface SolicitacaoProps {
     epi: EPIProps;
     solicitante: ColaboradorProps;
     responsavelEPI: ColaboradorProps;
-    numeroPatrimonio: number;
 };
