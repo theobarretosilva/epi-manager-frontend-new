@@ -9,7 +9,7 @@ import { axiosInstance } from "../lib/axios";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
-export const useCadastroNewColabForm = () => {
+export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
         matricula: "",
         nome: "",
@@ -71,24 +71,20 @@ export const useCadastroNewColabForm = () => {
 
             setResponseError('Houve um erro, tente novamente mais tarde.');
         },
+        onSuccess: () => {
+            reset();
+            setModalIsOpen(false);
+            setIdColab(null);
+        }
     });
     
     const handleCreateForm: SubmitHandler<ColaboradorForm> = (data) => {
         createColabMutation.mutate(data);
     };
 
-    const onSubmit = (data: ColaboradorForm) => {
-        try {
-            console.log("Dados:", data);
-            handleSubmit(handleCreateForm)
-        } catch (error) {
-            console.error("Erro no envio:", error);
-        }
-    };
-
     return {
         handleSubmit,
-        onSubmit,
+        onSubmit: handleCreateForm,
         register,
         responseError,
         reset,

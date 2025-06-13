@@ -10,6 +10,7 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mu
 import { AddColaboradorProps } from "../../props/addColaboradorProps";
 import { useCadastroNewColabForm } from "../../hooks/useCadastroNewColabForm";
 import { SelectStyled } from "../SelectStyled/SelectStyled";
+import { SubmitHandler } from "react-hook-form";
 
 const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   setModalIsOpen,
@@ -27,7 +28,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     setValue,
     watch,
     defaultValues
-  } = useCadastroNewColabForm();
+  } = useCadastroNewColabForm({setIdColab, setModalIsOpen});
 
   useEffect(() => {
     if (!modalIsOpen || !colaboradores) return;
@@ -56,18 +57,8 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   const lideres = colaboradores?.filter((c) => c.lideranca) ?? [];
   const lideresList: string[] = lideres.map((c) => c.nome);
 
-  const submitForm = (data: ColaboradorForm) => {
-    console.log("SUBMIT DISPARADO", data);
-    onSubmit(data);
-    reset();
-    setModalIsOpen(false);
-    setIdColab(null);
-  };
-
   return (
-    <S.FormContainer onSubmit={handleSubmit(submitForm, (errors) => {
-      console.log("ERROS DE VALIDAÇÃO:", errors);
-    })}>
+    <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<ColaboradorForm>)}>
       <S.DivWrapper>
         <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
         <S.DivInputs>
