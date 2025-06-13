@@ -81,3 +81,19 @@ export const TextDownload = styled.p`
     font-size: 1rem;
     font-weight: 500;
 `
+
+export const modalStyle = {
+    overlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    },
+    content: {
+        top: "50%",
+        left: "50%",
+        right: "auto",
+        bottom: "auto",
+        transform: "translate(-50%, -50%)",
+        padding: "25px",
+        borderRadius: "10px",
+        backgroundColor: "#FCFCFC",
+    },
+};

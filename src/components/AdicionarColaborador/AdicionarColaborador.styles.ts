@@ -27,22 +27,9 @@ export const DivWrapper = styled.div`
   }
 `;
 
-export interface Colaborador {
-  id: string;
-  nome: string;
-  matricula: string;
-  setor: string;
-  cargo: string;
-  email: string;
-  hash: string;
-  salt: string;
-}
-
-
-export interface AddColaboradorProps {
-  setModalIsOpen: (value: boolean) => void;
-  onAdd: (colaborador: any) => void;
-  idColab: string | null;
-  setIdColab: Dispatch<SetStateAction<string | null>>;
-  modalIsOpen: boolean;
-}
+export const DivInputs = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 2vw;
+`

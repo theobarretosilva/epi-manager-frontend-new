@@ -1,166 +1,144 @@
-import React, { useState, useEffect } from "react";
-import * as S from "./AdicionarColaborador.styles"; 
-import { toast } from "react-toastify";
+import React, { useEffect } from "react";
+import * as S from "./AdicionarColaborador.styles";
 import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
+import { ColaboradorForm } from "../../types/colaboradorForm";
+import { TipoPermissao } from "../../enums/TipoPermissao";
+import { useGetColaboradores } from "../../hooks/useGetColaboradores";
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import { AddColaboradorProps } from "../../props/addColaboradorProps";
+import { useCadastroNewColabForm } from "../../hooks/useCadastroNewColabForm";
 import { SelectStyled } from "../SelectStyled/SelectStyled";
+import { SubmitHandler } from "react-hook-form";
 
-interface ColaboradorProps {
-  id: string;
-  nome: string; 
-  matricula: string;
-  setor: string;
-  cargo: string;
-  email: string;
-  hash: string;
-  salt: string;
-  linkFoto: string;
-}
-
-const AdicionarColaborador: React.FC<S.AddColaboradorProps> = ({ setModalIsOpen, onAdd, idColab, modalIsOpen, setIdColab }) => {
-  const colaboradores = JSON.parse(sessionStorage.getItem('ColaboradoresCadastrados') || '[]');
-  const [nome, setNome] = useState("");
-  const [matricula, setMatricula] = useState("");
-  const [setor, setSetor] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
+  setModalIsOpen,
+  idColab,
+  modalIsOpen,
+  setIdColab,
+}) => {
+  const { colaboradores } = useGetColaboradores();
+  const {
+    handleSubmit,
+    onSubmit,
+    register,
+    responseError,
+    reset,
+    setValue,
+    watch,
+    defaultValues
+  } = useCadastroNewColabForm({setIdColab, setModalIsOpen});
 
   useEffect(() => {
-    if (!modalIsOpen) return;
-  
-    const resetCampos = () => {
-      setNome("");
-      setMatricula("");
-      setSetor("");
-      setCargo("");
-      setEmail("");
-      setSenha("");
-    };
-  
-    if (idColab) {
-      const colaborador = colaboradores.find((c: ColaboradorProps) => c.id === idColab);
-      if (colaborador) {
-        setNome(colaborador.nome);
-        setMatricula(colaborador.matricula);
-        setSetor(colaborador.setor);
-        setCargo(colaborador.cargo);
-        setEmail(colaborador.email);
-        setSenha(colaborador.hash || "");
+    if (!modalIsOpen || !colaboradores) return;
 
-      }
-    } else {
-      resetCampos();
-    }
-  }, [idColab, modalIsOpen]);
+    const colaborador = colaboradores?.find(c => c.matricula === idColab);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "nome":
-        setNome(value);
-        break;
-      case "matricula":
-        setMatricula(value);
-        break;
-      case "setor":
-        setSetor(value);
-        break;
-      case "cargo":
-        setCargo(value);
-        break;
-      case "email":
-        setEmail(value);
-        break;
-      case "senha":
-        setSenha(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const generateHashWithSalt = async (password: string) => {
-    const encoder = new TextEncoder();
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const passwordBytes = encoder.encode(password);
-    const combined = new Uint8Array([...passwordBytes, ...salt]);
-
-    const hashBuffer = await crypto.subtle.digest("SHA-256", combined);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    const saltHex = Array.from(salt).map((b) => b.toString(16).padStart(2, "0")).join("");
-
-    return { hash: hashHex, salt: saltHex };
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!nome || !matricula || !setor || !cargo || !email || (!senha && !idColab)) {
-      toast.warning("Por favor, preencha todos os campos.", { autoClose: 6000 });
-    } else if (!emailRegex.test(email)) {
-      toast.warning("Por favor, insira um e-mail válido.");
-    } else if (!idColab && senha.length < 8) {
-      toast.warning("A senha deve ter no mínimo 8 caracteres.");
-      return;
-    }
-
-    try {
-      const { hash, salt } = senha ? await generateHashWithSalt(senha) : { hash: null, salt: null };
-
-      const colaborador = {
-        id: idColab || matricula,
-        nome,
-        matricula,
-        setor,
-        cargo,
-        email,
-        hash: hash || colaboradores.find((col: any) => col.id === idColab)?.hash,
-        salt: salt || colaboradores.find((col: any) => col.id === idColab)?.salt,
+    if (idColab && colaborador) {
+      const colaboradorComPermissaoNormalizada = {
+        ...colaborador,
+        permissao: colaborador.permissao as TipoPermissao,
       };
 
-      if (!idColab) {
-        const existe = colaboradores.some((col: ColaboradorProps) => col.matricula === matricula);
-        if (existe) {
-          toast.error("Colaborador já cadastrado com esta matrícula.");
-          return;
+      Object.entries(colaboradorComPermissaoNormalizada).forEach(([key, value]) => {
+        if (key in defaultValues) {
+          setValue(
+            key as keyof ColaboradorForm,
+            value as ColaboradorForm[keyof ColaboradorForm]
+          );
         }
-        colaboradores.push(colaborador);
-      } else {
-        const index = colaboradores.findIndex((col: ColaboradorProps) => col.id === idColab);
-        if (index !== -1) colaboradores[index] = colaborador;
-      }
-
-      sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(colaboradores));
-      onAdd(colaborador);
-      setNome("");
-      toast.success(idColab ? "Colaborador atualizado!" : "Colaborador adicionado!");
-      setModalIsOpen(false);
-      setIdColab(null)
-      setMatricula("");
-      setSetor("");
-      setCargo("");
-      setEmail("");
-      setSenha("");
-      console.log(nome)
-    } catch (error) {
-      console.error("Erro ao gerar o hash:", error);
-      toast.error("Erro ao salvar colaborador.");
+      });
+    } else {
+      reset(defaultValues);
     }
-  };
+  }, [idColab, modalIsOpen, colaboradores, setValue, reset, defaultValues]);
+
+  const lideres = colaboradores?.filter((c) => c.lideranca) ?? [];
+  const lideresList: string[] = lideres.map((c) => c.nome);
 
   return (
-    <S.FormContainer onSubmit={handleSubmit}>
+    <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<ColaboradorForm>)}>
       <S.DivWrapper>
-        <InputStyled value={nome} tipo="text" titulo="Nome Completo" name="nome" onChange={handleChange} />
-        <InputStyled value={matricula} tipo="text" titulo="Matrícula" name="matricula" onChange={handleChange} />
-        <InputStyled value={setor} tipo="text" titulo="Setor" name="setor" onChange={handleChange} />
-        <SelectStyled value={cargo} titulo="Cargo" name="cargo" onChange={(value) => setCargo(value)} options={["Administrador", "Almoxarifado", "Colaborador"]} />
-        <InputStyled value={email} tipo="email" titulo="Email" name="email" onChange={handleChange} />
-        {!idColab && <InputStyled value={senha} tipo="password" titulo="Senha" name="senha" onChange={handleChange} />}
+        <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
+        <S.DivInputs>
+          <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
+          <InputStyled
+            tipo="text"
+            titulo="CPF"
+            {...register("cpf", {
+              onChange: (e) => {
+                let value = e.target.value.replace(/\D/g, "");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                e.target.value = value;
+              },
+            })}
+          />
+        </S.DivInputs>
+        <S.DivInputs>
+          <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
+          <InputStyled tipo="text" titulo="Cargo" {...register("cargo")} />
+        </S.DivInputs>
+        <S.DivInputs style={{gap: '0'}}>
+          <FormControl style={{marginTop: '1vh'}}>
+            <FormLabel>Cargo de liderança?</FormLabel>
+            <RadioGroup
+              row
+              style={{ width: '14vw'}}
+              value={watch("lideranca") ? "true" : "false"}
+              onChange={(e) => setValue("lideranca", e.target.value === "true")}
+            >
+              <FormControlLabel value="true" control={<Radio />} label="Sim" />
+              <FormControlLabel value="false" control={<Radio />} label="Não" />
+            </RadioGroup>
+          </FormControl>
+          <FormControl style={{ marginTop: "1vh" }}>
+            <FormLabel>Tipo de permissão</FormLabel>
+            <RadioGroup
+              row
+              style={{ width: "28vw"}}
+              value={watch("permissao")}
+              onChange={(e) =>
+                setValue("permissao", e.target.value as TipoPermissao)
+              }
+            >
+              <FormControlLabel
+                value={TipoPermissao.COLABORADOR}
+                control={<Radio />}
+                label="Colaborador"
+              />
+              <FormControlLabel
+                value={TipoPermissao.ALMOXARIFADO}
+                control={<Radio />}
+                label="Almoxarifado"
+              />
+              <FormControlLabel
+                value={TipoPermissao.ADMINISTRADOR}
+                control={<Radio />}
+                label="Administrador"
+              />
+            </RadioGroup>
+          </FormControl>
+        </S.DivInputs>
+        <SelectStyled
+          disabled={watch("lideranca") ? true : false}
+          titulo="Nome liderança" 
+          value={watch("nome_lideranca")} 
+          options={lideresList} 
+          onChange={(e) =>
+            setValue("nome_lideranca", e.target.value)
+          } 
+          name='nome_lideranca'
+        />
+        <S.DivInputs>
+          <InputStyled tipo="email" titulo="Email" {...register("email")} />
+          {!idColab && (
+            <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
+          )}
+        </S.DivInputs>
+        {!!responseError && <p>{responseError}</p>}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>

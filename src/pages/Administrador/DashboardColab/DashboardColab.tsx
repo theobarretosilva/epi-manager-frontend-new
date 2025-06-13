@@ -1,6 +1,6 @@
 import ReactModal from "react-modal";
 import AdicionarColaborador from "../../../components/AdicionarColaborador/AdicionarColaborador";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import * as S from './DashboardColab.styles';
 import { ToastContainer } from "react-toastify";
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
@@ -15,71 +15,16 @@ import { ModuloIndicNume } from "../../../components/ModuloIndicNume/ModuloIndic
 import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/DownloadSoliciIcon";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { ColaboradorProps, SolicitacaoProps } from "./DashboardColab.types";
-
-
+import { useGetColaboradores } from "../../../hooks/useGetColaboradores";
+import { SolicitacaoProps } from "../../../props/solicitacao.props";
 
 export const DashboardColab = () => {
-    const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
-    const mockData: ColaboradorProps[] = [
-        {
-            id: "1",
-            nome: "João Silva",
-            matricula: "001",
-            setor: "Almoxarifado",
-            cargo: "Auxiliar",
-            email: "joao@email.com",
-            hash: "abc",
-            salt: "123",
-            dataCadastro: new Date().toISOString(),
-            epis: [
-                { nome: "Capacete", validade: new Date(new Date().setDate(new Date().getDate() - 10)).toISOString() } // vencido
-            ]
-        },
-        {
-            id: "2",
-            nome: "Maria Souza",
-            matricula: "002",
-            setor: "Produção",
-            cargo: "Operadora",
-            email: "maria@email.com",
-            hash: "def",
-            salt: "456",
-            dataCadastro: new Date().toISOString(),
-            epis: [
-                { nome: "Luvas", validade: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString() } // vence em 10 dias
-            ]
-        },
-        {
-            id: "3",
-            nome: "Carlos Lima",
-            matricula: "003",
-            setor: "Manutenção",
-            cargo: "Técnico",
-            email: "carlos@email.com",
-            hash: "ghi",
-            salt: "789",
-            dataCadastro: new Date().toISOString(),
-            epis: [
-                { nome: "Botina", validade: new Date(new Date().setDate(new Date().getDate() + 40)).toISOString() } // vence em 40 dias
-            ]
-        },
-        {
-            id: "4",
-            nome: "Ana Paula",
-            matricula: "004",
-            setor: "RH",
-            cargo: "Analista",
-            email: "ana@email.com",
-            hash: "jkl",
-            salt: "012",
-            dataCadastro: new Date().toISOString(),
-            epis: [] // sem EPIs
-        }
-    ];
+    const { colaboradores } = useGetColaboradores();
+    console.log(colaboradores);
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idColaborador, setIdColaborador] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const closeModal = () => {
         setModalIsOpenAddColaborador(false);
@@ -101,58 +46,38 @@ export const DashboardColab = () => {
         setIdColaborador(id);
     }
 
-    const handleDeleteColaborador = (id: string) => {
-        const updatedColaboradores = colaboradores.filter((colaborador: ColaboradorProps) => colaborador.id !== id);
-        sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(updatedColaboradores));
-        
-        setColaboradores(updatedColaboradores);
+    const handleDownloadSolicitacoes = (
+        matricula: string,
+        solicitacoes: SolicitacaoProps[]
+    ) => {
+        const solicitacoesFiltradas = solicitacoes?.filter(
+            (sol) => sol.solicitante.matricula === matricula
+        );
 
-        setRows(updatedColaboradores.map((colaborador: ColaboradorProps) => ({
-            id: colaborador.id,
-            matricula: colaborador.matricula,
-            nome: colaborador.nome,
-            cargo: colaborador.cargo,
-            setor: colaborador.setor,
-        })));
-    };
-
-    const handleAddColaborador = (colaborador: ColaboradorProps) => {
-        const colaboradoresList: ColaboradorProps[] = storedData ? JSON.parse(storedData) : [];
-    
-        const existingIndex = colaboradoresList.findIndex(c => c.id === colaborador.id);
-    
-        if (existingIndex !== -1) {
-            colaboradoresList[existingIndex] = colaborador;
-        } else {
-            colaboradoresList.push(colaborador);
+        if (!solicitacoesFiltradas || solicitacoesFiltradas.length === 0) {
+            console.error("Nenhuma solicitação encontrada para este colaborador.");
+            return;
         }
-    
-        setColaboradores(colaboradoresList);
-        sessionStorage.setItem("ColaboradoresCadastrados", JSON.stringify(colaboradoresList));
-    
-        setRows(colaboradoresList.map(c => ({
-            id: c.id,
-            matricula: c.matricula,
-            nome: c.nome,
-            cargo: c.cargo,
-            setor: c.setor,
-        })));
-    };
 
-    const customStyles = {
-        overlay: {
-          backgroundColor: "rgba(0, 0, 0, 0.5)", 
-        },
-        content: {
-          top: "50%",
-          left: "50%",
-          right: "auto",
-          bottom: "auto",
-          transform: "translate(-50%, -50%)",
-          padding: "25px",
-          borderRadius: "10px",
-          backgroundColor: "#FCFCFC",
-        },
+        const colaborador = solicitacoesFiltradas[0].solicitante;
+
+        const doc = new jsPDF();
+        doc.text(`Solicitações de ${colaborador.nome}`, 14, 15);
+
+        autoTable(doc, {
+            startY: 20,
+            head: [["Código", "Qtd", "Data Abertura", "Status", "Urgência", "EPI"]],
+            body: solicitacoesFiltradas.map((sol) => [
+                sol.codigo,
+                sol.qtd,
+                new Date(sol.dataAbertura).toLocaleDateString(),
+                sol.status,
+                sol.urgencia,
+                sol.epi.descricao,
+            ]),
+        });
+
+        doc.save(`solicitacoes_${colaborador.nome}.pdf`);
     };
 
     const columns: GridColDef[] = [
@@ -168,12 +93,13 @@ export const DashboardColab = () => {
                     onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
-            width: 100,
+            width: 65,
         },
-        { field: 'matricula', headerName: 'Matricula', width: 90, align: 'center', headerAlign: 'center' },
-        { field: 'nome', headerName: 'Nome', width: 280, align: 'center', headerAlign: 'center' },
-        { field: 'cargo', headerName: 'Cargo', width: 160, align: 'center', headerAlign: 'center'},
-        { field: 'setor', headerName: 'Setor', width: 160, align: 'center', headerAlign: 'center' },
+        { field: 'matricula', headerName: 'Matricula', width: 80, align: 'center', headerAlign: 'center' },
+        { field: 'nome', headerName: 'Nome', width: 230, align: 'center', headerAlign: 'center' },
+        { field: 'cpf', headerName: 'CPF', width: 150, align: 'center', headerAlign: 'center'},
+        { field: 'cargo', headerName: 'Cargo', width: 140, align: 'center', headerAlign: 'center'},
+        { field: 'setor', headerName: 'Setor', width: 140, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',
@@ -193,191 +119,121 @@ export const DashboardColab = () => {
         { 
             field: 'downloadSolicitacoes',
             type: 'actions',
-            headerName: 'Download de solicitações', 
+            headerName: 'Baixar solicitações', 
             getActions: (params: GridRowParams) => [
                 <GridActionsCellItem
                     key={0}
                     icon={<DownloadSoliciIcon />}
-                    label="Deletar"
-                    onClick={() => handleDownloadSolicitacoes(params.row.nome)}
+                    label="Baixar"
+                    onClick={() => handleDownloadSolicitacoes(params.row.matricula)}
                 />,
             ],
-            width: 200,
+            width: 150,
             align: 'center',
             headerAlign: 'center'
         },
     ];
 
-    const [colaboradores, setColaboradores] = useState<ColaboradorProps[]>([]);
-    const [rows, setRows] = useState<any[]>([]);
-    const [filteredRows, setFilteredRows] = useState(rows);
+    const rows = colaboradores?.map((colaborador) => ({
+        matricula: colaborador.matricula,
+        nome: colaborador.nome,
+        email: colaborador.email,
+        cpf: colaborador.cpf ?? "—",
+        cargo: colaborador.cargo,
+        setor: colaborador.setor
+    }));
 
-    useEffect(() => {
-        const storedData = sessionStorage.getItem("ColaboradoresCadastrados");
-        const parsedData = storedData ? JSON.parse(storedData) : mockData;
-        setColaboradores(parsedData);
-    }, []);
+    const filteredRows = searchTerm
+        ? rows?.filter((row) =>
+            row.nome.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : rows;
 
-    useEffect(() => {
-        const newRows = colaboradores.map((colaborador: ColaboradorProps) => ({
-            id: colaborador.id,
-            matricula: colaborador.matricula,
-            nome: colaborador.nome,
-            cargo: colaborador.cargo,
-            setor: colaborador.setor,
-        }));
-        setRows(newRows);
-        setFilteredRows(newRows);
-    }, [colaboradores]);
-
-    const handleSearch = (value: string) => {
-        setFilteredRows(
-            rows.filter(row => 
-                row.matricula.toLowerCase().includes(value.toLowerCase()) ||
-                row.nome.toLowerCase().includes(value.toLowerCase())
-            )
-        );
-    };
-    
-    const hoje = new Date();
-
-    const colaboradoresCadastradosNoMes = useMemo(() => {
-        return mockData.filter(colab => {
-            const data = new Date(colab.dataCadastro);
-            return (
-            data.getMonth() === hoje.getMonth() &&
-            data.getFullYear() === hoje.getFullYear()
-            );
-        }).length;
-    }, [colaboradores]);
-
-    const colaboradoresComEPIsVencendo = useMemo(() => {
-        return mockData.filter(colab =>
-            colab.epis.some(epi => new Date(epi.validade) < hoje)
-        ).length;
-    }, [colaboradores]);
-
-    const colaboradoresComEPIsVencendo30Dias = useMemo(() => {
-        const daqui30Dias = new Date();
-        daqui30Dias.setDate(hoje.getDate() + 30);
-
-        return mockData.filter(colab =>
-            colab.epis.some(epi => {
-            const validade = new Date(epi.validade);
-            return validade >= hoje && validade <= daqui30Dias;
-            })
-        ).length;
-    }, [colaboradores]);
-
-    const exportarColaboradoresPDF = () => {
+    const exportColabsPDF = () => {
         const doc = new jsPDF();
-
+    
         doc.text("Lista de Colaboradores", 14, 15);
-
+    
         autoTable(doc, {
             startY: 20,
             head: [["Matrícula", "Nome", "Cargo", "Setor"]],
-            body: colaboradores.map(colab => [
+            body: colaboradores?.map(colab => [
                 colab.matricula,
                 colab.nome,
                 colab.cargo,
                 colab.setor
             ]),
         });
-
+    
         doc.save("colaboradores.pdf");
-    };
-
-    const handleDownloadSolicitacoes = (nomeColaborador: string) => {
-        const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('solicitacoes') || '[]');
-
-        const solicitacoesDoColaborador = solicitacoes.filter(
-            (s) => s.solicitante === nomeColaborador
-        );
-
-        const doc = new jsPDF();
-        doc.text(`Solicitações de ${nomeColaborador}`, 14, 20);
-
-        autoTable(doc, {
-            startY: 30,
-            head: [['Descrição', 'Setor', 'Data']],
-            body: solicitacoesDoColaborador.map((s) => [
-                s.descricaoItem,
-                s.setor,
-                s.dataSolicitacao,
-            ]),
-        });
-
-        doc.save(`Solicitacoes_${nomeColaborador.replace(/\s+/g, '_')}.pdf`);
-    };
+    }
     
     return (
         <>
             <S.MainStyled>
-                {filteredRows.length > 0 ? (
-                    <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
-                        <S.DivBtnSearch>
-                            <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
-                            <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" />
-                            <S.DivDownload onClick={exportarColaboradoresPDF}>
-                                <DownloadSoliciIcon />
-                                <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
-                            </S.DivDownload>
-                        </S.DivBtnSearch>
-                        <DataGrid
-                            rows={filteredRows}
-                            columns={columns}
-                            autoHeight
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { pageSize: 3, page: 0 },
-                                },
-                            }}
-                            sx={{
-                                border: 0,
-                                '& .MuiDataGrid-cell': { textAlign: 'center' },
-                                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                            }}
-                        />
-                    </Paper>
+                {(filteredRows || []).length > 0 ? (
+                    <>
+                        <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+                            <S.DivBtnSearch>
+                                <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                                <Searchbar onSearch={setSearchTerm} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
+                                <S.DivDownload onClick={exportColabsPDF}>
+                                    <DownloadSoliciIcon />
+                                    <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
+                                </S.DivDownload>
+                            </S.DivBtnSearch>
+                            <DataGrid
+                                rows={filteredRows}
+                                columns={columns}
+                                autoHeight
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: { pageSize: 3, page: 0 },
+                                    },
+                                }}
+                                sx={{
+                                    border: 0,
+                                    '& .MuiDataGrid-cell': { textAlign: 'center' },
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+                                }}
+                                getRowId={(row) => row.matricula}
+                            />
+                        </Paper>
+                        <S.DivLayoutDash>
+                            <ModuloColabSetDash />
+                            <ModuloIndicNume />
+                        </S.DivLayoutDash>
+                    </>
                 ) : (
-                    <NoDataToShow mainText="Não foram adicionados colaboradores!" />
+                    <>
+                        <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                        <NoDataToShow mainText="Não foram adicionados colaboradores!" />
+                    </>
                 )}
-
-                <S.DivLayoutDash>
-                    <ModuloColabSetDash />
-                    <ModuloIndicNume 
-                        total={colaboradores.length}
-                        vencendo={colaboradoresComEPIsVencendo}
-                        cadastradosMes={colaboradoresCadastradosNoMes}
-                        vencendo30dias={colaboradoresComEPIsVencendo30Dias}
-                    />
-                </S.DivLayoutDash>
-
             </S.MainStyled>
             <ToastContainer position="top-right" />
             <ReactModal
                 isOpen={modalIsOpenDelete}
                 onRequestClose={() => setModalIsOpenDelete(false)}
-                style={customStyles}
+                style={S.modalStyle}
             >
                 <S.MainWrapper>
                     <S.ImageContent onClick={() => setModalIsOpenDelete(false)}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <ExcluirModal onDelete={handleDeleteColaborador} setModalIsOpen={setModalIsOpenDelete} Id={idColaborador} tipo="colaborador" />
+                    <ExcluirModal setModalIsOpen={setModalIsOpenDelete} id={idColaborador} tipo="colaborador" />
                 </S.MainWrapper>
             </ReactModal>
             <ReactModal
                 isOpen={modalIsOpenAddColaborador}
                 onRequestClose={() => setModalIsOpenAddColaborador(false)}
-                style={customStyles}
+                style={S.modalStyle}
             >
                 <S.MainWrapper>
                     <S.ImageContent onClick={() => closeModal()}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <AdicionarColaborador setIdColab={setIdColaborador} modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} onAdd={handleAddColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
+                    <AdicionarColaborador setIdColab={setIdColaborador} modalIsOpen={modalIsOpenAddColaborador} idColab={idColaborador} setModalIsOpen={setModalIsOpenAddColaborador} />
                 </S.MainWrapper>
             </ReactModal>
         </>

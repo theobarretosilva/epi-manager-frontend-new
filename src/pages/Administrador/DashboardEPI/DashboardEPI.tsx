@@ -265,7 +265,7 @@ export const DashboardEPI = () => {
                     <S.ImageContent onClick={() => setModalIsOpenDelete(false)}>
                         <S.Image  src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
-                    <ExcluirModal onDelete={handleDeleteEPI} setModalIsOpen={setModalIsOpenDelete} Id={ idEpi } tipo="epi" /> 
+                    <ExcluirModal onDelete={handleDeleteEPI} setModalIsOpen={setModalIsOpenDelete} Id={ idEpi } tipo="EPI" /> 
                 </S.MainWrapper>
             </ReactModal>
 
