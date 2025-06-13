@@ -35,16 +35,18 @@ export const Login = () => {
                             placeholder=''
                             {...register('matricula')}
                         />
+                        <p style={{color: 'red', margin: '0'}}>{errors.matricula?.message}</p>
                         <InputStyled
                             titulo='Senha'
                             tipo='password'
                             placeholder=''
                             {...register('password')}
                         />
+                        <p style={{color: 'red', margin: '0'}}>{errors.password?.message}</p>
                         <S.PEsqueciSenha onClick={() => navigate('/esqueciSenha')}>
                             Esqueci a senha
                         </S.PEsqueciSenha>
-                        {responseError && <p style={{ color: 'red', marginTop: '8px' }}>{responseError}</p>}
+                        {responseError && <p style={{ color: 'red', marginTop: '5px' }}>{responseError}</p>}
                         {LoginButtonLabel}
                     </form>
                     <S.PVoltar onClick={() => navigate("/")}>Voltar para seleção de usuário</S.PVoltar>

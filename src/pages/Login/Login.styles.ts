@@ -63,13 +63,16 @@ export const ImgLogo = styled.img`
 export const BoxForm = styled.div`
     background-color: white;
     width: 30vw;
-    height: 52vh;
+    height: 60vh;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border-radius: 15px;
     padding: 4vh 2vw 4vh 2vw;
     margin-bottom: 4vh;
     margin-left: 6vw;
     margin-right: 6vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     @media (max-width: 450px) {
         padding: 4vh 4vw 4vh 4vw;
@@ -118,7 +121,5 @@ export const PVoltar = styled.p`
     color: #FFDD4A;
     text-decoration: underline;
     cursor: pointer;
-    text-align: center;
     margin-top: 3vh;
-    position: fixed;
 `

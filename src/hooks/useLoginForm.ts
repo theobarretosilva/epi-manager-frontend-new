@@ -11,9 +11,9 @@ import { HandleLoginSuccessProps } from '../types/loginResponse';
 import { AxiosError } from 'axios';
 
 export const useLoginForm = () => {
-    const defaultValues = { email: '', password: '' }
-    const navigate = useNavigate()
-    const [responseError, setResponseError] = useState('')
+    const defaultValues = { matricula: '', password: '' };
+    const navigate = useNavigate();
+    const [responseError, setResponseError] = useState('');
 
     const {
         register,
@@ -22,7 +22,13 @@ export const useLoginForm = () => {
     } = useForm<LoginForm>({
         resolver: yupResolver(schemas.loginForm),
         defaultValues,
-    })
+    });
+
+    const redirectPaths: Record<string, string> = {
+        admin: '/administrador/solicitacoes',
+        colaborador: '/colaborador/solicitacoes',
+        almoxarifado: '/almoxarifado/dashboardAlmox',
+    };
 
     const handleLoginSuccess = ({ access_token, permissao }: HandleLoginSuccessProps) => {
         localStorage.setItem('EpiManagerToken', access_token);
@@ -30,34 +36,28 @@ export const useLoginForm = () => {
         axiosInstance.defaults.headers.common.Authorization = `Bearer ${access_token}`;
         toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
 
-        switch (permissao.toLowerCase()) {
-            case 'administrador':
-                setTimeout( () => navigate('/administrador/solicitacoes'), 2500);
-                break;
-            case 'colaborador':
-                setTimeout( () => navigate('/colaborador/solicitacoes'), 2500);
-                break;
-            case 'almoxarifado':
-                setTimeout( () => navigate('/almoxarifado/dashboardAlmox'), 2500);
-                break;
-            default:
-                toast.error("Cargo não reconhecido.");
+        const path = redirectPaths[permissao.toLowerCase()];
+        if (path) {
+            setTimeout(() => navigate(path), 2500);
+        } else {
+            toast.error("Cargo não reconhecido.");
         }
-    }
+    };
 
     const loginMutation = useMutation({
         mutationFn: async (data: LoginForm) => {
+            console.log(data);
             setResponseError("");
             const { data: responseData } = await axiosInstance.post<HandleLoginSuccessProps>(
                 '/auth/login',
-                data
-            )
-            return responseData
+                data,
+            );
+            return responseData;
         },
         onSuccess: handleLoginSuccess,
         onError: (error: AxiosError<{ message: string }>) => {
-            const errorMessage = error.response?.data.message
-                ? error.response.data.message
+            const errorMessage = error.response?.data.error.message
+                ? error.response?.data.error.message
                 : 'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);
             toast.error(errorMessage);
