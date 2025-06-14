@@ -62,5 +62,11 @@ export const validators = {
     .oneOf(Object.values(Urgencia), 'Urgência inválida'),
   responsavel: yup
     .string()
+    .required(errorMessages.required),
+  descricaoItem: yup
+    .string()
+    .required(errorMessages.required),
+  solicitante: yup
+    .string()
     .required(errorMessages.required)
 }

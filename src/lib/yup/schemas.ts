@@ -25,5 +25,7 @@ export const schemas = {
         urgencia: validators.urgencia,
         responsavel: validators.responsavel,
         matricula_responsavel: validators.matricula,
+        descricaoItem: validators.descricaoItem,
+        solicitante: validators.solicitante                
     })
 }

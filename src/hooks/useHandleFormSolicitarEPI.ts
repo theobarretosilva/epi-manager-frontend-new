@@ -9,14 +9,19 @@ import { axiosInstance } from '../lib/axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
 import { AxiosError } from 'axios';
-
-type ResponseError = {
-    message: string;
-};
+import { useGetUserLogado } from './useGetUserLogado';
 
 export const useHandleFormSolicitarEPI = () => {
+    const { userLogado } = useGetUserLogado();
     const navigate = useNavigate();
     const [responseError, setResponseError] = useState('');
+    const tipoAcesso = sessionStorage.getItem('TipoAceso') || 'colaborador';
+    const redirectPaths: Record<string, string> = {
+        admin: '/administrador/solicitacoes',
+        colaborador: '/colaborador/solicitacoes',
+        almoxarifado: '/almoxarifado/dashboardAlmox',
+    };
+    const path = redirectPaths[tipoAcesso] || '/';
 
     const defaultValues = useMemo<SolicitarEpiForm>(() => ({
         equipamentoId: 0,
@@ -24,8 +29,9 @@ export const useHandleFormSolicitarEPI = () => {
         urgencia: Urgencia.MEDIA,
         responsavel: '',
         matricula_responsavel: '',
+        descricaoItem: '',
+        solicitante: ''
     }), []);
-
 
     const {
         register,
@@ -33,7 +39,7 @@ export const useHandleFormSolicitarEPI = () => {
         reset,
         setValue,
         watch,
-        setError,
+        formState: { errors },
     } = useForm<SolicitarEpiForm>({
         resolver: yupResolver(schemas.solicitarEpiForm),
         defaultValues,
@@ -51,8 +57,14 @@ export const useHandleFormSolicitarEPI = () => {
             return createSolicitacaoPromise;
         },
         onSuccess: () => {
-            reset();
-            navigate('/solicitarEpi'); // tem que adaptar para colocar a rota de acordo com o perfil logado
+            reset({
+                solicitante: userLogado?.nome || '',
+                descricaoItem: '',
+                equipamentoId: 0,
+                urgencia: Urgencia.MEDIA,
+                qtd: 1
+            });
+            navigate(path);
         },
         onError: (error: AxiosError<{ message: string }>) => {
             const errorMessage = error.response?.data?.error?.message
@@ -75,6 +87,7 @@ export const useHandleFormSolicitarEPI = () => {
         reset,
         setValue,
         watch,
-        defaultValues
+        defaultValues,
+        errors
     };
 };

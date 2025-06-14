@@ -49,7 +49,7 @@ export const Login = () => {
                         {responseError && <p style={{ color: 'red', marginTop: '5px' }}>{responseError}</p>}
                         {LoginButtonLabel}
                     </form>
-                    <S.PVoltar onClick={() => navigate("/")}>Voltar para seleção de usuário</S.PVoltar>
+                    {/* <S.PVoltar onClick={() => navigate("/")}>Voltar para seleção de usuário</S.PVoltar> */}
                 </S.BoxForm>
             </S.MainStyled>
         </S.DivGeral>

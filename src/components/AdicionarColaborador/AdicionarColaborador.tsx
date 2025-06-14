@@ -115,7 +115,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
                 label="Almoxarifado"
               />
               <FormControlLabel
-                value={TipoPermissao.ADMINISTRADOR}
+                value={TipoPermissao.ADMIN}
                 control={<Radio />}
                 label="Administrador"
               />

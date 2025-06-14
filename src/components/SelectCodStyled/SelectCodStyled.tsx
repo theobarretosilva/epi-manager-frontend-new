@@ -1,16 +1,12 @@
+import { OptionProps } from '../../props/optionProps';
 import * as S from './SelectCodStyled.styles';
-
-interface Option {
-    label: string;
-    value: string;
-}
 
 interface SelectCodStyledProps {
     titulo: string;
     value?: string;
     disabled?: boolean;
-    options: Array<Option>;
-    onChange?: (selectedOption: Option) => void;
+    options: Array<OptionProps>;
+    onChange?: (selectedOption: OptionProps) => void;
 }
 
 export const SelectCodStyled = ({ titulo, value, disabled, options, onChange }: SelectCodStyledProps) => {
@@ -21,7 +17,7 @@ export const SelectCodStyled = ({ titulo, value, disabled, options, onChange }: 
                 value={value}
                 disabled={disabled}
                 onChange={(e) => {
-                    const selectedValue = e.target.value;
+                    const selectedValue = Number(e.target.value);
                     const selectedOption = options.find(option => option.value === selectedValue);
                     if (selectedOption) onChange?.(selectedOption);
                 }}

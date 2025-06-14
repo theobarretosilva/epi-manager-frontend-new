@@ -1,98 +1,109 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { BtnStyled } from '../../components/BtnStyled/BtnStyled';
 import { InputStyled } from '../../components/InputStyled/InputStyled';
 import { SelectCodStyled } from '../../components/SelectCodStyled/SelectCodStyled';
 import * as S from './SolicitarEPI.styles';
 import { SelectStyled } from '../../components/SelectStyled/SelectStyled';
 import { useNavigate } from 'react-router';
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetEPIS } from '../../hooks/useGetEPIS';
 import { EPIProps } from '../../props/episProps';
 import { useGetUserLogado } from '../../hooks/useGetUserLogado';
 import { useHandleFormSolicitarEPI } from '../../hooks/useHandleFormSolicitarEPI';
+import { Urgencia } from '../../enums/Urgencia';
+import { OptionProps } from '../../props/optionProps';
 
 export const SolicitarEPI = () => {
-    const { userLogado, isError } = useGetUserLogado();
-    const { defaultValues, handleSubmit, onSubmit, register, reset, responseError, setValue, watch } = useHandleFormSolicitarEPI();
+    const { userLogado } = useGetUserLogado();
+    const { 
+        onSubmit,
+        handleSubmit,
+        register,
+        responseError,
+        setValue,
+        watch,
+        errors
+    } = useHandleFormSolicitarEPI();
     const { epis } = useGetEPIS();
     const navigate = useNavigate();
+    const tipoAcessoStorage = sessionStorage.getItem('TipoAcesso');
+    const tipoAcesso = tipoAcessoStorage?.toLowerCase() || userLogado?.permissao?.toLowerCase() || 'colaborador';
 
-    const options = epis?.map((epi: EPIProps) => ({
-        label: epi.descricao,
+    const options: OptionProps[] = (epis ?? []).map((epi: EPIProps) => ({
+        label: epi.descricao || '',
         value: epi.codigo,
     }));
 
-    const handleSubmit = () => {
-        if (!formData.descricaoItem || !formData.codigoEPI || !formData.urgencia || !formData.quantidade) {
-            toast.error('Por favor, preencha todos os campos.');
-            return;
+    const handleItemChange = (option: OptionProps) => {
+        setValue('descricaoItem', option.label);
+        setValue('equipamentoId', option.value);
+    };
+
+    useEffect(() => {
+        if (userLogado?.nome) {
+            setValue('solicitante', userLogado.nome);
+            setValue('responsavel', userLogado.nome || '');
+            setValue('matricula_responsavel', userLogado.matricula || '');
         }
+    }, [setValue, userLogado]);
 
-        submitForm();
-        toast.success('EPI solicitado com sucesso!');
-        navigate('/colaborador/solicitacoes');
+    const redirectPaths: Record<string, string> = {
+        admin: '/administrador/solicitacoes',
+        colaborador: '/colaborador/solicitacoes',
+        almoxarifado: '/almoxarifado/dashboardAlmox',
     };
+    const path = redirectPaths[tipoAcesso] || '/';
 
-    const handleItemChange = (option: { label: string; value: string }) => {
-        updateField('descricaoItem', option.label);
-        updateField('codigoEPI', option.value);
-    };
-
+console.log('Erros do formulário:', errors);
     return (
         <S.MainStyled>
-            <S.DivMainSolicitar>
-                <S.DivFlex>
-                    <InputStyled 
-                        disabled={true}
-                        tipo='text'
-                        titulo='ID da Solicitação'
-                        value={formData.id}
-                        onChange={e => updateField('id', e.target.value)}
-                    />
-                    <InputStyled 
-                        disabled={true}
-                        tipo='text'
-                        titulo='Solicitante'
-                        value={userLogado?.nome}
-                    />
-                </S.DivFlex>
+            <S.FormMainSolicitar onSubmit={handleSubmit(onSubmit)}>
+                <InputStyled 
+                    tipo="text"
+                    titulo="Solicitante"
+                    disabled
+                    value={watch('solicitante')}
+                />
+                <p style={{color: 'red', margin: '0'}}>{errors.solicitante?.message}</p>
                 <S.DivFlex>
                     <SelectCodStyled
                         titulo="Escolha um item"
-                        value={formData.descricaoItem}
                         options={options}
                         onChange={handleItemChange}
                     />
-                    <InputStyled 
-                        tipo='text'
-                        titulo='Código'
-                        disabled={true}
-                        value={formData.codigoEPI}
+                    <p style={{color: 'red', margin: '0'}}>{errors.descricaoItem?.message}</p>
+                    <InputStyled
+                        tipo="text"
+                        titulo="Código do EPI"
+                        {...register('equipamentoId')}
+                        value={watch('equipamentoId')}
                     />
+                    <p style={{color: 'red', margin: '0'}}>{errors.equipamentoId?.message}</p>
                 </S.DivFlex>
                 <S.DivFlex>
                     <SelectStyled
-                        titulo="Urgência" 
-                        value={formData.urgencia} 
-                        options={['Alta', 'Média', 'Baixa']} 
-                        onChange={value => updateField('urgencia', value)} 
+                        titulo="Urgência"
+                        value={watch("urgencia")}
+                        options={['Alta', 'Média', 'Baixa']}
+                        onChange={(e) => {
+                            const value = e?.target?.value;
+                            if (value) setValue("urgencia", value as Urgencia);
+                        }}
                         name='urgencia'
                     />
+                    <p style={{color: 'red', margin: '0'}}>{errors.urgencia?.message}</p>
                     <InputStyled 
                         tipo='number'
                         titulo='Quantidade'
-                        value={formData.quantidade}
-                        onChange={e => {
-                            const value = parseInt(e.target.value, 10);
-                            updateField('quantidade', isNaN(value) ? 0 : value);
-                        }}
+                        {...register('qtd')}
+                        value={watch('qtd')}
                     />
+                    <p style={{color: 'red', margin: '0'}}>{errors.qtd?.message}</p>
                 </S.DivFlex>
-                <br />
-                <BtnStyled text='Solicitar' onClick={handleSubmit} />
-                <S.PVoltar onClick={() => navigate('/colaborador/solicitacoes')}>Voltar</S.PVoltar>
-            </S.DivMainSolicitar>
+                {!!responseError && <p>{responseError}</p>}
+                <BtnStyled text='Solicitar' type='submit' />
+                <S.PVoltar onClick={() => navigate(path)}>Voltar</S.PVoltar>
+            </S.FormMainSolicitar>
         </S.MainStyled>
     );
 };

@@ -11,7 +11,7 @@ export const MainStyled = styled.main`
     background-color: #E4F0F2;
 `
 
-export const DivMainSolicitar = styled.form`
+export const FormMainSolicitar = styled.form`
     width: 55vw;
     height: 60vh;
     background-color: white;
