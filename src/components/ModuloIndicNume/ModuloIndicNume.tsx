@@ -9,7 +9,6 @@ export const ModuloIndicNume = () => {
     const { colaboradores } = useGetColaboradores();
     const { solicitacoes } = useGetSolicitacoes();
     const colabsComEPIsVencendo = useGetColabsComEPIsVencendo(solicitacoes);
-    const colabsCadastradosNoMes = useGetColabsCadastradosMes(colaboradores);
     const colabsVencendo = useGetColabsEPIsVencendo30Dias(solicitacoes);
     
     return(
@@ -23,11 +22,6 @@ export const ModuloIndicNume = () => {
                 <S.TituloBox>Colaboradores com EPIs vencendo</S.TituloBox>
                 <S.LinhaStyled></S.LinhaStyled>
                 <S.NInfo>{colabsComEPIsVencendo}</S.NInfo>
-            </S.CardInfo>
-            <S.CardInfo>
-                <S.TituloBox>Colabs cadastrados no mês</S.TituloBox>
-                <S.LinhaStyled></S.LinhaStyled>
-                <S.NInfo>{colabsCadastradosNoMes}</S.NInfo>
             </S.CardInfo>
             <S.CardInfo>
                 <S.TituloBox>Colabs com EPIs vencendo nos próximos 30 dias</S.TituloBox>

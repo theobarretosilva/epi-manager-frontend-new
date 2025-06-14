@@ -73,11 +73,30 @@ export const Solicitacoes = () => {
         doc.text('Detalhes da Solicitação', 10, 10);
 
         doc.setFontSize(12);
-        doc.text(`ID: ${solicitacao.id}`, 10, 30);
+
+        // Dados da solicitação
+        doc.text(`ID da Solicitação: ${solicitacao.id}`, 10, 30);
         doc.text(`Item: ${solicitacao.equipamento.descricao}`, 10, 40);
-        doc.text(`Status: ${solicitacao.status}`, 10, 50);
-        doc.text(`Código do EPI: ${solicitacao.equipamento.codigo}`, 10, 60);
-        doc.text(`Urgência: ${solicitacao.urgencia}`, 10, 70);
+        doc.text(`Código do EPI: ${solicitacao.equipamento.codigo}`, 10, 50);
+        doc.text(`CA do EPI: ${solicitacao.equipamento.ca}`, 10, 60);
+        doc.text(`Validade do EPI: ${new Date(solicitacao.equipamento.data_validade).toLocaleDateString('pt-BR')}`, 10, 70);
+        doc.text(`Quantidade Solicitada: ${solicitacao.qtd}`, 10, 80);
+        doc.text(`Urgência: ${solicitacao.urgencia}`, 10, 90);
+        doc.text(`Status: ${solicitacao.status}`, 10, 100);
+        doc.text(`Entrega realizada: ${solicitacao.entrega ? 'Sim' : 'Não'}`, 10, 110);
+        doc.text(`Data de Abertura: ${new Date(solicitacao.dataAbertura).toLocaleDateString('pt-BR')}`, 10, 120);
+        doc.text(`Data de Conclusão: ${solicitacao.dataConclusao ? new Date(solicitacao.dataConclusao).toLocaleDateString('pt-BR') : 'Ainda não concluída'}`, 10, 130);
+
+        // Solicitante
+        doc.setFontSize(14);
+        doc.text('Solicitante:', 10, 145);
+        doc.setFontSize(12);
+        doc.text(`Nome: ${solicitacao.solicitante.nome}`, 10, 155);
+        doc.text(`CPF: ${solicitacao.solicitante.cpf}`, 10, 165);
+        doc.text(`Setor: ${solicitacao.solicitante.setor}`, 10, 175);
+        doc.text(`Cargo: ${solicitacao.solicitante.cargo}`, 10, 185);
+        doc.text(`Matrícula: ${solicitacao.solicitante.matricula}`, 10, 195);
+        doc.text(`Permissão: ${solicitacao.solicitante.permissao}`, 10, 205);
 
         doc.save(`Solicitacao-${solicitacao.id}.pdf`);
     };

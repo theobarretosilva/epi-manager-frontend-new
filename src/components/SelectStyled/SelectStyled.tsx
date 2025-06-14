@@ -8,7 +8,7 @@ export const SelectStyled = ({ titulo, value, disabled, options, onChange, name 
             <S.SelectStyled 
                 value={value} 
                 disabled={disabled} 
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange?.(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange?.(e.target.value || 'Sem liderança')}
                 name={name}
             >
                 <option value="" disabled>Selecione uma opção</option>

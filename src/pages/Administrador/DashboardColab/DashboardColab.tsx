@@ -93,13 +93,14 @@ export const DashboardColab = () => {
                     onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
-            width: 65,
+            width: 60,
         },
         { field: 'matricula', headerName: 'Matricula', width: 80, align: 'center', headerAlign: 'center' },
         { field: 'nome', headerName: 'Nome', width: 230, align: 'center', headerAlign: 'center' },
-        { field: 'cpf', headerName: 'CPF', width: 150, align: 'center', headerAlign: 'center'},
-        { field: 'cargo', headerName: 'Cargo', width: 140, align: 'center', headerAlign: 'center'},
-        { field: 'setor', headerName: 'Setor', width: 140, align: 'center', headerAlign: 'center' },
+        { field: 'cpf', headerName: 'CPF', width: 130, align: 'center', headerAlign: 'center'},
+        { field: 'cargo', headerName: 'Cargo', width: 130, align: 'center', headerAlign: 'center'},
+        { field: 'setor', headerName: 'Setor', width: 130, align: 'center', headerAlign: 'center' },
+        { field: 'permissao', headerName: 'Permissão', width: 125, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',
@@ -112,7 +113,7 @@ export const DashboardColab = () => {
                     onClick={() => openModalDelete(params.row.id)}
                 />,
             ],
-            width: 90,
+            width: 70,
             align: 'center',
             headerAlign: 'center'
         },
@@ -128,7 +129,7 @@ export const DashboardColab = () => {
                     onClick={() => handleDownloadSolicitacoes(params.row.matricula)}
                 />,
             ],
-            width: 150,
+            width: 140,
             align: 'center',
             headerAlign: 'center'
         },
@@ -138,9 +139,10 @@ export const DashboardColab = () => {
         matricula: colaborador.matricula,
         nome: colaborador.nome,
         email: colaborador.email,
-        cpf: colaborador.cpf ?? "—",
+        cpf: colaborador.cpf,
         cargo: colaborador.cargo,
-        setor: colaborador.setor
+        setor: colaborador.setor,
+        permissao: colaborador.permissao.toLowerCase()
     }));
 
     const filteredRows = searchTerm
@@ -150,23 +152,49 @@ export const DashboardColab = () => {
         : rows;
 
     const exportColabsPDF = () => {
-        const doc = new jsPDF();
-    
-        doc.text("Lista de Colaboradores", 14, 15);
-    
+        const doc = new jsPDF({
+            orientation: "landscape",
+            unit: "mm",
+            format: "a4",
+        });
+
+        doc.text("Lista Completa de Colaboradores", 14, 15);
+
         autoTable(doc, {
             startY: 20,
-            head: [["Matrícula", "Nome", "Cargo", "Setor"]],
-            body: colaboradores?.map(colab => [
+            head: [[
+                "Matrícula", 
+                "Nome", 
+                "CPF", 
+                "Email", 
+                "Cargo", 
+                "Setor", 
+                "Permissão", 
+                "Liderança", 
+                "Nome da Liderança", 
+            ]],
+            body: colaboradores?.map((colab) => [
                 colab.matricula,
                 colab.nome,
+                colab.cpf,
+                colab.email,
                 colab.cargo,
-                colab.setor
+                colab.setor,
+                colab.permissao,
+                colab.lideranca ? "Sim" : "Não",
+                colab.nome_lideranca || "",
             ]),
+            styles: {
+                fontSize: 8,
+            },
+            headStyles: {
+                fillColor: [22, 160, 133],
+                textColor: 255,
+            },
         });
-    
+
         doc.save("colaboradores.pdf");
-    }
+    };
     
     return (
         <>

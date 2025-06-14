@@ -18,7 +18,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
         setor: "",
         lideranca: false,
         dataCadastro: new Date(),
-        nome_lideranca: "",
+        nome_lideranca: "Sem liderança",
         permissao: TipoPermissao.COLABORADOR,
         senha: "",
         email: "",
@@ -33,6 +33,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
         setValue,
         watch,
         setError,
+        formState: { errors }
     } = useForm<ColaboradorForm>({
         resolver: yupResolver(schemas.colaboradorForm),
         defaultValues,
@@ -89,6 +90,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
         reset,
         setValue,
         watch,
-        defaultValues
+        defaultValues,
+        errors
     };
 }

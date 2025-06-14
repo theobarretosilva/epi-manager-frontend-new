@@ -12,7 +12,7 @@ export const useGetColabsEPIsVencendo30Dias = (solicitacoes: SolicitacaoProps[] 
     const colaboradoresSet = new Set<number>();
 
     solicitacoes.forEach(solicitacao => {
-      const validade = new Date(solicitacao.epi.dataValidade);
+      const validade = new Date(solicitacao.equipamento.data_validade);
       if (validade >= hoje && validade <= daqui30Dias) {
         colaboradoresSet.add(solicitacao.solicitante.id);
       }

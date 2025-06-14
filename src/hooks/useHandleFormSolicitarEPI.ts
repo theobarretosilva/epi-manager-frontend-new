@@ -15,13 +15,13 @@ export const useHandleFormSolicitarEPI = () => {
     const { userLogado } = useGetUserLogado();
     const navigate = useNavigate();
     const [responseError, setResponseError] = useState('');
-    const tipoAcesso = sessionStorage.getItem('TipoAceso') || 'colaborador';
+    const tipoAcesso = sessionStorage.getItem('TipoAcesso')?.toLowerCase() || 'colaborador';
     const redirectPaths: Record<string, string> = {
         admin: '/administrador/solicitacoes',
         colaborador: '/colaborador/solicitacoes',
         almoxarifado: '/almoxarifado/dashboardAlmox',
     };
-    const path = redirectPaths[tipoAcesso] || '/';
+    const path = redirectPaths[tipoAcesso] || '/login';
 
     const defaultValues = useMemo<SolicitarEpiForm>(() => ({
         equipamentoId: 0,

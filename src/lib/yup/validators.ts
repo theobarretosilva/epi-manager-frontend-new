@@ -49,7 +49,9 @@ export const validators = {
       'CPF inválido'
     ),
   nome_lideranca: yup
-    .string(),
+    .string()
+    .default('Sem liderança')
+    .transform((value) => value ?? 'Sem liderança'),
   equipamentoId: yup
     .number()
     .required(errorMessages.required),

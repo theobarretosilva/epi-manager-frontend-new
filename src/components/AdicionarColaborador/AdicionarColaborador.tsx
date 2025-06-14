@@ -27,7 +27,8 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     reset,
     setValue,
     watch,
-    defaultValues
+    defaultValues,
+    errors
   } = useCadastroNewColabForm({setIdColab, setModalIsOpen});
 
   useEffect(() => {
@@ -61,11 +62,14 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<ColaboradorForm>)}>
       <S.DivWrapper>
         <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
+        <p style={{color: 'red', margin: '0'}}>{errors.nome?.message}</p>
         <S.DivInputs>
           <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
+          <p style={{color: 'red', margin: '0'}}>{errors.matricula?.message}</p>
           <InputStyled
             tipo="text"
             titulo="CPF"
+            maxLength={14}
             {...register("cpf", {
               onChange: (e) => {
                 let value = e.target.value.replace(/\D/g, "");
@@ -76,10 +80,17 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
               },
             })}
           />
+          <p style={{color: 'red', margin: '0'}}>{errors.cpf?.message}</p>
         </S.DivInputs>
         <S.DivInputs>
-          <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
-          <InputStyled tipo="text" titulo="Cargo" {...register("cargo")} />
+          <div>
+            <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
+            <p style={{color: 'red', margin: '0'}}>{errors.setor?.message}</p>
+          </div>
+          <div>
+            <InputStyled tipo="text" titulo="Cargo" {...register("cargo")} />
+            <p style={{color: 'red', margin: '0'}}>{errors.cargo?.message}</p>
+          </div>
         </S.DivInputs>
         <S.DivInputs style={{gap: '0'}}>
           <FormControl style={{marginTop: '1vh'}}>
@@ -93,6 +104,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
               <FormControlLabel value="true" control={<Radio />} label="Sim" />
               <FormControlLabel value="false" control={<Radio />} label="Não" />
             </RadioGroup>
+            <p style={{color: 'red', margin: '0'}}>{errors.lideranca?.message}</p>
           </FormControl>
           <FormControl style={{ marginTop: "1vh" }}>
             <FormLabel>Tipo de permissão</FormLabel>
@@ -120,23 +132,31 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
                 label="Administrador"
               />
             </RadioGroup>
+            <p style={{color: 'red', margin: '0'}}>{errors.permissao?.message}</p>
           </FormControl>
         </S.DivInputs>
         <SelectStyled
           disabled={watch("lideranca") ? true : false}
           titulo="Nome liderança" 
-          value={watch("nome_lideranca")} 
+          value={watch("nome_lideranca") ?? 'Sem liderança'} 
           options={lideresList} 
           onChange={(e) =>
-            setValue("nome_lideranca", e.target.value)
+            setValue("nome_lideranca", e.target.value  ?? 'Sem liderança')
           } 
           name='nome_lideranca'
         />
+        <p style={{color: 'red', margin: '0'}}>{errors.nome_lideranca?.message}</p>
         <S.DivInputs>
-          <InputStyled tipo="email" titulo="Email" {...register("email")} />
-          {!idColab && (
-            <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
-          )}
+          <div>
+            <InputStyled tipo="email" titulo="Email" {...register("email")} />
+            <p style={{color: 'red', margin: '0'}}>{errors.email?.message}</p>
+          </div>
+          <div>
+            {!idColab && (
+              <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
+            )}
+            <p style={{color: 'red', margin: '0'}}>{errors.senha?.message}</p>
+          </div>
         </S.DivInputs>
         {!!responseError && <p>{responseError}</p>}
       </S.DivWrapper>

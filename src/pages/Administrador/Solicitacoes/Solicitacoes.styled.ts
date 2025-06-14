@@ -64,7 +64,7 @@ export const DivLayoutDash = styled.div`
     justify-content: space-between;
     width: 100%;
     height: auto;
-    margin-top: 2vh;
+    margin-top: 1vh;
 `
 
 export const stylesModal = {

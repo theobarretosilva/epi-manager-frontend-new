@@ -12,11 +12,11 @@ export const useGetColabsComEPIsVencendo = (
     const colaboradoresComEPIvencido = new Set<string>();
 
     solicitacoes.forEach((solicitacao) => {
-      const { solicitante, epi } = solicitacao;
+      const { solicitante, equipamento } = solicitacao;
 
-      if (!solicitante || !epi || !epi.dataValidade) return;
+      if (!solicitante || !equipamento || !equipamento.data_validade) return;
 
-      const validade = new Date(epi.dataValidade);
+      const validade = new Date(equipamento.data_validade);
 
       if (validade < hoje) {
         colaboradoresComEPIvencido.add(solicitante.cpf);

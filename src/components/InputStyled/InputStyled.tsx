@@ -12,6 +12,7 @@ interface InputStyledProps {
   error?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  maxLength?: number;
 }
 
 export const InputStyled = forwardRef<HTMLInputElement, InputStyledProps>(
@@ -27,6 +28,7 @@ export const InputStyled = forwardRef<HTMLInputElement, InputStyledProps>(
       disabled,
       hidden,
       error,
+      maxLength
     },
     ref
   ) => {
@@ -44,6 +46,7 @@ export const InputStyled = forwardRef<HTMLInputElement, InputStyledProps>(
           onBlur={onBlur}
           ref={ref}
           error={error}
+          maxLength={maxLength}
         />
       </S.DivGeral>
     );
