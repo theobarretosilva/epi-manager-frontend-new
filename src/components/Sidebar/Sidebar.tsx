@@ -8,7 +8,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ links }) => {
 
     const logout = () => {
         toast.success("Fazendo logout em 3.. 2.. 1..", { autoClose: 2000 });
-        sessionStorage.setItem('TipoAcesso', "");
+        sessionStorage.removeItem('TipoAcesso');
+        sessionStorage.removeItem('EpiManagerToken')
         setTimeout(() => navigate("/"), 2500);
     };
 

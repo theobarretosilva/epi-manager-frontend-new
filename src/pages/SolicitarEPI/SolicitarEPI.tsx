@@ -1,41 +1,30 @@
 import { useEffect, useState } from 'react';
-import { BtnStyled } from '../../../components/BtnStyled/BtnStyled';
-import { InputStyled } from '../../../components/InputStyled/InputStyled';
-import { SelectCodStyled } from '../../../components/SelectCodStyled/SelectCodStyled';
+import { BtnStyled } from '../../components/BtnStyled/BtnStyled';
+import { InputStyled } from '../../components/InputStyled/InputStyled';
+import { SelectCodStyled } from '../../components/SelectCodStyled/SelectCodStyled';
 import * as S from './SolicitarEPI.styles';
-import { SelectStyled } from '../../../components/SelectStyled/SelectStyled';
+import { SelectStyled } from '../../components/SelectStyled/SelectStyled';
 import { useNavigate } from 'react-router';
-import useHandleFormSolicitarEPI from '../../../hooks/useHandleFormSolicitarEPI';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useGetEPIS } from '../../hooks/useGetEPIS';
+import { EPIProps } from '../../props/episProps';
+import { useGetUserLogado } from '../../hooks/useGetUserLogado';
+import { useHandleFormSolicitarEPI } from '../../hooks/useHandleFormSolicitarEPI';
 
 export const SolicitarEPI = () => {
+    const { userLogado, isError } = useGetUserLogado();
+    const { defaultValues, handleSubmit, onSubmit, register, reset, responseError, setValue, watch } = useHandleFormSolicitarEPI();
+    const { epis } = useGetEPIS();
     const navigate = useNavigate();
-    const { formData, updateField, submitForm } = useHandleFormSolicitarEPI();
 
-    const userLogado = JSON.parse(sessionStorage.getItem('UserLogado') || '{}');
-
-    const EPIList = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
-    const options = EPIList.map((epi: { descricaoItem: string; codigo: string }) => ({
-        label: epi.descricaoItem,
+    const options = epis?.map((epi: EPIProps) => ({
+        label: epi.descricao,
         value: epi.codigo,
     }));
 
-    const pad = (num: number) => num.toString().padStart(2, '0');
-    const generateUniqueID = () => {
-        const now = new Date();
-        return `SOL-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-    };
-
-    const [id] = useState(() => generateUniqueID());
-    
-    useEffect(() => {
-        updateField('id', id);
-        updateField('solicitante', userLogado.nome);
-    }, [updateField, userLogado.nome]);
-
     const handleSubmit = () => {
-        if (!formData.descricaoItem || !formData.codigoEPI || !formData.prioridade || !formData.quantidade) {
+        if (!formData.descricaoItem || !formData.codigoEPI || !formData.urgencia || !formData.quantidade) {
             toast.error('Por favor, preencha todos os campos.');
             return;
         }
@@ -43,6 +32,11 @@ export const SolicitarEPI = () => {
         submitForm();
         toast.success('EPI solicitado com sucesso!');
         navigate('/colaborador/solicitacoes');
+    };
+
+    const handleItemChange = (option: { label: string; value: string }) => {
+        updateField('descricaoItem', option.label);
+        updateField('codigoEPI', option.value);
     };
 
     return (
@@ -60,18 +54,15 @@ export const SolicitarEPI = () => {
                         disabled={true}
                         tipo='text'
                         titulo='Solicitante'
-                        value={userLogado.nome}
+                        value={userLogado?.nome}
                     />
                 </S.DivFlex>
                 <S.DivFlex>
-                    <SelectCodStyled 
+                    <SelectCodStyled
                         titulo="Escolha um item"
                         value={formData.descricaoItem}
                         options={options}
-                        onChange={option => {
-                            updateField('descricaoItem', option.label);
-                            updateField('codigoEPI', option.value);
-                        }}
+                        onChange={handleItemChange}
                     />
                     <InputStyled 
                         tipo='text'
@@ -82,11 +73,11 @@ export const SolicitarEPI = () => {
                 </S.DivFlex>
                 <S.DivFlex>
                     <SelectStyled
-                        titulo="Prioridade" 
-                        value={formData.prioridade} 
+                        titulo="Urgência" 
+                        value={formData.urgencia} 
                         options={['Alta', 'Média', 'Baixa']} 
-                        onChange={value => updateField('prioridade', value)} 
-                        name='prioridade'
+                        onChange={value => updateField('urgencia', value)} 
+                        name='urgencia'
                     />
                     <InputStyled 
                         tipo='number'

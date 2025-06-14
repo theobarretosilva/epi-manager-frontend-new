@@ -14,22 +14,22 @@ interface SolicitacaoProps {
   descricaoItem: string;
   status: string;
   codigoEPI: string;
-  prioridade: string;
+  urgencia: string;
 }
 
 export const AprovarSolicitacao: React.FC<AprovarSolicitacoesProps> = ({setModalIsOpen, id, onEdit}) => {
   const solicitacoes = JSON.parse(sessionStorage.getItem("Solicitacoes") || "[]");
   const solicitacao = solicitacoes.filter((element: SolicitacaoProps)=> element.id == id);  
   const [status, setStatus] = useState("");
-  const [prioridade, setPrioridade] = useState(solicitacao[0].prioridade);
+  const [urgencia, setUrgencia] = useState(solicitacao[0].urgencia);
   const [patrimonio, setPatrimonio] = useState("");
   const [estado, setEstado] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     switch (name) {
-      case "prioridade":
-        setPrioridade(value);
+      case "urgencia":
+        setUrgencia(value);
         break;
       case "patrimonio":
         setPatrimonio(value);
@@ -43,7 +43,7 @@ export const AprovarSolicitacao: React.FC<AprovarSolicitacoesProps> = ({setModal
     e.preventDefault();
     switch (estado) {
       case "Aprovar":
-        if (!prioridade || !patrimonio ) {
+        if (!urgencia || !patrimonio ) {
           toast.warning("Por favor, preencha todos os campos.", {
             autoClose: 6000,
             closeOnClick: true,
@@ -54,7 +54,7 @@ export const AprovarSolicitacao: React.FC<AprovarSolicitacoesProps> = ({setModal
               solicitante: solicitacao[0].solicitante,
               descricaoItem: solicitacao[0].descricaoItem,
               codigoEPI: solicitacao[0].codigoEPI,
-              prioridade: prioridade,
+              urgencia: urgencia,
               quantidade: solicitacao[0].quantidade,
               status: "Aprovada",
               dataSolicitacao: solicitacao[0].dataSolicitacao,
@@ -86,7 +86,7 @@ export const AprovarSolicitacao: React.FC<AprovarSolicitacoesProps> = ({setModal
             solicitante: solicitacao[0].solicitante,
             descricaoItem: solicitacao[0].descricaoItem,
             codigoEPI: solicitacao[0].codigoEPI,
-            prioridade: prioridade,
+            urgencia: urgencia,
             quantidade: solicitacao[0].quantidade,
             status: "Recusada",
             dataSolicitacao: solicitacao[0].dataSolicitacao,
@@ -156,7 +156,7 @@ export const AprovarSolicitacao: React.FC<AprovarSolicitacoesProps> = ({setModal
           title="Código do EPI"
           name="codigo"
         />
-        <SelectInput text={prioridade} title="Prioridade" disable={false} handle={(e) => setPrioridade(e.target.value)}/>
+        <SelectInput text={urgencia} title="urgencia" disable={false} handle={(e) => setPrioridade(e.target.value)}/>
         <InputStyled 
           value={patrimonio}
           tipo="text"

@@ -15,7 +15,7 @@ interface SolicitacaoProps {
     descricaoItem: string;
     status: string;
     codigoEPI: string;
-    prioridade: string;
+    urgencia: string;
 }
   
 interface EPIProps {
@@ -29,7 +29,7 @@ interface RowProps {
     id: string;
     descricaoItem: string;
     status: string;
-    prioridade: string;
+    urgencia: string;
     validade: string;
 }
 
@@ -77,7 +77,7 @@ export const DashboardAlmox = () => {
         setRows(solicitacoesList.map((solicitacao: SolicitacaoProps) => ({
             id: solicitacao.id,
             descricaoItem: solicitacao.descricaoItem,
-            prioridade: solicitacao.prioridade,
+            urgencia: solicitacao.urgencia,
             status: solicitacao.status,
             validadeEPI: getValidadeEPI(solicitacao.codigoEPI),
         })));
@@ -107,7 +107,7 @@ export const DashboardAlmox = () => {
         },
         { field: 'id', headerName: 'ID', width: 200, align: 'center', headerAlign: 'center' },
         { field: 'descricaoItem', headerName: 'Descrição do Item', width: 300, align: 'center', headerAlign: 'center' },
-        { field: 'prioridade', headerName: 'Prioridade', width: 130, align: 'center', headerAlign: 'center'},
+        { field: 'urgencia', headerName: 'urgencia', width: 130, align: 'center', headerAlign: 'center'},
         { field: 'status', headerName: 'Status', width: 130, align: 'center', headerAlign: 'center' },
         { field: 'validadeEPI', headerName: 'Validade EPI', width: 150, align: 'center', headerAlign: 'center' }
     ];
@@ -116,7 +116,7 @@ export const DashboardAlmox = () => {
         return solicitacoes.map((solicitacao: SolicitacaoProps) => ({
             id: solicitacao.id,
             descricaoItem: solicitacao.descricaoItem,
-            prioridade: solicitacao.prioridade,
+            urgencia: solicitacao.urgencia,
             status: solicitacao.status,
             validadeEPI: getValidadeEPI(solicitacao.codigoEPI),
         }));

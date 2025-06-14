@@ -6,7 +6,7 @@ export const useLogOutIfExpiredToken = () => {
 
   const handleLogOutIfExpiredToken = (error: AxiosError) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('EpiManagerToken')
+      sessionStorage.removeItem('EpiManagerToken')
       navigate('/')
     }
   }

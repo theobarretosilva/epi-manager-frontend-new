@@ -1,20 +1,12 @@
 import { BarChart } from '@mui/x-charts';
 import * as S from './ModuloNSoliciDash.styles';
+import { SolicitacaoProps } from '../../props/solicitacao.props';
 
-type Solicitacao = {
-  id: string;
-  solicitante: string;
-  status: string;
-  descricaoItem: string;
-  codigoEPI: string;
-  prioridade: string;
-};
+interface ModuloNSoliciDashProps {
+  solicitacoes: SolicitacaoProps[];
+}
 
-type Props = {
-  solicitacoes: Solicitacao[];
-};
-
-export const ModuloNSoliciDash = ({ solicitacoes }: Props) => {
+export const ModuloNSoliciDash = ({ solicitacoes }: ModuloNSoliciDashProps) => {
   function contarSolicitacoes() {
     let pendentes = 0;
     let aprovadas = 0;

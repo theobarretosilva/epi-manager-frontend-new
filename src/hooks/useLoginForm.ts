@@ -30,13 +30,16 @@ export const useLoginForm = () => {
         almoxarifado: '/almoxarifado/dashboardAlmox',
     };
 
-    const handleLoginSuccess = ({ access_token, permissao }: HandleLoginSuccessProps) => {
-        localStorage.setItem('EpiManagerToken', access_token);
-        localStorage.setItem("TipoAcesso", permissao);
-        axiosInstance.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+    const handleLoginSuccess = (data: HandleLoginSuccessProps) => {
+        console.log("Salvando token:", data.token);
+        console.log("Salvando permissão:", data.permissao);
+
+        sessionStorage.setItem('EpiManagerToken', data.token);
+        sessionStorage.setItem("TipoAcesso", data.permissao);
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.token}`;
         toast.success("Logado com sucesso! Redirecionando...", { autoClose: 2000 });
 
-        const path = redirectPaths[permissao.toLowerCase()];
+        const path = redirectPaths[data.permissao.toLowerCase()];
         if (path) {
             setTimeout(() => navigate(path), 2500);
         } else {
@@ -46,18 +49,14 @@ export const useLoginForm = () => {
 
     const loginMutation = useMutation({
         mutationFn: async (data: LoginForm) => {
-            console.log(data);
-            setResponseError("");
-            const { data: responseData } = await axiosInstance.post<HandleLoginSuccessProps>(
-                '/auth/login',
-                data,
-            );
-            return responseData;
+            setResponseError('');
+            const res = await axiosInstance.post<HandleLoginSuccessProps>('/auth/login', data);
+            return res.data;
         },
         onSuccess: handleLoginSuccess,
         onError: (error: AxiosError<{ message: string }>) => {
-            const errorMessage = error.response?.data.error.message
-                ? error.response?.data.error.message
+            const errorMessage = error.response?.data?.error?.message
+                ? error.response.data.error.message
                 : 'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);
             toast.error(errorMessage);

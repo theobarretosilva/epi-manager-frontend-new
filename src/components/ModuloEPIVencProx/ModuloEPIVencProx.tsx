@@ -7,7 +7,7 @@ interface SolicitacaoProps {
   descricaoItem: string;
   status: string;
   codigoEPI: string;
-  prioridade: string;
+  urgencia: string;
   solicitante: string;
 }
 

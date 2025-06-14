@@ -44,7 +44,6 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
 
     const createColabMutation = useMutation({
         mutationFn: (data: ColaboradorForm) => {
-            console.log('aipapai')
             setResponseError('');
             const createColaboradorPromise = axiosInstance.post('/colaboradores/create', data);
             toast.promise(createColaboradorPromise, {

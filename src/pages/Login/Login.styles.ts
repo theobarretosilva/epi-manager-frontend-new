@@ -118,7 +118,7 @@ export const ErrorMessage = styled.p`
 export const PVoltar = styled.p`
     font-size: 1.08rem;
     font-weight: 300;
-    color: #FFDD4A;
+    color:rgb(255, 208, 0);
     text-decoration: underline;
     cursor: pointer;
     margin-top: 3vh;

@@ -1,4 +1,4 @@
 export type HandleLoginSuccessProps = {
-  access_token: string;
+  token: string;
   permissao: string;
 }

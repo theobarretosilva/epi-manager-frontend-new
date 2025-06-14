@@ -3,43 +3,21 @@ import { SolicitacaoModalProps } from "../props/solicitacaoModalProps";
 
 export const useModalDetalhesSolicitacao = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [descricaoItem, setDescricaoItem] = useState("");
-  const [id, setId] = useState("");
-  const [status, setStatus] = useState("");
-  const [dataSolicitacao, setdataSolicitacao] = useState("");
-  const [solicitante, setSolicitante] = useState("");
-  const [quantidade, setQuantidade] = useState("");
-  const [codigoEPI, setCodigoEPI] = useState();
-  const [urgencia, setUrgencia] = useState("");
-  const [dataConclusao, setDataConclusao] = useState("");
-  const openModal = ({ dataConclusao, descricaoItem, id, status, dataSolicitacao, solicitante, quantidade, codigoEPI, urgencia }: SolicitacaoModalProps) => {
-    setDescricaoItem(descricaoItem);
-    setId(id);
-    setStatus(status);
-    setdataSolicitacao(dataSolicitacao);
-    setSolicitante(solicitante);
-    setQuantidade(quantidade);
-    setCodigoEPI(codigoEPI);
-    setUrgencia(urgencia);
-    setDataConclusao(dataConclusao);
+  const [solicitacao, setSolicitacao] = useState<SolicitacaoModalProps | null>(null);
+
+  const openModal = (dados: SolicitacaoModalProps) => {
+    setSolicitacao(dados);
     setIsOpen(true);
   };
 
   const closeModal = () => {
     setIsOpen(false);
+    setSolicitacao(null);
   };
 
   return {
     isOpen,
-    descricaoItem,
-    id,
-    status,
-    dataSolicitacao,
-    solicitante,
-    quantidade,
-    codigoEPI,
-    prioridade,
-    dataConclusao,
+    solicitacao,
     openModal,
     closeModal,
   };

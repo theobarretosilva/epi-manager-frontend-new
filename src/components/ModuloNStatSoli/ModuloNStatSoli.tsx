@@ -1,17 +1,9 @@
 import { BarChart } from '@mui/x-charts'
 import * as S from './ModuloNStatSoli.styles'
-
-type Solicitacao = {
-    id: string;
-    solicitante: string;
-    status: string;
-    descricaoItem: string;
-    codigoEPI: string;
-    prioridade: string;
-};
+import { SolicitacaoProps } from '../../props/solicitacao.props';
 
 type Props = {
-    solicitacoes: Solicitacao[];
+    solicitacoes: SolicitacaoProps[];
 };
 
 export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
@@ -21,12 +13,12 @@ export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
         let baixas = 0;
 
         solicitacoes.forEach((s) => {
-            const prioridade = s.prioridade.toLowerCase();
-            if (prioridade === 'alta') {
+            const urgencia = s.urgencia.toLowerCase();
+            if (urgencia === 'alta') {
                 altas += 1;
-            } else if (prioridade === 'média') {
+            } else if (urgencia === 'média') {
                 medias += 1;
-            } else if (prioridade === 'baixa') {
+            } else if (urgencia === 'baixa') {
                 baixas += 1;
             }
         });
@@ -38,7 +30,7 @@ export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
 
     const dataset = [
         {
-            Prioridade: 'Solicitações',
+            urgencia: 'Solicitações',
             altas,
             medias,
             baixas
@@ -55,11 +47,11 @@ export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
     
     return(
         <S.BoxStyled>
-            <S.TituloBox>N° e Prioridade de Solicitações</S.TituloBox>
+            <S.TituloBox>N° e urgencia de Solicitações</S.TituloBox>
             <S.LinhaStyled />
             <BarChart
                 dataset={dataset}
-                xAxis={[{ dataKey: 'Prioridade', scaleType: 'band' }]}
+                xAxis={[{ dataKey: 'urgencia', scaleType: 'band' }]}
                 series={[
                 { dataKey: 'altas', label: 'Altas', valueFormatter },
                 { dataKey: 'medias', label: 'Médias', valueFormatter },

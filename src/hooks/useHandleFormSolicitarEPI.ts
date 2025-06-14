@@ -1,70 +1,80 @@
-import moment from 'moment';
-import { useState, useEffect } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMemo, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { schemas } from '../lib/yup/schemas';
+import { SolicitarEpiForm } from '../types/solicitarEpiForm';
+import { Urgencia } from '../enums/Urgencia';
+import { useMutation } from '@tanstack/react-query';
+import { axiosInstance } from '../lib/axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
+import { AxiosError } from 'axios';
 
-interface FormData {
-    id: string;
-    solicitante: string;
-    descricaoItem: string;
-    codigoEPI: string;
-    prioridade: string;
-    quantidade: number;
-    status: string;
-    dataSolicitacao: string;
-    dataConclusao: string;
-    numeroPatrimonio: string;
-    certificadoAprovacao: string;
-}
-
-const useHandleFormSolicitarEPI = () => {
-    const [formData, setFormData] = useState<FormData>({
-        id: '',
-        solicitante: '',
-        descricaoItem: '',
-        codigoEPI: '',
-        prioridade: '',
-        quantidade: 0,
-        status: 'Pendente',
-        dataSolicitacao: moment().format('DD/MM/YYYY'),
-        dataConclusao: '-',
-        numeroPatrimonio: '-',
-        certificadoAprovacao: '',
-    });
-
-    const generateUniqueID = () => {
-        const now = new Date();
-        return `SOL-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
-    };
-
-    useEffect(() => {
-        const newId = generateUniqueID();
-        setFormData(prev => ({
-            ...prev,
-            id: newId,
-        }));
-    }, []);
-
-    const updateField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
-
-    const submitForm = () => {
-        try {
-            const storedData = sessionStorage.getItem('Solicitacoes');
-            const solicitacoes = storedData ? JSON.parse(storedData) : [];
-
-            const updatedSolicitacoes = [...solicitacoes, formData];
-
-            sessionStorage.setItem('Solicitacoes', JSON.stringify(updatedSolicitacoes));
-
-        } catch (error) {
-            console.error('Erro ao salvar os dados:', error);
-        }
-    };
-
-    return { formData, updateField, submitForm };
+type ResponseError = {
+    message: string;
 };
 
-export default useHandleFormSolicitarEPI;
+export const useHandleFormSolicitarEPI = () => {
+    const navigate = useNavigate();
+    const [responseError, setResponseError] = useState('');
+
+    const defaultValues = useMemo<SolicitarEpiForm>(() => ({
+        equipamentoId: 0,
+        qtd: 0,
+        urgencia: Urgencia.MEDIA,
+        responsavel: '',
+        matricula_responsavel: '',
+    }), []);
+
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        watch,
+        setError,
+    } = useForm<SolicitarEpiForm>({
+        resolver: yupResolver(schemas.solicitarEpiForm),
+        defaultValues,
+    });
+
+    const createSolicitacaoEpi = useMutation({
+        mutationFn: (data: SolicitarEpiForm) => {
+            setResponseError('');
+            const createSolicitacaoPromise = axiosInstance.post('/solicitacoes/create', data);
+            toast.promise(createSolicitacaoPromise, {
+                pending: 'Processando...',
+                success: 'Solicitação feita!',
+                error: 'Houve um erro, tente novamente mais tarde.',
+            });
+            return createSolicitacaoPromise;
+        },
+        onSuccess: () => {
+            reset();
+            navigate('/solicitarEpi'); // tem que adaptar para colocar a rota de acordo com o perfil logado
+        },
+        onError: (error: AxiosError<{ message: string }>) => {
+            const errorMessage = error.response?.data?.error?.message
+                ? error.response.data.error.message
+                : 'Houve um erro, tente novamente mais tarde.';
+            setResponseError(errorMessage);
+            toast.error(errorMessage);
+        },
+    });
+
+    const handleCreateSolicitacao: SubmitHandler<SolicitarEpiForm> = (data) => {
+        createSolicitacaoEpi.mutate(data);
+    };
+
+    return {
+        handleSubmit,
+        onSubmit: handleCreateSolicitacao,
+        register,
+        responseError,
+        reset,
+        setValue,
+        watch,
+        defaultValues
+    };
+};

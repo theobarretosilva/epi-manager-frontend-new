@@ -170,7 +170,7 @@ export const SolicitacoesFunc = () => {
             <InputDisable text={quantidade} title="Quantidade" type="number" />
             <InputDisable text={descricaoItem} title="Descrição do Item" type="text" />
             <InputDisable text={codigoEPI} title="Código" type="text" />
-            <SelectInput disable={true} text="Normal" title="Prioridade" />
+            <SelectInput disable={true} text="Normal" title="urgencia" />
             <InputDisable text={getCAEPI(codigoEPI)} title="Certificado de Aprovação" type="text" />
             <InputDisable text={getValidadeEPI(codigoEPI)} title="Data de Validade" type="text" />
             <InputDisable text={numeroPatrimonio} title="Número de Patrimônio" type="text" />

@@ -4,7 +4,7 @@ import { ColaboradorProps } from "./colaboradorProps";
 import { EPIProps } from "./episProps";
 
 export interface SolicitacaoProps {
-    id: number | undefined;
+    id: number;
     codigo: number;
     qtd: number;
     dataAbertura: Date;

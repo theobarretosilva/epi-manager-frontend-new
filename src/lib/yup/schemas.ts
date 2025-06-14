@@ -18,5 +18,12 @@ export const schemas = {
         permissao: validators.permissao,
         senha: validators.password,
         email: validators.email
+    }),
+    solicitarEpiForm: yup.object().shape({
+        equipamentoId: validators.equipamentoId,
+        qtd: validators.qtd,
+        urgencia: validators.urgencia,
+        responsavel: validators.responsavel,
+        matricula_responsavel: validators.matricula,
     })
 }

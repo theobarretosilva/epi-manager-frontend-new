@@ -1,5 +1,6 @@
 import * as yup from 'yup'
 import { TipoPermissao } from '../../enums/TipoPermissao'
+import { Urgencia } from '../../enums/Urgencia'
 
 const errorMessages = {
   required: 'Campo obrigatório',
@@ -48,5 +49,18 @@ export const validators = {
       'CPF inválido'
     ),
   nome_lideranca: yup
+    .string(),
+  equipamentoId: yup
+    .number()
+    .required(errorMessages.required),
+  qtd: yup
+    .number()
+    .required(errorMessages.required),
+  urgencia: yup
     .string()
+    .required(errorMessages.required)
+    .oneOf(Object.values(Urgencia), 'Urgência inválida'),
+  responsavel: yup
+    .string()
+    .required(errorMessages.required)
 }
