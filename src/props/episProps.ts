@@ -7,7 +7,7 @@ export interface EPIProps {
     codigo: number;
     descricao: string | undefined;
     preco: number;
-    dataValidade: Date;
+    data_validade: Date;
     ca: string;
     estoques: EstoqueProps[];
     historico: HistoricoEntradaSaidaProps[];

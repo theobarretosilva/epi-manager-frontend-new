@@ -12,7 +12,7 @@ export interface SolicitacaoProps {
     entrega: boolean;
     status: StatusSolicitacao;
     urgencia: Urgencia;
-    epi: EPIProps;
+    equipamento: EPIProps;
     solicitante: ColaboradorProps;
     responsavelEPI: ColaboradorProps;
 };

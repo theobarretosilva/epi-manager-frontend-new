@@ -6,7 +6,7 @@ interface SearchbarProps {
     value: string;
 }
 
-export const Searchbar = ({ placeholder = "Pesquise sua solicitação...", onSearch, value }: SearchbarProps) => {
+export const Searchbar = ({ placeholder, onSearch, value }: SearchbarProps) => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (onSearch) {
             onSearch(event.target.value);

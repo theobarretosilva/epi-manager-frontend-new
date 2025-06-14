@@ -16,7 +16,7 @@ export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
             const urgencia = s.urgencia.toLowerCase();
             if (urgencia === 'alta') {
                 altas += 1;
-            } else if (urgencia === 'média') {
+            } else if (urgencia === 'media') {
                 medias += 1;
             } else if (urgencia === 'baixa') {
                 baixas += 1;
@@ -47,7 +47,7 @@ export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
     
     return(
         <S.BoxStyled>
-            <S.TituloBox>N° e urgencia de Solicitações</S.TituloBox>
+            <S.TituloBox>N° e urgência de Solicitações</S.TituloBox>
             <S.LinhaStyled />
             <BarChart
                 dataset={dataset}

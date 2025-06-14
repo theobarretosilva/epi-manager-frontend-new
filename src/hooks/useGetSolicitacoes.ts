@@ -6,6 +6,7 @@ export const useGetSolicitacoes = () => {
     const query = useQuery<SolicitacaoProps[], Error>({
         queryKey: ['solicitacoes'],
         queryFn: async () => {
+            console.log(axiosInstance.defaults.headers.common.Authorization)
             const { data } = await axiosInstance.get('/solicitacoes/all');
             return data;
         },

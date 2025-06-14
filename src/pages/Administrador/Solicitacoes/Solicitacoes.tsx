@@ -4,7 +4,7 @@ import { Searchbar } from '../../../components/Searchbar/Searchbar'
 import * as S from './Solicitacoes.styled'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from '@mui/x-data-grid'
 import { OpenModalIcon } from '../../../components/OpenModalIcon/OpenModalIcon';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DownloadSoliciIcon } from '../../../components/DownloadSoliciIcon/DownloadSoliciIcon';
 import jsPDF from 'jspdf';
 import { useModalDetalhesSolicitacao } from '../../../hooks/useModalDetalhesSolicitacao';
@@ -24,15 +24,18 @@ import { useNavigate } from 'react-router';
 export const Solicitacoes = () => {
     const { isOpen, solicitacao, openModal, closeModal } = useModalDetalhesSolicitacao();
     const { solicitacoes } = useGetSolicitacoes();
+    console.log(solicitacoes)
     const { epis } = useGetEPIS();
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredRows, setFilteredRows] = useState<typeof rows>([]);
     const navigate = useNavigate();
 
-    const getValidadeEPI = (cod: number | undefined) => {
+    const getValidadeEPI = useCallback((cod: number | undefined) => {
         const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
-        return epi ? epi.dataValidade : 'N/A';
-    };
+        return epi
+            ? new Date(epi.data_validade).toLocaleDateString('pt-BR')
+            : 'N/A';
+    }, [epis]);
 
     const getCAEPI = (cod: number | undefined) => {
         const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
@@ -43,20 +46,20 @@ export const Solicitacoes = () => {
     function getSolicitacao(idSolicitacao: number, modal: true): SolicitacaoModalProps | undefined;
     function getSolicitacao(idSolicitacao: number, modal: false): SolicitacaoProps | undefined;
     function getSolicitacao(idSolicitacao: number, modal: boolean): SolicitacaoProps | SolicitacaoModalProps | undefined {
-    const solicitacao = solicitacoes?.find(s => s.id === idSolicitacao);
+        const solicitacao = solicitacoes?.find(s => s.id === idSolicitacao);
         if (!solicitacao) return undefined;
 
         if (modal) {
             return {
-            descricaoItem: solicitacao.epi.descricao,
-            id: solicitacao.id,
-            status: solicitacao.status,
-            dataSolicitacao: solicitacao.dataAbertura,
-            solicitante: solicitacao.solicitante,
-            quantidade: solicitacao.qtd,
-            codigoEPI: solicitacao.epi.codigo,
-            urgencia: solicitacao.urgencia,
-            dataConclusao: solicitacao.dataConclusao
+                descricaoItem: solicitacao.equipamento.descricao,
+                id: solicitacao.id,
+                status: solicitacao.status,
+                dataSolicitacao: solicitacao.dataAbertura,
+                solicitante: solicitacao.solicitante,
+                quantidade: solicitacao.qtd,
+                codigoEPI: solicitacao.equipamento.codigo,
+                urgencia: solicitacao.urgencia,
+                dataConclusao: solicitacao.dataConclusao
             };
         } else {
             return solicitacao;
@@ -71,9 +74,9 @@ export const Solicitacoes = () => {
 
         doc.setFontSize(12);
         doc.text(`ID: ${solicitacao.id}`, 10, 30);
-        doc.text(`Item: ${solicitacao.epi.descricao}`, 10, 40);
+        doc.text(`Item: ${solicitacao.equipamento.descricao}`, 10, 40);
         doc.text(`Status: ${solicitacao.status}`, 10, 50);
-        doc.text(`Código do EPI: ${solicitacao.epi.codigo}`, 10, 60);
+        doc.text(`Código do EPI: ${solicitacao.equipamento.codigo}`, 10, 60);
         doc.text(`Urgência: ${solicitacao.urgencia}`, 10, 70);
 
         doc.save(`Solicitacao-${solicitacao.id}.pdf`);
@@ -91,20 +94,21 @@ export const Solicitacoes = () => {
                     icon={<OpenModalIcon />}
                     label="Abrir"
                     onClick={() => {
-                        const solicitacao = getSolicitacao(params.row, true);
+                        const solicitacao = getSolicitacao(params.row.id, true);
                         if (solicitacao) {
                             openModal(solicitacao);
                         }
                     }}
                 />,
             ],
-            width: 90,
+            width: 70,
         },
-        { field: 'id', headerName: 'ID', width: 200, align: 'center', headerAlign: 'center' },
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
-        { field: 'urgencia', headerName: 'urgencia', width: 130, align: 'center', headerAlign: 'center'},
-        { field: 'status', headerName: 'Status', width: 130, align: 'center', headerAlign: 'center' },
-        { field: 'validadeEPI', headerName: 'Validade EPI', width: 150, align: 'center', headerAlign: 'center' },
+        { field: 'id', headerName: 'ID', width: 80, align: 'center', headerAlign: 'center' },
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 250, align: 'center', headerAlign: 'center' },
+        { field: 'urgencia', headerName: 'Urgência', width: 120, align: 'center', headerAlign: 'center'},
+        { field: 'status', headerName: 'Status', width: 120, align: 'center', headerAlign: 'center' },
+        { field: 'validadeEPI', headerName: 'Validade EPI', width: 120, align: 'center', headerAlign: 'center' },
+        { field: 'solicitante', headerName: 'Solicitante', width: 250, align: 'center', headerAlign: 'center'},
         { 
             field: 'download',
             type: 'actions',
@@ -122,23 +126,26 @@ export const Solicitacoes = () => {
                     }}
                 />,
             ],
-            width: 90,
+            width: 70,
             align: 'center',
             headerAlign: 'center'
         }
     ];
 
-    const rows = solicitacoes?.map((solicitacao: SolicitacaoProps) => ({
-        id: solicitacao.id,
-        descricaoItem: solicitacao.epi.descricao,
-        urgencia: solicitacao.urgencia,
-        status: solicitacao.status,
-        validadeEPI: getValidadeEPI(solicitacao.epi.codigo),
-    })) ?? [];
+    const rows = useMemo(() => 
+        solicitacoes?.map((solicitacao: SolicitacaoProps) => ({
+            id: solicitacao.id,
+            descricaoItem: solicitacao.equipamento.descricao,
+            urgencia: solicitacao.urgencia,
+            status: solicitacao.status,
+            validadeEPI: getValidadeEPI(solicitacao.equipamento.codigo),
+            solicitante: solicitacao.solicitante.nome
+        })) ?? [], [solicitacoes, getValidadeEPI]
+    );
 
-    // useEffect(() => {
-    //     if (rows) setFilteredRows(rows);
-    // }, [rows]);
+    useEffect(() => {
+        if (rows) setFilteredRows(rows);
+    }, [rows]);
 
     const handleSearch = (value: string) => {
         setSearchTerm(value);
@@ -146,26 +153,34 @@ export const Solicitacoes = () => {
             setFilteredRows(rows);
             return;
         }
+
+        const normalized = (text: string | undefined) =>
+            (text ?? '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
         setFilteredRows(
-            rows.filter(
-                (row) =>
-                    row.descricaoItem?.toLowerCase().includes(value.toLowerCase()) ||
+            rows.filter((row) => {
+                return (
+                    normalized(row.descricaoItem).includes(normalized(value)) ||
+                    normalized(row.status).includes(normalized(value)) ||
+                    normalized(row.urgencia).includes(normalized(value)) ||
+                    normalized(row.solicitante).includes(normalized(value)) ||
                     row.id?.toString().includes(value)
-            )
+                );
+            })
         );
     };
 
     return(
         <S.MainStyled>
-            {filteredRows && filteredRows.length > 0 ? (
+            {rows && rows.length > 0 ? (
                 <>
                     <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                         <S.DivBtnSearch>
                             <S.ButtonStyled onClick={() => navigate('/administrador/solicitarEPI')}>+ Fazer Solicitação</S.ButtonStyled>
-                            <Searchbar value={searchTerm} onSearch={handleSearch} />
+                            <Searchbar placeholder='Buscar por ID, item, status, urgência ou solicitante...' value={searchTerm} onSearch={handleSearch} />
                         </S.DivBtnSearch>
                         <DataGrid
-                            rows={filteredRows}
+                            rows={filteredRows.length > 0 || searchTerm ? filteredRows : rows}
                             columns={columns}
                             autoHeight
                             initialState={{
