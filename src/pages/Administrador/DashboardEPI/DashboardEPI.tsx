@@ -25,17 +25,18 @@ export const DashboardEPI = () => {
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idEpi, setIdEpi] = useState(0);
 
-    const rows = useMemo(() => {
-        return epis?.map((epi: EPIProps) => ({
-            id: epi.codigo,
+    const rows = epis
+        ?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
+        .map((epi: EPIProps) => ({
+            id: epi.id,
             codigo: epi.codigo,
             descricao: epi.descricao,
             preco: epi.preco,
             qtd: epi.qtd,
             ca: epi.ca,
             data_validade: new Date(epi.data_validade).toLocaleDateString('pt-BR')
-        }));
-    }, [epis]);
+        })
+    );
 
     const openModal = (id: number) => {
         setModalIsOpenAddEpi(true);

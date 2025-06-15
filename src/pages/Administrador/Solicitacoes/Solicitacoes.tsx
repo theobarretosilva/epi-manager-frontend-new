@@ -239,7 +239,7 @@ export const Solicitacoes = () => {
                         <InputDisable text={solicitacao?.quantidade + ''} title="Quantidade" type="number" />
                         <InputDisable text={solicitacao?.descricaoItem ?? ''} title="Item" type="text" />
                         <InputDisable text={solicitacao?.codigoEPI + ''} title="Código" type="text" />
-                        <SelectInput disable={true} text={solicitacao?.urgencia ?? ''} title="urgencia" />
+                        <SelectInput disable={true} text={solicitacao?.urgencia ?? ''} title="Urgência" />
                         <InputDisable text={getCAEPI(solicitacao?.codigoEPI)} title="CA" type="text" />
                         <InputDisable text={getValidadeEPI(solicitacao?.codigoEPI)?.toLocaleString?.() || getValidadeEPI(solicitacao?.codigoEPI)?.toString?.() || 'N/A'}  title="Validade do EPI" type="text" />
                     </S.DivWrapper>

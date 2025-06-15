@@ -6,7 +6,7 @@ import { queryClientInstance } from "../lib/tanstack-query"
 export const useDeleteEPI = () => {
     const deleteEPIMutation = useMutation({
         mutationFn: (id: number) => {
-            const deletePromise = axiosInstance.delete(`/equipamentos/${id}`)
+            const deletePromise = axiosInstance.patch(`/equipamentos/${id}/status`);
             toast.promise(deletePromise, {
                 pending: 'Deletando...',
                 success: 'EPI excluído!',
