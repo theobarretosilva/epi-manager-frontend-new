@@ -55,9 +55,9 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
         },
         onError: (error: AxiosError<ResponseError>) => {
             const errorMessage = error.response?.data.message;
-            const isRepeatedCnpj = errorMessage?.toLocaleLowerCase().includes('cpf');
+            const isRepeatedCpf = errorMessage?.toLocaleLowerCase().includes('cpf');
 
-            if (isRepeatedCnpj) {
+            if (isRepeatedCpf) {
                 setError('cpf', { message: 'Já existe um registro com esse CPF' })
                 return
             };
@@ -100,6 +100,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
             createColabMutation.mutate(data);
         }
     };
+    
     return {
         handleSubmit,
         onSubmit: handleFormSubmit,

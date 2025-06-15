@@ -7,7 +7,7 @@ export interface EPIProps {
     preco: number;
     qtd: number;
     ca: string;
-    data_validade: Date;
+    dataValidade: Date;
     solicitacoes: SolicitacaoProps[];
     status_uso: string;
 }

@@ -26,5 +26,13 @@ export const schemas = {
         matricula_responsavel: validators.matricula,
         descricaoItem: validators.descricaoItem,
         solicitante: validators.solicitante                
+    }),
+    epiForm: yup.object().shape({
+        descricao: validators.descricaoItem,
+        ca: validators.ca,
+        dataValidade: validators.dataValidade,
+        preco: validators.preco,
+        qtd: validators.qtd,
+        codigo: validators.codigo
     })
 }

@@ -1,149 +1,89 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
 import * as S from "./AdicionarEpi.styles";
-import { toast } from "react-toastify";
 import { InputStyled } from "../InputStyled/InputStyled";
+import { EPIProps } from "../../props/episProps";
+import { useGetEPIS } from "../../hooks/useGetEPIS";
+import { AddEpiProps } from "../../props/addEpiProps";
+import { useCadastroNewEPIForm } from "../../hooks/useCadastroNewEPIForm";
+import { SubmitHandler } from "react-hook-form";
 
-const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, modalIsOpen, idEpi }) => {
-  const epis = JSON.parse(sessionStorage.getItem("EPIsCadastrados") || "[]");
-  const [descricaoItem, setDescricaoItem] = useState("");
-  const [codigo, setCodigo] = useState("");
-  const [certificadoAprovacao, setCertificadoAprovacao] = useState("");
-  const [validade, setValidade] = useState("");
-  const [linkFoto, setLinkFoto] = useState("");
+const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEpi, setIdEpi }) => {
+  const { epis } = useGetEPIS();
+  const { 
+    defaultValues,
+    errors,
+    handleSubmit,
+    onSubmit,
+    register,
+    reset,
+    responseError,
+    setValue,
+  } = useCadastroNewEPIForm({setIdEpi, setModalIsOpen, modalIsOpen});
 
   useEffect(() => {
-    if (modalIsOpen && idEpi) {
-      const epi = epis.find((epi: any) => epi.id === idEpi);
-      if (epi) {
-        setDescricaoItem(epi.descricaoItem);
-        setCodigo(epi.codigo);
-        setCertificadoAprovacao(epi.certificadoAprovacao);
-        setValidade(epi.validade);
-        setLinkFoto(epi.linkFoto);
-      }
+    if (!modalIsOpen || !epis) return;
+
+    const epi = epis?.find((epi: EPIProps) => epi.id === idEpi);
+    
+    if (idEpi && epi) {
+      setValue("descricao", epi.descricao ?? "");
+      setValue("codigo", epi.codigo);
+      setValue("ca", epi.ca ?? "");
+      setValue("dataValidade", epi.dataValidade.toISOString().split("T")[0]);
     } else {
-      setDescricaoItem(" ");
-      setCodigo(" ");
-      setCertificadoAprovacao(" ");
-      setValidade(" ");
-      setLinkFoto(" ")
+      reset(defaultValues);
     }
-  }, [idEpi, modalIsOpen]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "descricaoItem":
-        setDescricaoItem(value);
-        break;
-      case "codigo":
-        setCodigo(value);
-        break;
-      case "certificadoAprovacao":
-        {
-          const sanitized = value.startsWith("CA") ? value : `CA${value.replace(/^CA/i, "")}`;
-          setCertificadoAprovacao(sanitized);
-        }
-        break;
-      case "validade":
-        {
-          let input = value.replace(/\D/g, '');
-          if (input.length > 8) input = input.slice(0, 8);
-        
-          let formatted = input;
-          if (input.length > 4) {
-            formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}/${input.slice(4)}`;
-          } else if (input.length > 2) {
-            formatted = `${input.slice(0, 2)}/${input.slice(2)}`;
-          }
-        
-          setValidade(formatted);
-        }
-        break;
-      case "linkFoto":
-        setLinkFoto(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!descricaoItem || !codigo || !certificadoAprovacao || !validade || !linkFoto) {
-      toast.warning("Por favor, preencha todos os campos.", {
-        autoClose: 6000,
-        closeOnClick: true,
-      });
-    } else {
-      try {
-        const epi = {
-          id: codigo,
-          descricaoItem,
-          codigo,
-          certificadoAprovacao,
-          validade,
-          linkFoto
-        };
-
-        if (idEpi) {
-          const index = epis.findIndex((e: any) => e.id === idEpi);
-          if (index !== -1) epis[index] = epi;
-        } else {
-          epis.push(epi);
-        }
-
-        sessionStorage.setItem("EPIsCadastrados", JSON.stringify(epis));
-        toast.success(idEpi ? "EPI atualizado com sucesso!" : "EPI adicionado com sucesso!", {
-          autoClose: 6000,
-          closeOnClick: true,
-        });
-        setModalIsOpen(false);
-      } catch (error) {
-        toast.error("Ocorreu um erro ao salvar o EPI");
-      }
-    }
-  };
+  }, [defaultValues, epis, idEpi, modalIsOpen, reset, setValue]);
 
   return (
-    <S.FormContainer onSubmit={handleSave}>
+    <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<unknown>)}>
       <S.DivWrapper>
         <InputStyled
-          value={descricaoItem}
+          {...register("descricao")}
           tipo="text"
           titulo="Descrição do Item"
-          name="descricaoItem"
-          onChange={handleChange}
+          name="descricao"
         />
+        <p style={{color: 'red', margin: '0'}}>{errors.descricao?.message}</p>
         <InputStyled
-          value={codigo}
-          tipo="text"
-          titulo="Código"
-          name="codigo"
-          onChange={handleChange}
-        />
-        <InputStyled
-          value={certificadoAprovacao}
+          {...register("ca")}
           tipo="text"
           titulo="Certificado de Aprovação"
-          name="certificadoAprovacao"
-          onChange={handleChange}
+          name="ca"
         />
+        <p style={{color: 'red', margin: '0'}}>{errors.ca?.message}</p>
         <InputStyled
-          value={validade}
-          tipo="text"
+          {...register("dataValidade")}
+          tipo="date"
           titulo="Data de Validade"
-          name="validade"
-          onChange={handleChange}
+          name="dataValidade"
         />
-        <InputStyled 
-          value={linkFoto}
-          tipo="url"
-          titulo="Link da foto"
-          name="linkFoto"
-          onChange={handleChange}
+        <p style={{color: 'red', margin: '0'}}>{errors.dataValidade?.message}</p>
+        <InputStyled
+          {...register("preco")}
+          tipo="number"
+          titulo="Preço"
+          name="preco"
         />
+        <p style={{color: 'red', margin: '0'}}>{errors.preco?.message}</p>
+        <InputStyled
+          {...register("qtd")}
+          tipo="number"
+          titulo="Quantidade"
+          name="qtd"
+        />
+        <p style={{color: 'red', margin: '0'}}>{errors.qtd?.message}</p>
+        {idEpi !== null && idEpi !== undefined && (
+          <InputStyled
+            {...register("codigo")}
+            tipo="number"
+            titulo="Código"
+            name="codigo"
+            disabled={true}
+          />
+        )}
+        {!!responseError && <p style={{margin: 0}}>{responseError}</p>}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
     </S.FormContainer>

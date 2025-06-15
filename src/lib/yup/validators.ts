@@ -81,5 +81,17 @@ export const validators = {
     .required(errorMessages.required),
   id: yup
     .number()
+    .optional(),
+  ca: yup
+    .string()
+    .required(errorMessages.required),
+  dataValidade: yup
+    .string()
+    .required(errorMessages.required),
+  preco: yup
+    .number()
+    .required(errorMessages.required),
+  codigo: yup
+    .number()
     .optional()
 }
