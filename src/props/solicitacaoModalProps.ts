@@ -2,7 +2,7 @@ import { Urgencia } from "../enums/Urgencia";
 import { ColaboradorProps } from "./colaboradorProps";
 
 export interface SolicitacaoModalProps {
-  descricaoItem: string | undefined;
+  descricao: string | undefined;
   id: number | undefined;
   status: string | undefined;
   dataSolicitacao: Date | undefined;
@@ -10,5 +10,5 @@ export interface SolicitacaoModalProps {
   quantidade: number | undefined;
   codigoEPI: number | undefined;
   urgencia: Urgencia | undefined;
-  dataConclusao: Date | undefined;
+  dataConclusao: string | Date | undefined;
 }

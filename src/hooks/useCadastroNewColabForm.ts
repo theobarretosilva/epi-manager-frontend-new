@@ -12,7 +12,7 @@ import { AddColaboradorProps } from "../props/addColaboradorProps";
 
 export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColaboradorProps) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
-        matricula: 0,
+        matricula: "",
         nome: "",
         cpf: "",
         cargo: "",
@@ -21,6 +21,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
         nome_lideranca: "Sem liderança",
         permissao: TipoPermissao.COLABORADOR,
         senha: "",
+        email: ""
     }), []);
 
     const [responseError, setResponseError] = useState('');

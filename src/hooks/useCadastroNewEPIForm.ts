@@ -13,10 +13,11 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps)
     const defaultValues = useMemo<EpiForm>(() => ({
         descricao: '',
         ca: '',
-        dataValidade: '',
+        data_validade: '',
         preco: 0,
         qtd: 0,
-        codigo: undefined
+        codigo: undefined,
+        foto: ''
     }), []);
 
     const [responseError, setResponseError] = useState('');
@@ -40,7 +41,7 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps)
     const createEpiMutation = useMutation({
         mutationFn: (data: EpiForm) => {
             setResponseError('');
-            const createEpiPromise = axiosInstance.post('/equipamento/create', data);
+            const createEpiPromise = axiosInstance.post('/equipamentos/create', data);
             toast.promise(createEpiPromise, {
                 pending: 'Processando...',
                 success: 'EPI criado!',

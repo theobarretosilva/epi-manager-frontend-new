@@ -16,23 +16,26 @@ export const schemas = {
         nome_lideranca: validators.nome_lideranca,
         permissao: validators.permissao,
         senha: validators.password,
-        id: validators.id
+        id: validators.id,
+        email: validators.email
     }),
     solicitarEpiForm: yup.object().shape({
         equipamentoId: validators.equipamentoId,
         qtd: validators.qtd,
         urgencia: validators.urgencia,
         responsavel: validators.responsavel,
-        matricula_responsavel: validators.matricula,
+        matricula_responsavel: validators.matricula_responsavel,
         descricaoItem: validators.descricaoItem,
-        solicitante: validators.solicitante                
+        solicitante: validators.solicitante,
+        responsavelEPI: validators.responsavelEpi
     }),
     epiForm: yup.object().shape({
         descricao: validators.descricaoItem,
         ca: validators.ca,
-        dataValidade: validators.dataValidade,
+        data_validade: validators.data_validade,
         preco: validators.preco,
         qtd: validators.qtd,
-        codigo: validators.codigo
+        codigo: validators.codigo,
+        foto: validators.foto
     })
 }

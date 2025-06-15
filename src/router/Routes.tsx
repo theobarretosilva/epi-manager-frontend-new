@@ -20,19 +20,19 @@ export const Router = () => {
             <Route index path="/login" element={<Login/>} />
             {/* <Route path="/esqueciSenha" element={<EsqueciSenha/>} /> */}
 
-            <Route path="/colaborador" element={<ProtectedRoute element={<ColabLayout />} roles={['Colaborador']} />}>
+            <Route path="/colaborador" element={<ProtectedRoute element={<ColabLayout />} roles={['colaborador']} />}>
                 <Route path="solicitacoes" element={<SolicitacoesFunc />} />
                 <Route path="solicitarEPI" element={<SolicitarEPI />} />
             </Route>
 
-            <Route path="/almoxarifado" element={<ProtectedRoute element={<AlmoxLayout />} roles={['Almoxarifado']} />} >
+            <Route path="/almoxarifado" element={<ProtectedRoute element={<AlmoxLayout />} roles={['almoxarifado']} />} >
                 <Route path="dashboardAlmox" element={<DashboardAlmox />} />
                 <Route path="consultColab" element={<ConsultColab />} />
                 <Route path="consultEPI" element={<ConsultEPI />} />
                 <Route path="solicitarEPI" element={<SolicitarEPI />} />
             </Route>
 
-            <Route path="/administrador" element={<ProtectedRoute element={<AdminLayout />} roles={['ADMIN']} />} >
+            <Route path="/administrador" element={<ProtectedRoute element={<AdminLayout />} roles={['admin']} />} >
                 <Route path="solicitacoes" element={<Solicitacoes />} />
                 <Route path="dashboardEPI" element={<DashboardEPI />} />
                 <Route path="dashboardColaborador" element={<DashboardColab />} />

@@ -30,7 +30,8 @@ export const useHandleFormSolicitarEPI = () => {
         responsavel: '',
         matricula_responsavel: '',
         descricaoItem: '',
-        solicitante: ''
+        solicitante: '',
+        responsavelEPI: ''
     }), []);
 
     const {
@@ -48,7 +49,12 @@ export const useHandleFormSolicitarEPI = () => {
     const createSolicitacaoEpi = useMutation({
         mutationFn: (data: SolicitarEpiForm) => {
             setResponseError('');
-            const createSolicitacaoPromise = axiosInstance.post('/solicitacoes/create', data);
+            const dataParaEnviar = {
+                ...data,
+                solicitanteId: userLogado?.id,
+            };
+            console.log(dataParaEnviar)
+            const createSolicitacaoPromise = axiosInstance.post('/solicitacoes/create', dataParaEnviar);
             toast.promise(createSolicitacaoPromise, {
                 pending: 'Processando...',
                 success: 'Solicitação feita!',

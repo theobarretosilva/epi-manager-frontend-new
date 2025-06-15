@@ -4,17 +4,7 @@ import * as S from './ConsultColab.styles'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useState } from 'react'
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow'
-
-interface ColaboradorProps {
-    id: string;
-    nome: string; 
-    matricula: string;
-    setor: string;
-    cargo: string;
-    email: string;
-    hash: string;
-    salt: string;
-}
+import { ColaboradorProps } from '../../../props/colaboradorProps'
 
 export const ConsultColab = () => {
     const colaboradores = JSON.parse(sessionStorage.getItem('ColaboradoresCadastrados') || '{}');
@@ -53,7 +43,7 @@ export const ConsultColab = () => {
             <S.MainStyled>
                 {filteredRows.length > 0 ? (
                     <>
-                        <Searchbar placeholder='Pesquise pela matricula ou nome' onSearch={handleSearch} />
+                        <Searchbar value={searchTerm} placeholder='Pesquise pela matricula ou nome' onSearch={handleSearch} />
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <DataGrid
                                 rows={filteredRows}

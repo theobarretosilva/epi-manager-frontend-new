@@ -5,13 +5,11 @@ import asideImage from '../../assets/img/aside_login.jpg';
 import logoImage from '../../assets/img/logo.png';
 import { useLoginForm } from '../../hooks/useLoginForm';
 import { CircularProgress } from '@mui/material';
-import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 
 export const Login = () => {
     const { isLoading, onSubmit, errors, register, responseError } = 
         useLoginForm();
-    const navigate = useNavigate();
 
     const LoginButtonLabel = isLoading ? (
         <CircularProgress size="1.5rem" color="inherit" />

@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, roles }) => {
-    const userRole = sessionStorage.getItem("TipoAcesso");
+    const userRole = sessionStorage.getItem("TipoAcesso")?.toLowerCase();
 
     if (userRole && roles.includes(userRole)) {
         return element;

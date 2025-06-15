@@ -30,7 +30,7 @@ export const InputStyled = styled.input`
     }
 `
 export interface InputDisableProps {
-    text: string; 
+    text: string | undefined | Date | number; 
     title: string; 
     type: string;
     name?: string;

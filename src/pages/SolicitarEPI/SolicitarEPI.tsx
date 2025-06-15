@@ -12,9 +12,11 @@ import { useGetUserLogado } from '../../hooks/useGetUserLogado';
 import { useHandleFormSolicitarEPI } from '../../hooks/useHandleFormSolicitarEPI';
 import { Urgencia } from '../../enums/Urgencia';
 import { OptionProps } from '../../props/optionProps';
+import { useGetColaboradores } from '../../hooks/useGetColaboradores';
 
 export const SolicitarEPI = () => {
     const { userLogado } = useGetUserLogado();
+    console.log('userLogado id:', userLogado?.id);
     const { 
         onSubmit,
         handleSubmit,
@@ -28,6 +30,8 @@ export const SolicitarEPI = () => {
     const navigate = useNavigate();
     const tipoAcessoStorage = sessionStorage.getItem('TipoAcesso');
     const tipoAcesso = tipoAcessoStorage?.toLowerCase() || userLogado?.permissao?.toLowerCase() || 'colaborador';
+    const { colaboradores } = useGetColaboradores();
+    const colaboradoresList = colaboradores?.filter((colab) => colab.nome_lideranca == userLogado?.nome);
 
     const options: OptionProps[] = (epis ?? []).map((epi: EPIProps) => ({
         label: epi.descricao || '',
@@ -43,7 +47,7 @@ export const SolicitarEPI = () => {
         if (userLogado?.nome) {
             setValue('solicitante', userLogado.nome);
             setValue('responsavel', userLogado.nome || '');
-            setValue('matricula_responsavel', userLogado.matricula || '');
+            setValue('matricula_responsavel', userLogado.matricula + '');
         }
     }, [setValue, userLogado]);
 
@@ -58,12 +62,26 @@ console.log('Erros do formulário:', errors);
     return (
         <S.MainStyled>
             <S.FormMainSolicitar onSubmit={handleSubmit(onSubmit)}>
-                <InputStyled 
-                    tipo="text"
-                    titulo="Solicitante"
-                    disabled
-                    value={watch('solicitante')}
-                />
+                <S.DivFlex>
+                    <InputStyled 
+                        tipo="text"
+                        titulo="Solicitante"
+                        disabled
+                        value={watch('solicitante')}
+                    />
+                    <SelectStyled
+                        titulo="Responsável pelo EPI"
+                        value={watch('responsavelEPI')}
+                        options={colaboradoresList?.map(colab => colab.nome) || []}
+                        onChange={(e) => {
+                            const value = e?.target?.value;
+                            if (value) setValue("responsavelEPI", value);
+                        }}
+                        name='responsavelEPI'
+                        disabled={!colaboradoresList || colaboradoresList.length === 0}
+                    />
+                </S.DivFlex>
+                
                 <p style={{color: 'red', margin: '0'}}>{errors.solicitante?.message}</p>
                 <S.DivFlex>
                     <SelectCodStyled

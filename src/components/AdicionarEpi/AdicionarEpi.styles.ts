@@ -5,7 +5,7 @@ export const FormContainer = styled.form`
   padding: 2rem;
   background-color: transparent;
   border-radius: 8px;
-  height: 80vh;
+  height: auto;
 
   @media (max-width: 768px) {
     width: 90vw;
@@ -14,7 +14,7 @@ export const FormContainer = styled.form`
 `;
 
 export const DivWrapper = styled.div`
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   display: flex;
   flex-wrap: wrap; 
   gap: 1vh;
@@ -24,3 +24,10 @@ export const DivWrapper = styled.div`
     padding: 1.5rem;
   }
 `;
+
+export const DivInputs = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 2vw;
+`

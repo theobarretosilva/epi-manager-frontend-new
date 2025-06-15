@@ -18,7 +18,7 @@ export const validators = {
     .required(errorMessages.required)
     .min(8, errorMessages.passwordLength),
   matricula: yup
-    .number()
+    .string()
     .required(errorMessages.required),
   matricula_login: yup
     .string()
@@ -36,7 +36,7 @@ export const validators = {
     .date().default(() => new Date()),
   lideranca: yup
     .boolean()
-    .required(errorMessages.required),
+    .required(),
   matricula_lideranca: yup
     .number()
     .required(errorMessages.required),
@@ -52,14 +52,7 @@ export const validators = {
       'CPF inválido'
     ),
   nome_lideranca: yup
-  .string()
-  .when("lideranca", {
-    is: false, // se não for liderança, o campo é obrigatório
-    then: (schema) =>
-      schema.required("Selecione um nome de liderança"),
-    otherwise: (schema) => 
-      schema.oneOf(["Sem liderança"]),
-  }),
+  .string(),
   equipamentoId: yup
     .number()
     .required(errorMessages.required),
@@ -85,7 +78,7 @@ export const validators = {
   ca: yup
     .string()
     .required(errorMessages.required),
-  dataValidade: yup
+  data_validade: yup
     .string()
     .required(errorMessages.required),
   preco: yup
@@ -93,5 +86,14 @@ export const validators = {
     .required(errorMessages.required),
   codigo: yup
     .number()
+    .optional(),
+  matricula_responsavel: yup
+    .string()
+    .required(errorMessages.required),
+  foto: yup
+    .string()
+    .required(errorMessages.required),
+  responsavelEpi: yup
+    .string()
     .optional()
 }

@@ -3,7 +3,7 @@ import * as S from './ModuloNSoliciDash.styles';
 import { SolicitacaoProps } from '../../props/solicitacao.props';
 
 interface ModuloNSoliciDashProps {
-  solicitacoes: SolicitacaoProps[];
+  solicitacoes: SolicitacaoProps[] | undefined;
 }
 
 export const ModuloNSoliciDash = ({ solicitacoes }: ModuloNSoliciDashProps) => {
@@ -12,7 +12,7 @@ export const ModuloNSoliciDash = ({ solicitacoes }: ModuloNSoliciDashProps) => {
     let aprovadas = 0;
     let recusadas = 0;
 
-    solicitacoes.forEach((s) => {
+    solicitacoes?.forEach((s) => {
       const status = s.status.toLowerCase();
       if (status === 'pendente') {
         pendentes += 1;

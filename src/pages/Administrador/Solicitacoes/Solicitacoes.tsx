@@ -157,9 +157,9 @@ export const Solicitacoes = () => {
             descricaoItem: solicitacao.equipamento.descricao,
             urgencia: solicitacao.urgencia,
             status: solicitacao.status,
-            validadeEPI: getValidadeEPI(solicitacao.equipamento.codigo),
+            validadeEPI: new Date(solicitacao.equipamento.data_validade).toLocaleDateString('pt-BR'),
             solicitante: solicitacao.solicitante.nome
-        })) ?? [], [solicitacoes, getValidadeEPI]
+        })) ?? [], [solicitacoes]
     );
 
     useEffect(() => {

@@ -6,10 +6,11 @@ import { toast } from "react-toastify";
 
 import documentIcon from "../../assets/img/document.png";
 import settingIcon from "../../assets/img/setting.png";
+import { useGetEPIS } from "../../hooks/useGetEPIS";
 
 export function ColabLayout() {
     const navigate = useNavigate();
-    const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
+    const { epis } = useGetEPIS();
 
     const linksColabLayout = [
         { 
@@ -23,7 +24,7 @@ export function ColabLayout() {
             href: '/colaborador/solicitarEPI',
             image: settingIcon,
             onClick: () => {
-                if (EPIsCadastrados.length === 0) {
+                if (epis?.length === 0) {
                     toast.error("Não existem EPI's cadastrados, contate o Administrador!");
                 } else {
                     toast.success("Abrindo solicitação de EPI!", { autoClose: 2000 });

@@ -5,8 +5,8 @@ import * as S from "./DashboardEPI.styles"
 import { ToastContainer } from "react-toastify";
 import AdicionarEpi from "../../../components/AdicionarEpi/AdicionarEPI";
 import { Searchbar } from "../../../components/Searchbar/Searchbar";
-import { Paper } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from "@mui/x-data-grid";
+import { Box, Modal, Paper } from "@mui/material";
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
 import { EditColabIcon } from "../../../components/EditColabIcon/EditColabIcon";
 import { DeleteIcon } from "../../../components/DeleteIcon/DeleteIcon";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
@@ -28,6 +28,7 @@ export const DashboardEPI = () => {
     const rows = epis
         ?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
         .map((epi: EPIProps) => ({
+            foto: epi.foto,
             id: epi.id,
             codigo: epi.codigo,
             descricao: epi.descricao,
@@ -68,6 +69,16 @@ export const DashboardEPI = () => {
         },
     };
 
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const handleImageClick = (link: string) => {
+        setSelectedImage(link);
+    };
+
+    const handleClose = () => {
+        setSelectedImage(null);
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'editar',
@@ -81,15 +92,29 @@ export const DashboardEPI = () => {
                     onClick={() => openModal(params.row.id)}
                 />,
             ],
-            width: 90,
+            width: 70,
         },
-        { field: 'id', headerName: 'ID', width: 90, align: 'center', headerAlign: 'center'},
-        { field: 'codigo', headerName: 'Código', width: 90, align: 'center', headerAlign: 'center'},
+        {
+            field: 'foto',
+            headerName: 'Foto',
+            width: 100,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params: GridRenderCellParams) => (
+                <S.FotoEPI 
+                    onClick={() => handleImageClick(params.row.foto)}
+                    src={params.row.foto}
+                    alt="EPI"
+                />
+            )
+        },
+        { field: 'id', headerName: 'ID', width: 80, align: 'center', headerAlign: 'center'},
+        { field: 'codigo', headerName: 'Código', width: 80, align: 'center', headerAlign: 'center'},
         { field: 'descricao', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
-        { field: 'preco', headerName: 'Preço', width: 110, align: 'center', headerAlign: 'center' },
-        { field: 'qtd', headerName: 'Quantidade', width: 110, align: 'center', headerAlign: 'center' },
-        { field: 'ca', headerName: 'CA', width: 110, align: 'center', headerAlign: 'center' },
-        { field: 'data_validade', headerName: 'Validade', width: 110, align: 'center', headerAlign: 'center'},
+        { field: 'preco', headerName: 'Preço', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'qtd', headerName: 'Quantidade', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'ca', headerName: 'CA', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'data_validade', headerName: 'Validade', width: 100, align: 'center', headerAlign: 'center'},
         { 
             field: 'deletar',
             type: 'actions',
@@ -102,7 +127,7 @@ export const DashboardEPI = () => {
                     onClick={()=> openModalDelete(params.row.id)}
                 />,
             ],
-            width: 90,
+            width: 70,
             align: 'center',
             headerAlign: 'center'
         }
@@ -233,9 +258,30 @@ export const DashboardEPI = () => {
                         modalIsOpen={modalIsOpenAddEpi}
                         idEpi={idEpi}
                         setModalIsOpen={setModalIsOpenAddEpi}
+                        setIdEpi={setIdEpi}
                     />
                 </S.MainWrapper>
             </ReactModal>
+
+            <Modal open={!!selectedImage} onClose={handleClose}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 2,
+                        borderRadius: 2,
+                        maxWidth: '90vw',
+                        maxHeight: '90vh',
+                        overflow: 'auto'
+                    }}
+                >
+                    <img src={selectedImage!} alt="EPI Ampliado" style={{ width: '100%', height: 'auto' }} />
+                </Box>
+            </Modal>
         </>
     )
 }

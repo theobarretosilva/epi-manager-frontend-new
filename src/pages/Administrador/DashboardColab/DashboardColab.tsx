@@ -200,7 +200,8 @@ export const DashboardColab = () => {
                 "Setor", 
                 "Permissão", 
                 "Liderança", 
-                "Nome da Liderança", 
+                "Nome da Liderança",
+                "Email"
             ]],
             body: colaboradores?.map((colab) => [
                 colab.id,
@@ -211,6 +212,7 @@ export const DashboardColab = () => {
                 colab.permissao,
                 colab.lideranca ? "Sim" : "Não",
                 colab.nome_lideranca || "",
+                colab.email,
             ]),
             styles: {
                 fontSize: 8,

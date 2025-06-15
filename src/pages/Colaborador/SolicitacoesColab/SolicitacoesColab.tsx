@@ -3,58 +3,40 @@ import * as S from './SolicitacoesColab.styles';
 import { Searchbar } from '../../../components/Searchbar/Searchbar';
 import { DataGrid, GridActionsCellItem, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { OpenModalIcon } from '../../../components/OpenModalIcon/OpenModalIcon';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import ReactModal from 'react-modal';
 import { InputDisable } from '../../../components/InputDisable/InputDisable';
 import { SelectInput } from '../../../components/SelectInput/SelectInput';
 import { useModalDetalhesSolicitacao } from '../../../hooks/useModalDetalhesSolicitacao';
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow';
 import { ModuloNSoliciDash } from '../../../components/ModuloNSoliciDash/ModuloNSoliciDash';
-
-interface SolicitacaoProps {
-  id: string;
-  descricaoItem: string;
-  status: string;
-  codigoEPI: string;
-}
-
-interface EPIProps {
-  descricaoItem: string;
-  codigo: string;
-  certificadoAprovacao: string;
-  validade: string;
-}
+import { useGetEPIS } from '../../../hooks/useGetEPIS';
+import { EPIProps } from '../../../props/episProps';
+import { SolicitacaoProps } from '../../../props/solicitacao.props';
+import { SolicitacaoModalProps } from '../../../props/solicitacaoModalProps';
+import { useGetSolicitacoesUser } from '../../../hooks/useGetSolicitacoesUser';
 
 export const SolicitacoesFunc = () => {
-  const { 
-    isOpen,
-    descricaoItem,
-    id,
-    status,
-    dataSolicitacao,
-    solicitante,
-    quantidade,
-    codigoEPI,
-    numeroPatrimonio,
-    openModal,
-    closeModal 
-  } = useModalDetalhesSolicitacao();
+  const { isOpen, openModal, closeModal } = useModalDetalhesSolicitacao();
+  const { solicitacoesUser } = useGetSolicitacoesUser();
+  console.log(solicitacoesUser)
+  const { epis } = useGetEPIS();
+  const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<SolicitacaoModalProps | null>(null);
 
-  const solicitacoes = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
-  const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
+  const getValidadeEPI = useCallback((cod: number | undefined) => {
+    const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
+    return epi
+      ? new Date(epi.data_validade).toLocaleDateString('pt-BR')
+      : 'N/A';
+  }, [epis]);
 
-  const getValidadeEPI = (cod: string) => {
-    const epi = EPIsCadastrados.find((epi: EPIProps) => epi.codigo === cod);
-    return epi ? epi.validade : 'N/A';
-  };
-
-  const getCAEPI = (cod: string) => {
-    const epi = EPIsCadastrados.find((epi: EPIProps) => epi.codigo === cod);
-    return epi ? epi.certificadoAprovacao : 'N/A';
+  const getCAEPI = (cod: number) => {
+    const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
+    return epi ? epi.ca : 'N/A';
   }
 
   const getSolicitacao = (params: SolicitacaoProps) => {
-    const solicitacao = solicitacoes.find((solicitacao: SolicitacaoProps) => solicitacao.id == params.id);
+    const solicitacao = solicitacoesUser?.find((solicitacao: SolicitacaoProps) => solicitacao.id == params.id);
     return solicitacao;
   }
 
@@ -68,35 +50,70 @@ export const SolicitacoesFunc = () => {
           key={0}
           icon={<OpenModalIcon />}
           label="Abrir"
-          onClick={() => openModal(getSolicitacao(params.row as SolicitacaoProps))}
+          onClick={() => {
+            const solicitacao = getSolicitacao(params.row as SolicitacaoProps);
+            if (solicitacao) {
+              const dadosModal: SolicitacaoModalProps = {
+                id: solicitacao.id,
+                descricao: solicitacao.equipamento?.descricao ?? 'Descrição não informada',
+                status: solicitacao.status,
+                dataSolicitacao: solicitacao.dataAbertura ?? '-',
+                dataConclusao: solicitacao.dataConclusao ?? '-',
+                solicitante: solicitacao.solicitante,
+                quantidade: solicitacao.qtd ?? 0,
+                codigoEPI: solicitacao.equipamento?.codigo ?? 0,
+                urgencia: solicitacao.urgencia ?? 'Normal',
+              };
+              setSolicitacaoSelecionada(dadosModal);
+              openModal(dadosModal);
+            }
+          }}
         />,
       ],
-      width: 100,
+      width: 70,
     },
-    { field: 'id', headerName: 'ID', width: 230, align: 'center', headerAlign: 'center' },
-    { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
-    { field: 'status', headerName: 'Status', width: 220, align: 'center', headerAlign: 'center' },
-    { field: 'validadeEPI', headerName: 'Validade EPI', width: 220, align: 'center', headerAlign: 'center' },
+    { field: 'id', headerName: 'ID', width: 90, align: 'center', headerAlign: 'center' },
+    { field: 'dataAbertura', headerName: 'Data da solicitação', width: 180, align: 'center', headerAlign: 'center' },
+    { field: 'descricao', headerName: 'EPI', width: 250, align: 'center', headerAlign: 'center' },
+    { field: 'qtd', headerName: 'Quantidade', width: 150, align: 'center', headerAlign: 'center' },
+    { field: 'status', headerName: 'Status', width: 200, align: 'center', headerAlign: 'center' },
+    { field: 'urgencia', headerName: 'Urgência', width: 150, align: 'center', headerAlign: 'center' },
   ];
 
-  const rows = solicitacoes.map((solicitacao: SolicitacaoProps) => ({
-    id: solicitacao.id,
-    descricaoItem: solicitacao.descricaoItem,
-    status: solicitacao.status,
-    validadeEPI: getValidadeEPI(solicitacao.codigoEPI),
-  }));
+  const rows = useMemo(() => 
+    solicitacoesUser?.map((solicitacao: SolicitacaoProps) => ({
+      id: solicitacao.id,
+      dataAbertura: new Date(solicitacao.dataAbertura).toLocaleDateString('pt-BR'),
+      descricao: solicitacao.equipamento.descricao,
+      qtd: solicitacao.qtd,
+      status: solicitacao.status,
+      urgencia: solicitacao.urgencia
+    })) ?? [], [solicitacoesUser]
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRows, setFilteredRows] = useState(rows);
   
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    const filtered = rows.filter(
-      (row) =>
-        row.descricaoItem.toLowerCase().includes(value.toLowerCase()) ||
-        row.id.toLowerCase().includes(value.toLowerCase())
+    if (!value) {
+      setFilteredRows(rows);
+      return;
+    }
+
+    const normalized = (text: string | undefined) =>
+      (text ?? '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    setFilteredRows(
+      rows.filter((row) => {
+        return (
+          normalized(row.descricao).includes(normalized(value)) ||
+          normalized(row.status).includes(normalized(value)) ||
+          normalized(row.urgencia).includes(normalized(value)) ||
+          row.id?.toString().includes(value)
+        );
+      })
     );
-    setFilteredRows(filtered);
   };
 
   const customStyles = {
@@ -117,66 +134,58 @@ export const SolicitacoesFunc = () => {
 
   return (
     <S.MainStyled>
-      {solicitacoes.length > 0 ? (
+      {rows && rows.length > 0 ? (
         <>
-          {filteredRows.length > 0 ? (
-            <>
-              <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
-                <Searchbar onSearch={handleSearch} />
-                <DataGrid
-                  rows={filteredRows}
-                  columns={columns}
-                  pageSizeOptions={[5, 10]}
-                  autoHeight
-                  initialState={{
-                    pagination: {
-                      paginationModel: { pageSize: 3, page: 0 },
-                    },
-                  }}
-                  sx={{
-                    border: 0,
-                    '& .MuiDataGrid-cell': { textAlign: 'center'},
-                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                  }}
-                />
-              </Paper>
-              <S.DivLayoutDash>
-                <ModuloNSoliciDash solicitacoes={solicitacoes} />
-                <ModuloNSoliciDash solicitacoes={solicitacoes} />
-              </S.DivLayoutDash>
-            </>
-          ) : (
-            <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
-              <Searchbar onSearch={handleSearch} />
-              <NoDataToShow mainText={`Nenhuma solicitação encontrada para "${searchTerm}"`} />
-            </Paper>
-          )}
+          <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+            <Searchbar value={searchTerm} onSearch={handleSearch} placeholder='Buscar por ID, item, status ou urgência...' />
+            <DataGrid
+              rows={filteredRows.length > 0 || searchTerm ? filteredRows : rows}
+              columns={columns}
+              pageSizeOptions={[5, 10]}
+              autoHeight
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 3, page: 0 },
+                },
+              }}
+              sx={{
+                border: 0,
+                '& .MuiDataGrid-cell': { textAlign: 'center'},
+                '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
+              }}
+            />
+          </Paper>
+          <S.DivLayoutDash>
+            <ModuloNSoliciDash solicitacoes={solicitacoesUser} />
+            <ModuloNSoliciDash solicitacoes={solicitacoesUser} />
+          </S.DivLayoutDash>
         </>
       ) : (
         <NoDataToShow mainText='Não foram feitas solicitações!' />
       )}
 
-      <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
-        <S.MainWrapper>
-          <S.ImageContent onClick={closeModal}>
-            <S.Image src="../../src/assets/svg/Close.svg" />
-          </S.ImageContent>
-          <S.DivWrapper>
-            <InputDisable text={dataSolicitacao} title="Data de Abertura" type="text" />
-            <InputDisable text="-" title="Data de Conclusão" type="text" />
-            <InputDisable text={status} title="Status" type="text" />
-            <InputDisable text={id} title="ID da Solicitação" type="text" />
-            <InputDisable text={solicitante} title="Solicitante" type="text" />
-            <InputDisable text={quantidade} title="Quantidade" type="number" />
-            <InputDisable text={descricaoItem} title="Descrição do Item" type="text" />
-            <InputDisable text={codigoEPI} title="Código" type="text" />
-            <SelectInput disable={true} text="Normal" title="urgencia" />
-            <InputDisable text={getCAEPI(codigoEPI)} title="Certificado de Aprovação" type="text" />
-            <InputDisable text={getValidadeEPI(codigoEPI)} title="Data de Validade" type="text" />
-            <InputDisable text={numeroPatrimonio} title="Número de Patrimônio" type="text" />
-          </S.DivWrapper>
-        </S.MainWrapper>
-      </ReactModal>
+      {solicitacaoSelecionada && (
+        <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={customStyles}>
+          <S.MainWrapper>
+            <S.ImageContent onClick={closeModal}>
+              <S.Image src="../../src/assets/svg/Close.svg" />
+            </S.ImageContent>
+            <S.DivWrapper>
+              <InputDisable text={solicitacaoSelecionada.dataSolicitacao?.toDateString()} title="Data de Abertura" type="text" />
+              <InputDisable text={solicitacaoSelecionada.dataConclusao} title="Data de Conclusão" type="text" />
+              <InputDisable text={solicitacaoSelecionada.status} title="Status" type="text" />
+              <InputDisable text={solicitacaoSelecionada.id} title="ID da Solicitação" type="text" />
+              <InputDisable text={String(solicitacaoSelecionada.solicitante)} title="Solicitante" type="text" />
+              <InputDisable text={String(solicitacaoSelecionada.quantidade)} title="Quantidade" type="number" />
+              <InputDisable text={solicitacaoSelecionada.descricao} title="Descrição do Item" type="text" />
+              <InputDisable text={String(solicitacaoSelecionada.codigoEPI)} title="Código" type="text" />
+              <SelectInput disable={true} text={solicitacaoSelecionada.urgencia ?? ''} title="Urgência" />
+              <InputDisable text={getCAEPI(solicitacaoSelecionada.codigoEPI ?? 0)} title="Certificado de Aprovação" type="text" />
+              <InputDisable text={getValidadeEPI(solicitacaoSelecionada.codigoEPI)} title="Data de Validade" type="text" />
+            </S.DivWrapper>
+          </S.MainWrapper>
+        </ReactModal>
+      )}
     </S.MainStyled>
   );
 };
