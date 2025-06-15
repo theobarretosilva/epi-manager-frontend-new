@@ -28,6 +28,7 @@ export const BoxForm = styled.div`
     padding: 4vh 4vw 4vh 4vw;
     margin-bottom: 4vh;
     width: 400px;
+    text-align: center;
 
     @media (max-width: 820px) {
         width: 65vw;

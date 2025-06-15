@@ -6,6 +6,7 @@ import logoImage from '../../assets/img/logo.png';
 import { useLoginForm } from '../../hooks/useLoginForm';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 export const Login = () => {
     const { isLoading, onSubmit, errors, register, responseError } = 
@@ -43,7 +44,7 @@ export const Login = () => {
                             {...register('password')}
                         />
                         <p style={{color: 'red', margin: '0'}}>{errors.password?.message}</p>
-                        <S.PEsqueciSenha onClick={() => navigate('/esqueciSenha')}>
+                        <S.PEsqueciSenha onClick={() => toast.info('Entre em contato com a administração para recuperar sua senha!')}>
                             Esqueci a senha
                         </S.PEsqueciSenha>
                         {responseError && <p style={{ color: 'red', marginTop: '5px' }}>{responseError}</p>}

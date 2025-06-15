@@ -10,7 +10,6 @@ import { ConsultColab } from "../pages/Almoxarifado/ConsultColab/ConsultColab";
 import { ConsultEPI } from "../pages/Almoxarifado/ConsultEPI/ConsultEPI";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { SolicitacoesFunc } from "../pages/Colaborador/SolicitacoesColab/SolicitacoesColab";
-import { EsqueciSenha } from "../pages/EsqueciSenha/EsqueciSenha";
 import { ColabLayout } from "../layout/ColabLayout/ColabLayout";
 import { SolicitarEPI } from "../pages/SolicitarEPI/SolicitarEPI";
 
@@ -19,7 +18,7 @@ export const Router = () => {
         <Routes>
             {/* <Route path="/" element={<Usuarios/>} /> */}
             <Route index path="/login" element={<Login/>} />
-            <Route path="/esqueciSenha" element={<EsqueciSenha/>} />
+            {/* <Route path="/esqueciSenha" element={<EsqueciSenha/>} /> */}
 
             <Route path="/colaborador" element={<ProtectedRoute element={<ColabLayout />} roles={['Colaborador']} />}>
                 <Route path="solicitacoes" element={<SolicitacoesFunc />} />
