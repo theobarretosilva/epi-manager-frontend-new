@@ -15,6 +15,7 @@ import { EPIProps } from '../../../props/episProps';
 import { SolicitacaoProps } from '../../../props/solicitacao.props';
 import { SolicitacaoModalProps } from '../../../props/solicitacaoModalProps';
 import { useGetSolicitacoesUser } from '../../../hooks/useGetSolicitacoesUser';
+import { useNavigate } from 'react-router';
 
 export const SolicitacoesFunc = () => {
   const { isOpen, openModal, closeModal } = useModalDetalhesSolicitacao();
@@ -22,6 +23,7 @@ export const SolicitacoesFunc = () => {
   console.log(solicitacoesUser)
   const { epis } = useGetEPIS();
   const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<SolicitacaoModalProps | null>(null);
+  const navigate = useNavigate();
 
   const getValidadeEPI = useCallback((cod: number | undefined) => {
     const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
@@ -137,7 +139,10 @@ export const SolicitacoesFunc = () => {
       {rows && rows.length > 0 ? (
         <>
           <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
-            <Searchbar value={searchTerm} onSearch={handleSearch} placeholder='Buscar por ID, item, status ou urgência...' />
+            <S.DivBtnSearch>
+              <S.ButtonStyled onClick={() => navigate('/colaborador/solicitarEPI')}>+ Fazer Solicitação</S.ButtonStyled>
+              <Searchbar placeholder='Buscar por ID, item, status, urgência ou solicitante...' value={searchTerm} onSearch={handleSearch} />
+            </S.DivBtnSearch>
             <DataGrid
               rows={filteredRows.length > 0 || searchTerm ? filteredRows : rows}
               columns={columns}

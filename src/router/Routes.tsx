@@ -12,6 +12,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { SolicitacoesFunc } from "../pages/Colaborador/SolicitacoesColab/SolicitacoesColab";
 import { ColabLayout } from "../layout/ColabLayout/ColabLayout";
 import { SolicitarEPI } from "../pages/SolicitarEPI/SolicitarEPI";
+import { ConsultarEPI } from "../pages/Colaborador/ConsultarEPI/ConsultarEPI";
 
 export const Router = () => {
     return(
@@ -22,6 +23,7 @@ export const Router = () => {
 
             <Route path="/colaborador" element={<ProtectedRoute element={<ColabLayout />} roles={['colaborador']} />}>
                 <Route path="solicitacoes" element={<SolicitacoesFunc />} />
+                <Route path="consultEPI" element={<ConsultarEPI />} />
                 <Route path="solicitarEPI" element={<SolicitarEPI />} />
             </Route>
 

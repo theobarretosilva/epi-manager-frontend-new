@@ -2,7 +2,6 @@ import { Outlet, useNavigate } from "react-router";
 import { Headerbar } from "../../components/Headerbar/Headerbar";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import * as S from './ColabLayout.styles';
-import { toast } from "react-toastify";
 
 import documentIcon from "../../assets/img/document.png";
 import settingIcon from "../../assets/img/setting.png";
@@ -20,18 +19,24 @@ export function ColabLayout() {
             onClick: undefined
         },
         {
-            title: 'Solicitar EPI',
-            href: '/colaborador/solicitarEPI',
+            title: 'EPIs',
+            href: '/colaborador/consultEPI',
             image: settingIcon,
-            onClick: () => {
-                if (epis?.length === 0) {
-                    toast.error("Não existem EPI's cadastrados, contate o Administrador!");
-                } else {
-                    toast.success("Abrindo solicitação de EPI!", { autoClose: 2000 });
-                    navigate('/colaborador/solicitarEPI');
-                }
-            }
+            onClick: undefined
         }
+        // {
+        //     title: 'Solicitar EPI',
+        //     href: '/colaborador/solicitarEPI',
+        //     image: settingIcon,
+        //     onClick: () => {
+        //         if (epis?.length === 0) {
+        //             toast.error("Não existem EPI's cadastrados, contate o Administrador!");
+        //         } else {
+        //             toast.success("Abrindo solicitação de EPI!", { autoClose: 2000 });
+        //             navigate('/colaborador/solicitarEPI');
+        //         }
+        //     }
+        // }
     ];
 
     return (

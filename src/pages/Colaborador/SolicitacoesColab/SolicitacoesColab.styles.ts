@@ -69,18 +69,18 @@ export const DivWrapper = styled.div`
 
 export const ButtonStyled = styled.button`
     background-color: #FFDD4A;
-    width: auto;
+    width: 20vw;
     height: 4.9vh;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     border-radius: 5px;
-    align-self: center;
     border: none;
     font-size: 1.15rem;
     font-weight: 600;
     cursor: pointer;
     padding-left: 1.5vw;
     padding-right: 1.5vw;
-    margin-top: 4vh;
+    margin-top: 0;
+    margin-left: 1vw;
 `
 
 export const DivLayoutDash = styled.div`
@@ -90,4 +90,12 @@ export const DivLayoutDash = styled.div`
     width: 100%;
     height: auto;
     margin-top: 2vh;
+`
+
+export const DivBtnSearch = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: auto;
+    width: 100%;
 `
