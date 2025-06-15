@@ -3,7 +3,7 @@ import { validators } from './validators'
 
 export const schemas = {
     loginForm: yup.object().shape({
-        matricula_login: validators.matricula_login,
+        matricula: validators.matricula_login,
         password: validators.password,
     }),
     colaboradorForm: yup.object().shape({

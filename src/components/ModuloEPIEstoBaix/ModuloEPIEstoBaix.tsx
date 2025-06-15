@@ -1,8 +1,10 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as S from './ModuloEPIEstoBaix.styles';
+import { useGetEPIS } from '../../hooks/useGetEPIS';
+import { EPIProps } from '../../props/episProps';
 
 export const ModuloEPIEstoBaix = () => {
-  const epis = JSON.parse(sessionStorage.getItem("EPIsCadastrados") || "[]");
+  const { epis } = useGetEPIS();
 
   const columns: GridColDef[] = [
     { field: 'codigo', headerName: 'Código', width: 100, align: 'center', headerAlign: 'center' },
@@ -11,21 +13,19 @@ export const ModuloEPIEstoBaix = () => {
     { field: 'quantidadeMinima', headerName: 'Qtd Mínima', width: 120, align: 'center', headerAlign: 'center' },
   ];
 
-  const rows = epis
-    .filter((epi: any) => epi.quantidadeAtual <= epi.quantidadeMinima)
-    .map((epi: any) => ({
+  const rows = epis?.filter((epi: EPIProps) => epi.qtd <= 20)
+    .map((epi: EPIProps) => ({
       id: epi.codigo,
       codigo: epi.codigo,
-      descricaoItem: epi.descricaoItem,
-      quantidadeAtual: epi.quantidadeAtual,
-      quantidadeMinima: epi.quantidadeMinima,
+      descricaoItem: epi.descricao,
+      quantidadeAtual: epi.qtd,
     }));
 
   return (
     <S.BoxStyled>
       <S.TituloBox>EPI's com Estoque Baixo</S.TituloBox>
       <S.LinhaStyled />
-      {rows.length === 0 ? (
+      {rows?.length === 0 ? (
         <p style={{ textAlign: 'center', padding: '1rem', fontStyle: 'italic' }}>
           Nenhum EPI com estoque baixo.
         </p>

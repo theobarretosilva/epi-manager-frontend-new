@@ -24,16 +24,8 @@ export const DivWrapper = styled.div`
   }
 `;
 
-interface EPIProps {
-  descricaoItem: string;
-  codigo: string;
-  certificadoAprovacao: string;
-  validade: string;
-}
-
 export interface AddEPIProps {
   setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onAdd: (epi: EPIProps) => void;
-  idEpi?: string;
+  idEpi?: number;
   modalIsOpen: boolean;
 }

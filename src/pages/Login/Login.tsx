@@ -33,9 +33,9 @@ export const Login = () => {
                             titulo='Matrícula'
                             tipo='text'
                             placeholder=''
-                            {...register('matricula_login')}
+                            {...register('matricula')}
                         />
-                        <p style={{color: 'red', margin: '0'}}>{errors.matricula_login?.message}</p>
+                        <p style={{color: 'red', margin: '0'}}>{errors.matricula?.message}</p>
                         <InputStyled
                             titulo='Senha'
                             tipo='password'

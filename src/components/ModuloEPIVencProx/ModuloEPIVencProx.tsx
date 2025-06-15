@@ -1,28 +1,13 @@
-import { Paper } from '@mui/material'
+import { EPIProps } from '../../props/episProps';
+import { SolicitacaoProps } from '../../props/solicitacao.props';
 import * as S from './ModuloEPIVencProx.styles'
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-
-interface SolicitacaoProps {
-  id: string;
-  descricaoItem: string;
-  status: string;
-  codigoEPI: string;
-  urgencia: string;
-  solicitante: string;
-}
-
-interface EPIProps {
-  descricaoItem: string;
-  codigo: string;
-  validade: string;
-  certificadoAprovacao: string;
-}
 
 export const ModuloEPIVencProx = () => {
   const solicitacoes: SolicitacaoProps[] = JSON.parse(sessionStorage.getItem('Solicitacoes') || '[]');
   const EPIsCadastrados = JSON.parse(sessionStorage.getItem('EPIsCadastrados') || '[]');
 
-  const getValidadeEPI = (cod: string) => {
+  const getValidadeEPI = (cod: number) => {
     const epi = EPIsCadastrados.find((epi: EPIProps) => epi.codigo === cod);
     return epi ? epi.validade : 'N/A';
   };
@@ -43,10 +28,10 @@ export const ModuloEPIVencProx = () => {
 
   const rows = solicitacoes
     .map((solicitacao: SolicitacaoProps) => {
-      const validade = getValidadeEPI(solicitacao.codigoEPI);
+      const validade = getValidadeEPI(solicitacao.codigo);
       return {
         id: solicitacao.id,
-        descricaoItem: solicitacao.descricaoItem,
+        descricaoItem: solicitacao.equipamento.descricao,
         validadeEPI: validade,
       };
     })

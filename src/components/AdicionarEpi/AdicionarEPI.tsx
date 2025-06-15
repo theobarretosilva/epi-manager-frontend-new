@@ -4,7 +4,7 @@ import * as S from "./AdicionarEpi.styles";
 import { toast } from "react-toastify";
 import { InputStyled } from "../InputStyled/InputStyled";
 
-const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsOpen, idEpi }) => {
+const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, modalIsOpen, idEpi }) => {
   const epis = JSON.parse(sessionStorage.getItem("EPIsCadastrados") || "[]");
   const [descricaoItem, setDescricaoItem] = useState("");
   const [codigo, setCodigo] = useState("");
@@ -95,7 +95,6 @@ const AdicionarEpi: React.FC<S.AddEPIProps> = ({ setModalIsOpen, onAdd, modalIsO
         }
 
         sessionStorage.setItem("EPIsCadastrados", JSON.stringify(epis));
-        onAdd(epi);
         toast.success(idEpi ? "EPI atualizado com sucesso!" : "EPI adicionado com sucesso!", {
           autoClose: 6000,
           closeOnClick: true,
