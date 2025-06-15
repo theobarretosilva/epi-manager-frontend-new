@@ -123,11 +123,11 @@ export const DashboardColab = () => {
         },
         { field: 'id', headerName: 'ID', width: 20, align: 'center', headerAlign: 'center' },
         { field: 'matricula', headerName: 'Matricula', width: 90, align: 'center', headerAlign: 'center' },
-        { field: 'nome', headerName: 'Nome', width: 230, align: 'center', headerAlign: 'center' },
+        { field: 'nome', headerName: 'Nome', width: 220, align: 'center', headerAlign: 'center' },
         { field: 'cpf', headerName: 'CPF', width: 121, align: 'center', headerAlign: 'center'},
         { field: 'cargo', headerName: 'Cargo', width: 120, align: 'center', headerAlign: 'center'},
         { field: 'setor', headerName: 'Setor', width: 120, align: 'center', headerAlign: 'center' },
-        { field: 'permissao', headerName: 'Permissão', width: 96, align: 'center', headerAlign: 'center' },
+        { field: 'permissao', headerName: 'Permissão', width: 110, align: 'center', headerAlign: 'center' },
         { 
             field: 'deletar',
             type: 'actions',

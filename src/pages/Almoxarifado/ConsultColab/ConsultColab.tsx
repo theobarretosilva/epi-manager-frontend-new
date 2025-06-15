@@ -4,11 +4,11 @@ import * as S from './ConsultColab.styles'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useState } from 'react'
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow'
-import { ColaboradorProps } from '../../../props/colaboradorProps'
+import { useGetColaboradores } from '../../../hooks/useGetColaboradores'
 
 export const ConsultColab = () => {
-    const colaboradores = JSON.parse(sessionStorage.getItem('ColaboradoresCadastrados') || '{}');
-    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 6 });
+    const { colaboradores } = useGetColaboradores();
+    const [searchTerm, setSearchTerm] = useState("");
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 100, align: 'center', headerAlign: 'center'},
@@ -18,45 +18,47 @@ export const ConsultColab = () => {
         { field: 'setor', headerName: 'Setor', width: 200, align: 'center', headerAlign: 'center' },
     ];
 
-    const rows = colaboradores.map((colaborador: ColaboradorProps) => ({
-        id: colaborador.id,
-        matricula: colaborador.matricula,
-        nome: colaborador.nome,
-        cargo: colaborador.cargo,
-        setor: colaborador.setor,
-    }));
+    const rows = colaboradores
+        ?.filter((colab) => colab.status_uso.toLowerCase() === "ativo")
+        .map((colaborador) => ({
+            id: colaborador.id,
+            nome: colaborador.nome,
+            cpf: colaborador.cpf,
+            cargo: colaborador.cargo,
+            setor: colaborador.setor,
+            permissao: colaborador.permissao.toLowerCase(),
+            matricula: colaborador.matricula
+        })
+    );
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredRows, setFilteredRows] = useState(rows);
-    const handleSearch = (value: string) => {
-        setSearchTerm(value);
-        setFilteredRows(
-            rows.filter(row => 
-                row.matricula.toLowerCase().includes(value.toLowerCase()) ||
-                row.nome.toLowerCase().includes(value.toLowerCase())
-            )
-        );
-    };
+    const filteredRows = searchTerm
+        ? rows?.filter((row) =>
+            row.nome.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : rows;
 
     return(
         <>
             <S.MainStyled>
-                {filteredRows.length > 0 ? (
+                {(filteredRows || []).length > 0 ? (
                     <>
-                        <Searchbar value={searchTerm} placeholder='Pesquise pela matricula ou nome' onSearch={handleSearch} />
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
+                            <Searchbar value={searchTerm} placeholder='Pesquise pela matricula ou nome' onSearch={setSearchTerm} />
                             <DataGrid
                                 rows={filteredRows}
                                 columns={columns}
-                                paginationModel={paginationModel}
-                                onPaginationModelChange={setPaginationModel}
-                                pageSizeOptions={[6, 10]}
+                                autoHeight
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: { pageSize: 3, page: 0 },
+                                    },
+                                }}
                                 sx={{
                                     border: 0,
                                     '& .MuiDataGrid-cell': { textAlign: 'center' },
                                     '& .MuiDataGrid-columnHeaders': { backgroundColor: '#f5f5f5' },
-                                    '& .MuiDataGrid-root': { fontSize: '0.875rem' }
                                 }}
+                                getRowId={(row) => row.id}
                             />
                         </Paper>
                     </>
