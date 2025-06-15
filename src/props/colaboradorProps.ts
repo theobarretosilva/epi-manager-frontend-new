@@ -2,7 +2,7 @@ import { SolicitacaoProps } from "./solicitacao.props";
 
 export interface ColaboradorProps {
   id: number;
-  matricula: string;
+  matricula: number;
   nome: string;
   cpf: string;
   cargo: string;
@@ -11,6 +11,6 @@ export interface ColaboradorProps {
   nome_lideranca?: string;
   permissao: string;
   senha: string;
-  email: string;
   solicitacoes: SolicitacaoProps[];
+  status_uso: string;
 }

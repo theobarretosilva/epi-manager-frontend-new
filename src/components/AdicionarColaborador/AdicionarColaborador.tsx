@@ -34,32 +34,25 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   useEffect(() => {
     if (!modalIsOpen || !colaboradores) return;
 
-    const colaborador = colaboradores?.find(c => c.matricula === idColab);
+    const colaborador = colaboradores.find(c => c.id === idColab);
 
     if (idColab && colaborador) {
       const colaboradorComPermissaoNormalizada = {
         ...colaborador,
         permissao: colaborador.permissao as TipoPermissao,
+        nome_lideranca: colaborador.lideranca ? "Sem liderança" : colaborador.nome_lideranca ?? "Sem liderança",
       };
-
-      Object.entries(colaboradorComPermissaoNormalizada).forEach(([key, value]) => {
-        if (key in defaultValues) {
-          setValue(
-            key as keyof ColaboradorForm,
-            value as ColaboradorForm[keyof ColaboradorForm]
-          );
-        }
-      });
+      reset(colaboradorComPermissaoNormalizada);
     } else {
       reset(defaultValues);
     }
-  }, [idColab, modalIsOpen, colaboradores, setValue, reset, defaultValues]);
+  }, [idColab, modalIsOpen, colaboradores, reset, defaultValues]);
 
   const lideres = colaboradores?.filter((c) => c.lideranca) ?? [];
   const lideresList: string[] = lideres.map((c) => c.nome);
 
   return (
-    <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<ColaboradorForm>)}>
+    <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<unknown>)}>
       <S.DivWrapper>
         <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
         <p style={{color: 'red', margin: '0'}}>{errors.nome?.message}</p>
@@ -136,28 +129,22 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
           </FormControl>
         </S.DivInputs>
         <SelectStyled
-          disabled={watch("lideranca") ? true : false}
+          disabled={watch("lideranca")}
           titulo="Nome liderança" 
-          value={watch("nome_lideranca") ?? 'Sem liderança'} 
+          value={
+            watch("lideranca") ? "Sem liderança" : (watch("nome_lideranca") ?? "Sem liderança")
+          } 
           options={lideresList} 
           onChange={(e) =>
-            setValue("nome_lideranca", e.target.value  ?? 'Sem liderança')
+            setValue("nome_lideranca", e.target.value ?? "Sem liderança")
           } 
-          name='nome_lideranca'
+          name="nome_lideranca"
         />
         <p style={{color: 'red', margin: '0'}}>{errors.nome_lideranca?.message}</p>
-        <S.DivInputs>
-          <div>
-            <InputStyled tipo="email" titulo="Email" {...register("email")} />
-            <p style={{color: 'red', margin: '0'}}>{errors.email?.message}</p>
-          </div>
-          <div>
-            {!idColab && (
-              <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
-            )}
-            <p style={{color: 'red', margin: '0'}}>{errors.senha?.message}</p>
-          </div>
-        </S.DivInputs>
+        {!idColab && (
+          <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
+        )}
+        <p style={{color: 'red', margin: '0'}}>{errors.senha?.message}</p>
         {!!responseError && <p>{responseError}</p>}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />

@@ -8,20 +8,19 @@ import { useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { AddColaboradorProps } from "../props/addColaboradorProps";
 
-export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
+export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColaboradorProps) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
-        matricula: "",
+        matricula: 0,
         nome: "",
         cpf: "",
         cargo: "",
         setor: "",
         lideranca: false,
-        dataCadastro: new Date(),
         nome_lideranca: "Sem liderança",
         permissao: TipoPermissao.COLABORADOR,
         senha: "",
-        email: "",
     }), []);
 
     const [responseError, setResponseError] = useState('');
@@ -57,15 +56,9 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
         onError: (error: AxiosError<ResponseError>) => {
             const errorMessage = error.response?.data.message;
             const isRepeatedCnpj = errorMessage?.toLocaleLowerCase().includes('cpf');
-            const isRepeatedEmail = errorMessage?.toLocaleLowerCase().includes('email');
 
             if (isRepeatedCnpj) {
                 setError('cpf', { message: 'Já existe um registro com esse CPF' })
-                return
-            };
-
-            if (isRepeatedEmail) {
-                setError('email', { message: 'Já existe um registro com esse email' })
                 return
             };
 
@@ -77,14 +70,39 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }) => {
             setIdColab(null);
         }
     });
-    
-    const handleCreateForm: SubmitHandler<ColaboradorForm> = (data) => {
-        createColabMutation.mutate(data);
-    };
 
+    const editColabMutation = useMutation({
+        mutationFn: (data: ColaboradorForm) => {
+            setResponseError('');
+            const updateColaboradorPromise = axiosInstance.patch(`/colaboradores/${data.id}`, data);
+            toast.promise(updateColaboradorPromise, {
+                pending: 'Atualizando...',
+                success: 'Colaborador atualizado!',
+                error: 'Erro ao atualizar colaborador.',
+            });
+            return updateColaboradorPromise;
+        },
+        onError: (error: AxiosError<ResponseError>) => {
+            setResponseError(error.response?.data.message + '');
+        },
+        onSuccess: () => {
+            reset();
+            setModalIsOpen(false);
+            setIdColab(null);
+        }
+    })
+    
+    const handleFormSubmit: SubmitHandler<ColaboradorForm> = (data: ColaboradorForm) => {
+        const isEdit = !!data.id;
+        if (isEdit) {
+            editColabMutation.mutate(data);
+        } else {
+            createColabMutation.mutate(data);
+        }
+    };
     return {
         handleSubmit,
-        onSubmit: handleCreateForm,
+        onSubmit: handleFormSubmit,
         register,
         responseError,
         reset,

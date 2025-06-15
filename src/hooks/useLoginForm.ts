@@ -11,7 +11,7 @@ import { HandleLoginSuccessProps } from '../types/loginResponse';
 import { AxiosError } from 'axios';
 
 export const useLoginForm = () => {
-    const defaultValues = { matricula: '', password: '' };
+    const defaultValues = { matricula_login: '', password: '' };
     const navigate = useNavigate();
     const [responseError, setResponseError] = useState('');
 

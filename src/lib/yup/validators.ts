@@ -18,6 +18,9 @@ export const validators = {
     .required(errorMessages.required)
     .min(8, errorMessages.passwordLength),
   matricula: yup
+    .number()
+    .required(errorMessages.required),
+  matricula_login: yup
     .string()
     .required(errorMessages.required),
   nome: yup
@@ -49,9 +52,14 @@ export const validators = {
       'CPF inválido'
     ),
   nome_lideranca: yup
-    .string()
-    .default('Sem liderança')
-    .transform((value) => value ?? 'Sem liderança'),
+  .string()
+  .when("lideranca", {
+    is: false, // se não for liderança, o campo é obrigatório
+    then: (schema) =>
+      schema.required("Selecione um nome de liderança"),
+    otherwise: (schema) => 
+      schema.oneOf(["Sem liderança"]),
+  }),
   equipamentoId: yup
     .number()
     .required(errorMessages.required),
@@ -70,5 +78,8 @@ export const validators = {
     .required(errorMessages.required),
   solicitante: yup
     .string()
-    .required(errorMessages.required)
+    .required(errorMessages.required),
+  id: yup
+    .number()
+    .optional()
 }

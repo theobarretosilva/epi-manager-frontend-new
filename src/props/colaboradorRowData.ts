@@ -1,6 +1,6 @@
 export interface RowData {
-    id: string;
-    matricula: string;
+    id: number;
+    matricula: number;
     nome: string;
     cargo: string;
     setor: string;
