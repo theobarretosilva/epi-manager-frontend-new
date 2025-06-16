@@ -8,8 +8,9 @@ import { axiosInstance } from "../lib/axios";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AddEpiProps } from "../props/addEpiProps";
+import { EditEpiForm } from "../types/editEpiForm";
 
-export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps) => {
+export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEpiProps) => {
     const defaultValues = useMemo<EpiForm>(() => ({
         descricao: '',
         ca: '',
@@ -30,7 +31,7 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps)
         watch,
         formState: { errors }
     } = useForm<EpiForm>({
-        resolver: yupResolver(schemas.epiForm),
+        resolver: yupResolver(schemas.epiForm, { context: { isEdit: !!idEpi } }),
         defaultValues,
     });
 
@@ -57,14 +58,14 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps)
         onSuccess: () => {
             reset();
             setModalIsOpen(false);
-            setIdEpi(null);
+            setIdEpi?.(null);
         }
     });
 
     const editEpiMutation = useMutation({
-        mutationFn: (data: EpiForm) => {
+        mutationFn: (data: EditEpiForm) => {
             setResponseError('');
-            const updateEpiPromise = axiosInstance.patch(`/equipamentos/${data.codigo}`, data);
+            const updateEpiPromise = axiosInstance.patch(`/equipamentos/${idEpi}`, data);
             toast.promise(updateEpiPromise, {
                 pending: 'Atualizando...',
                 success: 'EPI atualizado!',
@@ -78,22 +79,25 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps)
         onSuccess: () => {
             reset();
             setModalIsOpen(false);
-            setIdEpi(null);
+            setIdEpi?.(null);
         }
     })
 
     const handleFormSubmit: SubmitHandler<EpiForm> = (data: EpiForm) => {
-        const isEdit = !!data.codigo;
-        if (isEdit) {
-            editEpiMutation.mutate(data);
-        } else {
-            createEpiMutation.mutate(data);
-        }
+        createEpiMutation.mutate(data);
+
+    }
+
+    const handleEditFormSubmit: SubmitHandler<EditEpiForm> = (data: EditEpiForm) => {
+                    console.log('entrou pap')
+
+        editEpiMutation.mutate(data);
     }
 
     return {
         handleSubmit,
         onSubmit: handleFormSubmit,
+        onSubmitEdit: handleEditFormSubmit,
         register,
         responseError,
         reset,

@@ -176,10 +176,11 @@ export const DashboardColab = () => {
     );
 
     const filteredRows = searchTerm
-        ? rows?.filter((row) =>
-            row.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    ? rows?.filter((row) =>
+        row.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.matricula.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
-        : rows;
+    : rows;
 
     const exportColabsPDF = () => {
         const doc = new jsPDF({

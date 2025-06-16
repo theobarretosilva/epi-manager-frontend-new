@@ -43,6 +43,12 @@ export const schemas = {
         preco: validators.preco,
         qtd: validators.qtd,
         codigo: validators.codigo,
-        foto: validators.foto
+        foto: validators.foto,
+        id: validators.id
+    }),
+    editEpiForm: yup.object().shape({
+        descricao: validators.descricaoItem,
+        preco: validators.preco,
+        codigo: validators.codigo
     })
 }

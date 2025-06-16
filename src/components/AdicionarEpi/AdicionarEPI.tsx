@@ -7,6 +7,8 @@ import { useGetEPIS } from "../../hooks/useGetEPIS";
 import { AddEpiProps } from "../../props/addEpiProps";
 import { useCadastroNewEPIForm } from "../../hooks/useCadastroNewEPIForm";
 import { SubmitHandler } from "react-hook-form";
+import { EpiForm } from "../../types/epiForm";
+import { EditEpiForm } from "../../types/editEpiForm";
 
 const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEpi, setIdEpi }) => {
   const { epis } = useGetEPIS();
@@ -15,11 +17,12 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
     errors,
     handleSubmit,
     onSubmit,
+    onSubmitEdit,
     register,
     reset,
     responseError,
     setValue,
-  } = useCadastroNewEPIForm({setIdEpi, setModalIsOpen, modalIsOpen});
+  } = useCadastroNewEPIForm({setIdEpi, setModalIsOpen, modalIsOpen, idEpi});
 
   useEffect(() => {
     if (!modalIsOpen || !epis) return;
@@ -30,6 +33,8 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
       setValue("descricao", epi.descricao ?? "");
       setValue("codigo", epi.codigo);
       setValue("ca", epi.ca ?? "");
+      setValue("foto", epi.foto)
+      setValue("id", epi.id)
       if (epi.data_validade) {
         const data = new Date(epi.data_validade);
         if (!isNaN(data.getTime())) {
@@ -41,8 +46,32 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
     }
   }, [defaultValues, epis, idEpi, modalIsOpen, reset, setValue]);
 
+  const onSubmitHandler: SubmitHandler<EpiForm> = (data) => {
+    console.log("submit chamado", data);
+    if (idEpi) {
+      // Para editar, passe só os campos esperados no EditEpiForm
+      const editData: EditEpiForm = {
+        codigo: data.codigo,
+        descricao: data.descricao,
+        preco: data.preco,
+      };
+      onSubmitEdit(editData);
+    } else {
+      onSubmit(data);
+    }
+  }
   return (
-    <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<unknown>)}>
+    <S.FormContainer
+  onSubmit={handleSubmit(
+    (data) => {
+      console.log('Submit OK:', data);
+      onSubmitHandler(data);
+    },
+    (errors) => {
+      console.log('Erros na validação:', errors);
+    }
+  )}
+>
       <S.DivWrapper>
         {/* Sempre mostra Descrição */}
         <InputStyled
