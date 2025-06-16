@@ -1,6 +1,6 @@
 import ReactModal from "react-modal";
 import AdicionarColaborador from "../../../components/AdicionarColaborador/AdicionarColaborador";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import * as S from './DashboardColab.styles';
 import { toast, ToastContainer } from "react-toastify";
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
@@ -162,8 +162,8 @@ export const DashboardColab = () => {
         },
     ];
 
-    const rows = colaboradores
-        ?.filter((colab) => colab.status_uso.toLowerCase() === "ativo")
+    const rows = useMemo(() => 
+        colaboradores?.filter((colab) => colab.status_uso.toLowerCase() === "ativo")
         .map((colaborador) => ({
             id: colaborador.id,
             nome: colaborador.nome,
@@ -172,7 +172,7 @@ export const DashboardColab = () => {
             setor: colaborador.setor,
             permissao: colaborador.permissao.toLowerCase(),
             matricula: colaborador.matricula
-        })
+        })) ?? [], [colaboradores]
     );
 
     const filteredRows = searchTerm

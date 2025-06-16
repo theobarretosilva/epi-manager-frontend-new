@@ -31,7 +31,7 @@ export const useHandleFormSolicitarEPI = () => {
         matricula_responsavel: '',
         descricaoItem: '',
         solicitante: '',
-        responsavelEPI: ''
+        responsavelEPI: '',
     }), []);
 
     const {

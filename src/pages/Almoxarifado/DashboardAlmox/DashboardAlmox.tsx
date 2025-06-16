@@ -215,7 +215,7 @@ export const DashboardAlmox = () => {
                     <>
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
-                                <S.ButtonStyled onClick={() => navigate('/administrador/solicitarEPI')}>+ Fazer Solicitação</S.ButtonStyled>
+                                <S.ButtonStyled onClick={() => navigate('/almoxarifado/solicitarEPI')}>+ Fazer Solicitação</S.ButtonStyled>
                                 <Searchbar placeholder='Buscar por ID, item, status, urgência ou solicitante...' value={searchTerm} onSearch={handleSearch} />
                             </S.DivBtnSearch>
                             <DataGrid

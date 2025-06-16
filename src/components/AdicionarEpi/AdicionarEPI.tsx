@@ -104,7 +104,7 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
 
             <InputStyled
               {...register("data_validade")}
-              tipo="string"
+              tipo="date"
               titulo="Data de Validade"
               name="data_validade"
             />

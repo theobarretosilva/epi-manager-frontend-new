@@ -23,8 +23,8 @@ export const ConsultEPI = () => {
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idEpi, setIdEpi] = useState(0);
 
-    const rows = epis
-        ?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
+    const rows = useMemo(() => 
+        epis?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
         .map((epi: EPIProps) => ({
             foto: epi.foto,
             id: epi.id,
@@ -34,8 +34,9 @@ export const ConsultEPI = () => {
             qtd: epi.qtd,
             ca: epi.ca,
             data_validade: new Date(epi.data_validade).toLocaleDateString('pt-BR')
-        })
+        })) ?? [], [epis]
     );
+    
     const columns: GridColDef[] = [
         {
             field: 'editar',
