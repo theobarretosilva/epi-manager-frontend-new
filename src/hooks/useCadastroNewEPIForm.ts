@@ -31,7 +31,7 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
         watch,
         formState: { errors }
     } = useForm<EpiForm>({
-        resolver: yupResolver(schemas.epiForm, { context: { isEdit: !!idEpi } }),
+        resolver: yupResolver(schemas.epiForm),
         defaultValues,
     });
 
@@ -88,11 +88,14 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
 
     }
 
-    const handleEditFormSubmit: SubmitHandler<EditEpiForm> = (data: EditEpiForm) => {
-                    console.log('entrou pap')
-
-        editEpiMutation.mutate(data);
-    }
+    const handleEditFormSubmit: SubmitHandler<EpiForm> = (data) => {
+        const editData: EditEpiForm = {
+            codigo: data.codigo,
+            descricao: data.descricao,
+            preco: data.preco
+        };
+        editEpiMutation.mutate(editData);
+    };
 
     return {
         handleSubmit,

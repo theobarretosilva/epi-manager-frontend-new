@@ -1,8 +1,8 @@
 import { SolicitacaoProps } from "./solicitacao.props";
 
 export interface EPIProps {
-    id: number;
-    codigo: number;
+    id?: number;
+    codigo?: number;
     descricao: string | undefined;
     preco: number;
     qtd: number;

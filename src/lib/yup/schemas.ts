@@ -42,9 +42,9 @@ export const schemas = {
         data_validade: validators.data_validade,
         preco: validators.preco,
         qtd: validators.qtd,
-        codigo: validators.codigo,
         foto: validators.foto,
-        id: validators.id
+        id: yup.number().optional(),
+        codigo: yup.number().optional()
     }),
     editEpiForm: yup.object().shape({
         descricao: validators.descricaoItem,

@@ -46,32 +46,8 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
     }
   }, [defaultValues, epis, idEpi, modalIsOpen, reset, setValue]);
 
-  const onSubmitHandler: SubmitHandler<EpiForm> = (data) => {
-    console.log("submit chamado", data);
-    if (idEpi) {
-      // Para editar, passe só os campos esperados no EditEpiForm
-      const editData: EditEpiForm = {
-        codigo: data.codigo,
-        descricao: data.descricao,
-        preco: data.preco,
-      };
-      onSubmitEdit(editData);
-    } else {
-      onSubmit(data);
-    }
-  }
   return (
-    <S.FormContainer
-      onSubmit={handleSubmit(
-        (data) => {
-          console.log('Submit OK:', data);
-          onSubmitHandler(data);
-        },
-        (errors) => {
-          console.log('Erros na validação:', errors);
-        }
-      )}
-    >
+    <S.FormContainer onSubmit={handleSubmit(idEpi ? onSubmitEdit : onSubmit)}>
       <S.DivWrapper>
         {/* Sempre mostra Descrição */}
         <InputStyled

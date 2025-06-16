@@ -171,7 +171,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
               : watch("nome_lideranca") ?? "Sem liderança"
           }
           options={lideresList}
-          onChange={(e) => setValue("nome_lideranca", e.target.value ?? "Sem liderança")}
+          onChange={(value) => setValue("nome_lideranca", value ?? "Sem liderança")}
           name="nome_lideranca"
         />
         <p style={{ color: "red", margin: "0" }}>{errors.nome_lideranca?.message}</p>
