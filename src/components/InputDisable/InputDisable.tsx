@@ -5,7 +5,7 @@ export const InputDisable: React.FC<InputDisableProps> = ({text , title, type, n
     return (
         <S.DivGeral>
             <S.NameInput>{title}</S.NameInput>
-            <S.InputStyled name={name} value={text} disabled type={type} />
+            <S.InputStyled name={name} value={text instanceof Date ? text.toISOString().split("T")[0] : text ?? ""} disabled type={type} />
         </S.DivGeral>   
     )
 }

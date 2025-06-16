@@ -62,16 +62,16 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
   }
   return (
     <S.FormContainer
-  onSubmit={handleSubmit(
-    (data) => {
-      console.log('Submit OK:', data);
-      onSubmitHandler(data);
-    },
-    (errors) => {
-      console.log('Erros na validação:', errors);
-    }
-  )}
->
+      onSubmit={handleSubmit(
+        (data) => {
+          console.log('Submit OK:', data);
+          onSubmitHandler(data);
+        },
+        (errors) => {
+          console.log('Erros na validação:', errors);
+        }
+      )}
+    >
       <S.DivWrapper>
         {/* Sempre mostra Descrição */}
         <InputStyled

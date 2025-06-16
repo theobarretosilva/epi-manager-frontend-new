@@ -6,7 +6,6 @@ import { OpenModalIcon } from '../../../components/OpenModalIcon/OpenModalIcon'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow'
 import ReactModal from 'react-modal'
-import { AprovarSolicitacao } from '../../../components/AprovarSolicitacao/AprovarSolicitacao'
 import { useGetSolicitacoes } from '../../../hooks/useGetSolicitacoes'
 import { SolicitacaoProps } from '../../../props/solicitacao.props'
 import { useNavigate } from 'react-router'
@@ -24,8 +23,6 @@ import { axiosInstance } from '../../../lib/axios'
 
 export const DashboardAlmox = () => {
     const { solicitacoes } = useGetSolicitacoes();
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [id, setId] = useState('');
     const navigate = useNavigate();
     const { isOpen, solicitacao, openModal, closeModal } = useModalDetalhesSolicitacao();
     const { epis } = useGetEPIS();
@@ -243,16 +240,6 @@ export const DashboardAlmox = () => {
                 )}
                 
             </S.MainStyled>
-            <ReactModal
-                isOpen={modalIsOpen}
-                onRequestClose={() => setModalIsOpen(false)}
-                style={S.customStyles}
-            >
-                <S.ImageContent onClick={() => setModalIsOpen(false)}>
-                    <S.Image src="../../src/assets/svg/Close.svg" />
-                </S.ImageContent>
-                <AprovarSolicitacao setModalIsOpen={setModalIsOpen} id={id}/>
-            </ReactModal>
             <ReactModal isOpen={isOpen} onRequestClose={closeModal} style={S.customStyles}>
                 <S.MainWrapper>
                     <S.ImageContent onClick={closeModal}>
