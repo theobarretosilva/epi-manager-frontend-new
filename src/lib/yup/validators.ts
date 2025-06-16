@@ -17,7 +17,7 @@ export const validators = {
   .string()
   .min(8, errorMessages.passwordLength)
   .when('id', {
-    is: (val) => !val, // ou (val) => val === undefined
+    is: (val: unknown) => !val,
     then: (schema) => schema.required(errorMessages.required),
     otherwise: (schema) => schema.notRequired(),
   }),

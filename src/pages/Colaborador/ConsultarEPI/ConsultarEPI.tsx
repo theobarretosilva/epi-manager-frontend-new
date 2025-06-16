@@ -3,7 +3,7 @@ import { useGetEPIS } from "../../../hooks/useGetEPIS"
 import { EPIProps } from "../../../props/episProps";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import * as S from './ConsultarEPI.styles'
-import { Paper } from "@mui/material";
+import { Box, Modal, Paper } from "@mui/material";
 import { Searchbar } from "../../../components/Searchbar/Searchbar";
 import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
 
@@ -96,6 +96,25 @@ export function ConsultarEPI() {
                     </div>
                 )}
             </S.MainStyled>
+            <Modal open={!!selectedImage} onClose={handleClose}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 2,
+                        borderRadius: 2,
+                        maxWidth: '90vw',
+                        maxHeight: '90vh',
+                        overflow: 'auto'
+                    }}
+                >
+                    <img src={selectedImage!} alt="EPI Ampliado" style={{ width: '100%', height: 'auto' }} />
+                </Box>
+            </Modal>
         </>
     )
 }

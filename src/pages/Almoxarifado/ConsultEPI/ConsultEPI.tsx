@@ -21,7 +21,7 @@ export const ConsultEPI = () => {
     const { epis } = useGetEPIS();
     const [modalIsOpenAddEpi, setModalIsOpenAddEpi] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
-    const [idEpi, setIdEpi] = useState(0);
+    const [idEpi, setIdEpi] = useState<number | null>(null);
 
     const rows = useMemo(() => 
         epis?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
@@ -237,7 +237,7 @@ export const ConsultEPI = () => {
                     </S.ImageContent>
                     <ExcluirModal
                         setModalIsOpen={setModalIsOpenDelete}
-                        id={ idEpi }
+                        id={ idEpi as number}
                         tipo="epi"
                     /> 
                 </S.MainWrapper>
@@ -254,7 +254,7 @@ export const ConsultEPI = () => {
                     </S.ImageContent>
                     <AdicionarEpi
                         modalIsOpen={modalIsOpenAddEpi}
-                        idEpi={idEpi}
+                        idEpi={idEpi as number}
                         setModalIsOpen={setModalIsOpenAddEpi}
                         setIdEpi={setIdEpi}
                     />

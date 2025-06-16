@@ -69,7 +69,7 @@ export const ButtonDelete = styled.button`
 `
 
 export interface ExcluirProps {
-  id: number; 
+  id: number | null; 
   tipo: "colaborador" | "epi";
   setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }

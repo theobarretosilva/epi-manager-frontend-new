@@ -51,7 +51,7 @@ export const Solicitacoes = () => {
 
         if (modal) {
             return {
-                descricaoItem: solicitacao.equipamento.descricao,
+                item: solicitacao.equipamento.descricao,
                 id: solicitacao.id,
                 status: solicitacao.status,
                 dataSolicitacao: solicitacao.dataAbertura,
@@ -237,7 +237,7 @@ export const Solicitacoes = () => {
                         <InputDisable text={solicitacao?.id + ''} title="ID da Solicitação" type="text" />
                         <InputDisable text={solicitacao?.solicitante?.nome ?? ''} title="Solicitante" type="text" />
                         <InputDisable text={solicitacao?.quantidade + ''} title="Quantidade" type="number" />
-                        <InputDisable text={solicitacao?.descricaoItem ?? ''} title="Item" type="text" />
+                        <InputDisable text={solicitacao?.item ?? ''} title="Item" type="text" />
                         <InputDisable text={solicitacao?.codigoEPI + ''} title="Código" type="text" />
                         <SelectInput disable={true} text={solicitacao?.urgencia ?? ''} title="Urgência" />
                         <InputDisable text={getCAEPI(solicitacao?.codigoEPI)} title="CA" type="text" />

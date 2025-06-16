@@ -13,6 +13,7 @@ import { useHandleFormSolicitarEPI } from '../../hooks/useHandleFormSolicitarEPI
 import { Urgencia } from '../../enums/Urgencia';
 import { OptionProps } from '../../props/optionProps';
 import { useGetColaboradores } from '../../hooks/useGetColaboradores';
+import { SubmitHandler } from 'react-hook-form';
 
 export const SolicitarEPI = () => {
     const { userLogado } = useGetUserLogado();
@@ -61,7 +62,7 @@ export const SolicitarEPI = () => {
 console.log('Erros do formulário:', errors);
     return (
         <S.MainStyled>
-            <S.FormMainSolicitar onSubmit={handleSubmit(onSubmit)}>
+            <S.FormMainSolicitar onSubmit={handleSubmit(onSubmit as SubmitHandler<unknown>)}>
                 <S.DivFlex>
                     <InputStyled 
                         tipo="text"
@@ -73,8 +74,7 @@ console.log('Erros do formulário:', errors);
                         titulo="Responsável pelo EPI"
                         value={watch('responsavelEPI')}
                         options={colaboradoresList?.map(colab => colab.nome) || []}
-                        onChange={(e) => {
-                            const value = e?.target?.value;
+                        onChange={(value) => {
                             if (value) setValue("responsavelEPI", value);
                         }}
                         name='responsavelEPI'
@@ -103,8 +103,7 @@ console.log('Erros do formulário:', errors);
                         titulo="Urgência"
                         value={watch("urgencia")}
                         options={['Alta', 'Média', 'Baixa']}
-                        onChange={(e) => {
-                            const value = e?.target?.value;
+                        onChange={(value) => {
                             if (value) setValue("urgencia", value as Urgencia);
                         }}
                         name='urgencia'
