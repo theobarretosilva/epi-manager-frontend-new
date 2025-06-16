@@ -5,7 +5,7 @@ export interface SolicitacaoModalProps {
   item: string | undefined;
   id: number | undefined;
   status: string | undefined;
-  dataSolicitacao: Date | undefined;
+  dataSolicitacao: Date;
   solicitante: ColaboradorProps | undefined;
   quantidade: number | undefined;
   codigoEPI: number | undefined;

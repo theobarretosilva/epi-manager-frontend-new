@@ -57,9 +57,10 @@ export const SolicitacoesFunc = () => {
             if (solicitacao) {
               const dadosModal: SolicitacaoModalProps = {
                 id: solicitacao.id,
-                descricao: solicitacao.equipamento?.descricao ?? 'Descrição não informada',
+                item: solicitacao.equipamento?.descricao ?? 'Descrição não informada',
                 status: solicitacao.status,
-                dataSolicitacao: solicitacao.dataAbertura ?? '-',
+                // eslint-disable-next-line no-constant-binary-expression
+                dataSolicitacao: new Date(solicitacao.dataAbertura) ?? '-',
                 dataConclusao: solicitacao.dataConclusao ?? '-',
                 solicitante: solicitacao.solicitante,
                 quantidade: solicitacao.qtd ?? 0,
@@ -176,13 +177,13 @@ export const SolicitacoesFunc = () => {
               <S.Image src="../../src/assets/svg/Close.svg" />
             </S.ImageContent>
             <S.DivWrapper>
-              <InputDisable text={solicitacaoSelecionada.dataSolicitacao?.toDateString()} title="Data de Abertura" type="text" />
+              <InputDisable text={new Date(solicitacaoSelecionada.dataSolicitacao).toLocaleDateString('pt-BR')} title="Data de Abertura" type="text" />
               <InputDisable text={solicitacaoSelecionada.dataConclusao} title="Data de Conclusão" type="text" />
               <InputDisable text={solicitacaoSelecionada.status} title="Status" type="text" />
               <InputDisable text={solicitacaoSelecionada.id} title="ID da Solicitação" type="text" />
-              <InputDisable text={String(solicitacaoSelecionada.solicitante)} title="Solicitante" type="text" />
+              <InputDisable text={String(solicitacaoSelecionada.solicitante?.nome)} title="Solicitante" type="text" />
               <InputDisable text={String(solicitacaoSelecionada.quantidade)} title="Quantidade" type="number" />
-              <InputDisable text={solicitacaoSelecionada.descricao} title="Descrição do Item" type="text" />
+              <InputDisable text={solicitacaoSelecionada.item} title="Descrição do Item" type="text" />
               <InputDisable text={String(solicitacaoSelecionada.codigoEPI)} title="Código" type="text" />
               <SelectInput disable={true} text={solicitacaoSelecionada.urgencia ?? ''} title="Urgência" />
               <InputDisable text={getCAEPI(solicitacaoSelecionada.codigoEPI ?? 0)} title="Certificado de Aprovação" type="text" />
