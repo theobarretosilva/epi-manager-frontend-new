@@ -1,5 +1,4 @@
 import { useGetColaboradores } from '../../hooks/useGetColaboradores';
-import { useGetColabsCadastradosMes } from '../../hooks/useGetColabsCadastradosMes';
 import { useGetColabsComEPIsVencendo } from '../../hooks/useGetColabsEPIsVencendo';
 import { useGetColabsEPIsVencendo30Dias } from '../../hooks/useGetColabsEPIsVencendo30Dias';
 import { useGetSolicitacoes } from '../../hooks/useGetSolicitacoes';

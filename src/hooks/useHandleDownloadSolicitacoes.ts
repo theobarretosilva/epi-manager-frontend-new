@@ -8,7 +8,7 @@ export const useHandleDownloadSolicitacoes = (idColaborador: string) => {
     const { solicitacoes } = useGetSolicitacoes();
 
     const solicitacoesDoColaborador = solicitacoes?.filter(
-        (s) => s.solicitante === colaborador?.nome
+        (s) => s.solicitante.nome === colaborador?.nome
     );
 
     const doc = new jsPDF();
@@ -18,10 +18,12 @@ export const useHandleDownloadSolicitacoes = (idColaborador: string) => {
         startY: 30,
         head: [['Descrição', 'Setor', 'Data']],
         body: solicitacoesDoColaborador?.map((s) => [
-            s.descricaoItem,
-            s.setor,
-            s.dataSolicitacao,
-        ]),
+            s.equipamento.descricao ?? '',
+            s.solicitante.setor ?? '',
+            s.dataAbertura instanceof Date
+            ? s.dataAbertura.toLocaleDateString()
+            : s.dataAbertura ?? '',
+        ]) ?? [],
     });
 
     doc.save(`Solicitacoes_${colaborador?.nome.replace(/\s+/g, '_')}.pdf`);

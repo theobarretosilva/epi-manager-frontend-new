@@ -14,4 +14,5 @@ export interface ColaboradorProps {
   solicitacoes: SolicitacaoProps[];
   status_uso: string;
   email: string;
+  data_cadastro: Date;
 }

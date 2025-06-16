@@ -5,7 +5,7 @@ export const useGetColabsCadastradosMes = (colaboradores: ColaboradorProps[] | u
     const colaboradoresCadastradosNoMes = useMemo(() => {
         const hoje = new Date();
         return colaboradores?.filter(colab => {
-            const data = new Date(colab.dataCadastro);
+            const data = new Date(colab.data_cadastro);
             return (
                 data.getMonth() === hoje.getMonth() &&
                 data.getFullYear() === hoje.getFullYear()
