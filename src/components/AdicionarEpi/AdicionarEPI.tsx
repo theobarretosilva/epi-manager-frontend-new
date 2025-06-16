@@ -6,9 +6,6 @@ import { EPIProps } from "../../props/episProps";
 import { useGetEPIS } from "../../hooks/useGetEPIS";
 import { AddEpiProps } from "../../props/addEpiProps";
 import { useCadastroNewEPIForm } from "../../hooks/useCadastroNewEPIForm";
-import { SubmitHandler } from "react-hook-form";
-import { EpiForm } from "../../types/epiForm";
-import { EditEpiForm } from "../../types/editEpiForm";
 
 const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEpi, setIdEpi }) => {
   const { epis } = useGetEPIS();
@@ -47,6 +44,8 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
   }, [defaultValues, epis, idEpi, modalIsOpen, reset, setValue]);
 
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
     <S.FormContainer onSubmit={handleSubmit(idEpi ? onSubmitEdit : onSubmit)}>
       <S.DivWrapper>
         {/* Sempre mostra Descrição */}

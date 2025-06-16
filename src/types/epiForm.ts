@@ -1,4 +1,10 @@
-import * as yup from 'yup'
-import { schemas } from '../lib/yup/schemas'
-
-export type EpiForm = yup.InferType<typeof schemas.epiForm>;
+export type EpiForm = {
+    descricao: string;
+    ca: string;
+    data_validade: string;
+    preco: number;
+    qtd: number;
+    foto: string;
+    id?: number | null | undefined; // Tornando opcional
+    codigo?: number | null | undefined; // Tornando opcional
+};

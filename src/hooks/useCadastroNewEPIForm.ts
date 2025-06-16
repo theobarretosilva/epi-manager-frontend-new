@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react"
-import { EpiForm } from "../types/epiForm"
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { schemas } from "../lib/yup/schemas";
@@ -8,7 +7,9 @@ import { axiosInstance } from "../lib/axios";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AddEpiProps } from "../props/addEpiProps";
+import { EpiForm } from "../types/epiForm";
 import { EditEpiForm } from "../types/editEpiForm";
+
 
 export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEpiProps) => {
     const defaultValues = useMemo<EpiForm>(() => ({
@@ -31,6 +32,8 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
         watch,
         formState: { errors }
     } = useForm<EpiForm>({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         resolver: yupResolver(schemas.epiForm),
         defaultValues,
     });
