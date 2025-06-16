@@ -13,10 +13,14 @@ export const validators = {
     .string()
     .required(errorMessages.required)
     .email(errorMessages.email),
-  password: yup
-    .string()
-    .required(errorMessages.required)
-    .min(8, errorMessages.passwordLength),
+  senha: yup
+  .string()
+  .min(8, errorMessages.passwordLength)
+  .when('id', {
+    is: (val) => !val, // ou (val) => val === undefined
+    then: (schema) => schema.required(errorMessages.required),
+    otherwise: (schema) => schema.notRequired(),
+  }),
   matricula: yup
     .string()
     .required(errorMessages.required),
@@ -52,7 +56,8 @@ export const validators = {
       'CPF inválido'
     ),
   nome_lideranca: yup
-  .string(),
+    .string()
+    .optional(),
   equipamentoId: yup
     .number()
     .required(errorMessages.required),

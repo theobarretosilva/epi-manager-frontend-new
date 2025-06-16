@@ -4,7 +4,7 @@ import { validators } from './validators'
 export const schemas = {
     loginForm: yup.object().shape({
         matricula: validators.matricula_login,
-        password: validators.password,
+        password: validators.senha,
     }),
     colaboradorForm: yup.object().shape({
         matricula: validators.matricula,
@@ -15,9 +15,16 @@ export const schemas = {
         lideranca: validators.lideranca,
         nome_lideranca: validators.nome_lideranca,
         permissao: validators.permissao,
-        senha: validators.password,
+        senha: validators.senha,
         id: validators.id,
         email: validators.email
+    }),
+    editColaboradorForm: yup.object().shape({
+        cargo: validators.cargo,
+        setor: validators.setor,
+        lideranca: validators.lideranca,
+        nome_lideranca: validators.nome_lideranca,
+        permissao: validators.permissao,
     }),
     solicitarEpiForm: yup.object().shape({
         equipamentoId: validators.equipamentoId,

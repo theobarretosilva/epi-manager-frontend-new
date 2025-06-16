@@ -9,6 +9,7 @@ import { axiosInstance } from "../lib/axios";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AddColaboradorProps } from "../props/addColaboradorProps";
+import { EditColaboradorForm } from "../types/editColaboradorForm";
 
 export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColaboradorProps) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
@@ -73,7 +74,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
     });
 
     const editColabMutation = useMutation({
-        mutationFn: (data: ColaboradorForm) => {
+        mutationFn: (data: EditColaboradorForm) => {
             setResponseError('');
             const updateColaboradorPromise = axiosInstance.patch(`/colaboradores/${data.id}`, data);
             toast.promise(updateColaboradorPromise, {

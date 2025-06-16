@@ -46,6 +46,8 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
       const colaboradorComPermissaoNormalizada = {
         ...colaborador,
         permissao: colaborador.permissao as TipoPermissao,
+        matricula: String(colaborador.matricula),
+        cpf: String(colaborador.cpf),
         nome_lideranca: colaborador.lideranca
           ? "Sem liderança"
           : colaborador.nome_lideranca ?? "Sem liderança",
@@ -76,30 +78,34 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
   return (
     <S.FormContainer onSubmit={handleSubmit(onSubmit as SubmitHandler<unknown>)}>
       <S.DivWrapper>
-        <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
-        <p style={{ color: "red", margin: "0" }}>{errors.nome?.message}</p>
+        {!idColab && (
+          <>
+            <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
+            <p style={{ color: "red", margin: "0" }}>{errors.nome?.message}</p>
 
-        <S.DivInputs>
-          <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
-          <p style={{ color: "red", margin: "0" }}>{errors.matricula?.message}</p>
+            <S.DivInputs>
+              <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
+              <p style={{ color: "red", margin: "0" }}>{errors.matricula?.message}</p>
 
-          <InputStyled
-            tipo="text"
-            titulo="CPF"
-            maxLength={14}
-            {...register("cpf", {
-              onChange: (e) => {
-                let value = e.target.value.replace(/\D/g, "");
-                value = value.replace(/(\d{3})(\d)/, "$1.$2");
-                value = value.replace(/(\d{3})(\d)/, "$1.$2");
-                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-                e.target.value = value;
-              },
-            })}
-          />
-          <p style={{ color: "red", margin: "0" }}>{errors.cpf?.message}</p>
-        </S.DivInputs>
-
+              <InputStyled
+                tipo="text"
+                titulo="CPF"
+                maxLength={14}
+                {...register("cpf", {
+                  onChange: (e) => {
+                    let value = e.target.value.replace(/\D/g, "");
+                    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                    value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                    e.target.value = value;
+                  },
+                })}
+              />
+              <p style={{ color: "red", margin: "0" }}>{errors.cpf?.message}</p>
+            </S.DivInputs>
+          </>
+        
+        )}
         <S.DivInputs>
           <div>
             <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
@@ -169,20 +175,22 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
           name="nome_lideranca"
         />
         <p style={{ color: "red", margin: "0" }}>{errors.nome_lideranca?.message}</p>
+          <S.DivInputs>
+                    {!idColab && (
 
-        <S.DivInputs>
-          <div>
-            <InputStyled tipo="email" titulo="Email" {...register("email")} />
-            <p style={{ color: "red", margin: "0" }}>{errors.email?.message}</p>
-          </div>
-          <div>
-            {!idColab && (
-              <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
-            )}
-            <p style={{ color: "red", margin: "0" }}>{errors.senha?.message}</p>
-          </div>
-        </S.DivInputs>
+            <div>
+              <InputStyled tipo="email" titulo="Email" {...register("email")} />
+              <p style={{ color: "red", margin: "0" }}>{errors.email?.message}</p>
+            </div>
+                    )}
 
+              <div>
+                <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
+                <p style={{ color: "red", margin: "0" }}>{errors.senha?.message}</p>
+              </div>
+            
+          </S.DivInputs>
+        
         {!!responseError && <p>{responseError}</p>}
       </S.DivWrapper>
       <BtnStyled type="submit" text="Salvar" />
