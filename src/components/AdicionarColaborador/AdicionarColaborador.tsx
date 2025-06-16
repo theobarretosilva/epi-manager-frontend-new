@@ -34,7 +34,7 @@ const AdicionarColaborador: React.FC<AddColaboradorProps> = ({
     watch,
     defaultValues,
     errors,
-  } = useCadastroNewColabForm({ setIdColab, setModalIsOpen });
+  } = useCadastroNewColabForm({ setIdColab, setModalIsOpen, idColab });
 
   // Resetar o formulário quando abrir o modal ou mudar colaborador
   useEffect(() => {

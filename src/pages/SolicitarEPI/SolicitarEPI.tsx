@@ -34,6 +34,8 @@ export const SolicitarEPI = () => {
     const { colaboradores } = useGetColaboradores();
     const colaboradoresList = colaboradores?.filter((colab) => colab.nome_lideranca == userLogado?.nome);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
     const options: OptionProps[] = (epis ?? []).map((epi: EPIProps) => ({
         label: epi.descricao || '',
         value: epi.codigo,

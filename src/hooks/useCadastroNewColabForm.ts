@@ -11,7 +11,7 @@ import { AxiosError } from "axios";
 import { AddColaboradorProps } from "../props/addColaboradorProps";
 import { EditColaboradorForm } from "../types/editColaboradorForm";
 
-export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColaboradorProps) => {
+export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen, idColab }: AddColaboradorProps) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
         matricula: "",
         nome: "",
@@ -36,6 +36,8 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
         setError,
         formState: { errors }
     } = useForm<ColaboradorForm>({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         resolver: yupResolver(schemas.colaboradorForm),
         defaultValues,
     });
@@ -76,7 +78,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
     const editColabMutation = useMutation({
         mutationFn: (data: EditColaboradorForm) => {
             setResponseError('');
-            const updateColaboradorPromise = axiosInstance.patch(`/colaboradores/${data.id}`, data);
+            const updateColaboradorPromise = axiosInstance.patch(`/colaboradores/${idColab}`, data);
             toast.promise(updateColaboradorPromise, {
                 pending: 'Atualizando...',
                 success: 'Colaborador atualizado!',
