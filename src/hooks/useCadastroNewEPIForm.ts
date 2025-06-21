@@ -8,10 +8,10 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AddEpiProps } from "../props/addEpiProps";
 import { EpiForm } from "../types/epiForm";
-import { EditEpiForm } from "../types/editEpiForm";
+import { ResponseError } from "../types/responseError";
 
 
-export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEpiProps) => {
+export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps) => {
     const defaultValues = useMemo<EpiForm>(() => ({
         descricao: '',
         ca: '',
@@ -26,20 +26,15 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
 
     const {
         register,
-        handleSubmit,
         reset,
         setValue,
         watch,
+        handleSubmit,
         formState: { errors }
     } = useForm<EpiForm>({
-
         resolver: yupResolver(schemas.epiForm),
         defaultValues,
     });
-
-    type ResponseError = {
-        message: string;
-    };
 
     const createEpiMutation = useMutation({
         mutationFn: (data: EpiForm) => {
@@ -54,7 +49,6 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
         },
         onError: (error: AxiosError<ResponseError>) => {
             const errorMessage = error.response?.data.message;
-
             setResponseError(errorMessage + '');
         },
         onSuccess: () => {
@@ -64,45 +58,14 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
         }
     });
 
-    const editEpiMutation = useMutation({
-        mutationFn: (data: EditEpiForm) => {
-            setResponseError('');
-            const updateEpiPromise = axiosInstance.patch(`/equipamentos/${idEpi}`, data);
-            toast.promise(updateEpiPromise, {
-                pending: 'Atualizando...',
-                success: 'EPI atualizado!',
-                error: 'Erro ao atualizar o EPI.',
-            });
-            return updateEpiPromise;
-        },
-        onError: (error: AxiosError<ResponseError>) => {
-            setResponseError(error.response?.data.message + '');
-        },
-        onSuccess: () => {
-            reset();
-            setModalIsOpen(false);
-            setIdEpi?.(null);
-        }
-    })
-
-    const handleFormSubmit: SubmitHandler<EpiForm> = (data: EpiForm) => {
+    const handleFormSubmit: SubmitHandler<EpiForm> = (data) => {
         createEpiMutation.mutate(data);
 
     }
 
-    const handleEditFormSubmit: SubmitHandler<EpiForm> = (data) => {
-        const editData: EditEpiForm = {
-            codigo: data.codigo,
-            descricao: data.descricao,
-            preco: data.preco
-        };
-        editEpiMutation.mutate(editData);
-    };
-
     return {
-        handleSubmit,
         onSubmit: handleFormSubmit,
-        onSubmitEdit: handleEditFormSubmit,
+        handleSubmit,
         register,
         responseError,
         reset,

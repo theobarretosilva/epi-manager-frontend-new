@@ -1,53 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
-import * as S from "./AdicionarEpi.styles";
+import * as S from './AdicionarEPI.styles'
 import { InputStyled } from "../InputStyled/InputStyled";
-import { EPIProps } from "../../props/episProps";
-import { useGetEPIS } from "../../hooks/useGetEPIS";
 import { AddEpiProps } from "../../props/addEpiProps";
 import { useCadastroNewEPIForm } from "../../hooks/useCadastroNewEPIForm";
 
 const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEpi, setIdEpi }) => {
-  const { epis } = useGetEPIS();
   const { 
-    defaultValues,
     errors,
-    handleSubmit,
     onSubmit,
-    onSubmitEdit,
     register,
-    reset,
     responseError,
-    setValue,
+    handleSubmit
   } = useCadastroNewEPIForm({setIdEpi, setModalIsOpen, modalIsOpen, idEpi});
 
-  useEffect(() => {
-    if (!modalIsOpen || !epis) return;
-
-    const epi = epis?.find((epi: EPIProps) => epi.id === idEpi);
-    
-    if (idEpi && epi) {
-      setValue("descricao", epi.descricao ?? "");
-      setValue("codigo", epi.codigo);
-      setValue("ca", epi.ca ?? "");
-      setValue("foto", epi.foto)
-      setValue("id", epi.id)
-      if (epi.data_validade) {
-        const data = new Date(epi.data_validade);
-        if (!isNaN(data.getTime())) {
-          setValue("data_validade", data.toISOString().split("T")[0]);
-        }
-      }
-    } else {
-      reset(defaultValues);
-    }
-  }, [defaultValues, epis, idEpi, modalIsOpen, reset, setValue]);
-
   return (
-        // @ts-expect-error
-    <S.FormContainer onSubmit={handleSubmit(idEpi ? onSubmitEdit : onSubmit)}>
+    <S.FormContainer onSubmit={handleSubmit(onSubmit)}>
       <S.DivWrapper>
-        {/* Sempre mostra Descrição */}
         <InputStyled
           {...register("descricao")}
           tipo="text"
@@ -56,7 +25,6 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
         />
         <p style={{ color: 'red', margin: '0' }}>{errors.descricao?.message}</p>
 
-        {/* Sempre mostra Preço */}
         <InputStyled
           {...register("preco")}
           tipo="number"
@@ -65,7 +33,6 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
         />
         <p style={{ color: 'red', margin: '0' }}>{errors.preco?.message}</p>
 
-        {/* Só mostra os outros campos se NÃO estiver editando */}
         {!idEpi && (
           <>
             <InputStyled
@@ -103,18 +70,6 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
             <p style={{ color: 'red', margin: '0' }}>{errors.foto?.message}</p>
           </>
         )}
-
-        {/* Código aparece somente no modo edição, e desabilitado */}
-        {idEpi !== null && idEpi !== undefined && (
-          <InputStyled
-            {...register("codigo")}
-            tipo="number"
-            titulo="Código"
-            name="codigo"
-            disabled={true}
-          />
-        )}
-
         {!!responseError && <p style={{ margin: 0 }}>{responseError}</p>}
       </S.DivWrapper>
 

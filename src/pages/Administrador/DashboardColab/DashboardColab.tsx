@@ -17,34 +17,37 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useGetColaboradores } from "../../../hooks/useGetColaboradores";
 import { useGetSolicitacoes } from "../../../hooks/useGetSolicitacoes";
+import EditarColaboradorModal from "../../../components/EditarColaboradorModal/EditarColaboradorModal";
 
 export const DashboardColab = () => {
     const { colaboradores } = useGetColaboradores();
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
+    const [modalIsOpenEditarColaborador, setModalIsOpenEditarColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idColaborador, setIdColaborador] = useState<number | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const { solicitacoes } = useGetSolicitacoes();
 
-    const closeModal = () => {
+    const closeModalAdd = () => {
         setModalIsOpenAddColaborador(false);
-        setIdColaborador(0);
-    }
-
-    const openModal = () => {
+        setIdColaborador(null);
+    };
+    const closeModalEdit = () => {
+        setModalIsOpenEditarColaborador(false);
+        setIdColaborador(null);
+    };
+    const openModalAdd = () => {
         setModalIsOpenAddColaborador(true);
-        setIdColaborador(null)
-    }
-
+        setIdColaborador(null);
+    };
     const openModalEdit = (id: number) => {
-        setModalIsOpenAddColaborador(true);
+        setModalIsOpenEditarColaborador(true);
         setIdColaborador(id);
-    }
-
+    };
     const openModalDelete = (id: number) => {
         setModalIsOpenDelete(true);
         setIdColaborador(id);
-    }
+    };
 
     const handleDownloadSolicitacoes = (id: number) => {
         const solicitacoesFiltradas = solicitacoes?.filter(
@@ -176,11 +179,11 @@ export const DashboardColab = () => {
     );
 
     const filteredRows = searchTerm
-    ? rows?.filter((row) =>
-        row.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        row.matricula.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    : rows;
+        ? rows?.filter((row) =>
+            row.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            row.matricula.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        : rows;
 
     const exportColabsPDF = () => {
         const doc = new jsPDF({
@@ -234,7 +237,7 @@ export const DashboardColab = () => {
                     <>
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
-                                <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                                <S.ButtonStyled onClick={() => openModalAdd()}>+ Adicionar Colaborador</S.ButtonStyled>
                                 <Searchbar onSearch={setSearchTerm} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
                                 <S.DivDownload onClick={exportColabsPDF}>
                                     <DownloadSoliciIcon />
@@ -265,7 +268,7 @@ export const DashboardColab = () => {
                     </>
                 ) : (
                     <>
-                        <S.ButtonStyled onClick={() => openModal()}>+ Adicionar Colaborador</S.ButtonStyled>
+                        <S.ButtonStyled onClick={() => openModalAdd()}>+ Adicionar Colaborador</S.ButtonStyled>
                         <NoDataToShow mainText="Não foram adicionados colaboradores!" />
                     </>
                 )}
@@ -289,11 +292,11 @@ export const DashboardColab = () => {
             </ReactModal>
             <ReactModal
                 isOpen={modalIsOpenAddColaborador}
-                onRequestClose={() => setModalIsOpenAddColaborador(false)}
+                onRequestClose={closeModalAdd}
                 style={S.modalStyle}
             >
                 <S.MainWrapper>
-                    <S.ImageContent onClick={() => closeModal()}>
+                    <S.ImageContent onClick={closeModalAdd}>
                         <S.Image src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
                     <AdicionarColaborador 
@@ -302,6 +305,25 @@ export const DashboardColab = () => {
                         idColab={idColaborador}
                         setModalIsOpen={setModalIsOpenAddColaborador}
                     />
+                </S.MainWrapper>
+            </ReactModal>
+
+            <ReactModal
+                isOpen={modalIsOpenEditarColaborador}
+                onRequestClose={closeModalEdit}
+                style={S.modalStyle}
+            >
+                <S.MainWrapper>
+                    <S.ImageContent onClick={closeModalEdit}>
+                        <S.Image src="../../src/assets/svg/Close.svg" />
+                    </S.ImageContent>
+                    {idColaborador && (
+                        <EditarColaboradorModal
+                            idColab={idColaborador}
+                            modalIsOpen={modalIsOpenEditarColaborador}
+                            setModalIsOpen={setModalIsOpenEditarColaborador}
+                        />
+                    )}
                 </S.MainWrapper>
             </ReactModal>
         </>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import * as S from "./EditarColaborador.styles";
+import * as S from "./EditarColaboradorModal.styles";
 import "react-toastify/dist/ReactToastify.css";
 import { InputStyled } from "../InputStyled/InputStyled";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
@@ -8,14 +8,9 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mu
 import { SelectStyled } from "../SelectStyled/SelectStyled";
 import { useGetColaboradores } from "../../hooks/useGetColaboradores";
 import { useEditColabForm } from "../../hooks/useEditColabForm";
+import { EditColabProps } from "../../props/editColabProps";
 
-interface EditarColaboradorModalProps {
-  idColab: number;
-  setModalIsOpen: (open: boolean) => void;
-  modalIsOpen: boolean;
-}
-
-const EditarColaboradorModal: React.FC<EditarColaboradorModalProps> = ({ idColab, setModalIsOpen, modalIsOpen }) => {
+const EditarColaboradorModal: React.FC<EditColabProps> = ({ idColab, setModalIsOpen, modalIsOpen }) => {
     const { colaboradores } = useGetColaboradores();
     const { onSubmit, register, responseError, reset, setValue, watch, errors } =
         useEditColabForm({ idColab, setModalIsOpen });
