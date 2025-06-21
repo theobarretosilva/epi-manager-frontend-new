@@ -1,4 +1,12 @@
-import * as yup from 'yup'
-import { schemas } from '../lib/yup/schemas'
+import { Urgencia } from "../enums/Urgencia";
 
-export type SolicitarEpiForm = yup.InferType<typeof schemas.solicitarEpiForm>
+export type SolicitarEpiForm = {
+    equipamentoId: number;
+    qtd: number;
+    urgencia: Urgencia;
+    responsavel: string;
+    matricula_responsavel: string;
+    descricaoItem: string;
+    solicitante: string;
+    responsavelEPI: string;
+}

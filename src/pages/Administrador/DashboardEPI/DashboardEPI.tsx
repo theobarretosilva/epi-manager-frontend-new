@@ -16,12 +16,14 @@ import { DownloadSoliciIcon } from "../../../components/DownloadSoliciIcon/Downl
 import jsPDF from "jspdf";
 import { EPIProps } from "../../../props/episProps";
 import { useGetEPIS } from "../../../hooks/useGetEPIS";
+import { EditarEPIModal } from "../../../components/EditarEPIModal/EditarEPIModal";
 
 ReactModal.setAppElement('#root');
 
 export const DashboardEPI = () => {
     const { epis } = useGetEPIS();
     const [modalIsOpenAddEpi, setModalIsOpenAddEpi] = useState(false);
+    const [modalIsOpenEditarEpi, setModalIsOpenEditarEpi] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idEpi, setIdEpi] = useState<number | null>(null);
 
@@ -39,15 +41,22 @@ export const DashboardEPI = () => {
         })) ?? [], [epis]
     );
 
-    const openModal = (id: number) => {
-        setModalIsOpenAddEpi(true);
-        setIdEpi(id);
-    }
-    const closeModal = () => {
+    const closeModalAdd = () => {
         setModalIsOpenAddEpi(false);
         setIdEpi(0);
     }
-
+    const closeModalEdit = () => {
+        setModalIsOpenEditarEpi(false);
+        setIdEpi(0);
+    }
+    const openModalAdd = () => {
+        setModalIsOpenAddEpi(true);
+        setIdEpi(0);
+    }
+    const openModalEdit = (id: number) => {
+        setModalIsOpenEditarEpi(true);
+        setIdEpi(id);
+    }
     const openModalDelete = (id: number) => {
         setModalIsOpenDelete(true);
         setIdEpi(id);
@@ -89,7 +98,7 @@ export const DashboardEPI = () => {
                     key={`editar-${params.row.id}`}
                     icon={<EditColabIcon />}
                     label="Editar"
-                    onClick={() => openModal(params.row.id)}
+                    onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
             width: 70,
@@ -192,7 +201,7 @@ export const DashboardEPI = () => {
                     <>
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
-                                <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                                <S.ButtonStyled onClick={() => openModalAdd()} >+ Adicionar EPI</S.ButtonStyled>
                                 <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch}  value={searchValue}/>
                                 <S.DivDownload onClick={generateAllEPIsPDF}>
                                     <DownloadSoliciIcon />
@@ -223,7 +232,7 @@ export const DashboardEPI = () => {
                     
                 ) : (
                     <div style={{justifyContent: 'flex-start', width: '100%'}}>
-                        <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                        <S.ButtonStyled onClick={() => openModalAdd()} >+ Adicionar EPI</S.ButtonStyled>
                         <NoDataToShow mainText="Não foram adicionados EPI's!" />
                     </div>
                 )}
@@ -248,11 +257,11 @@ export const DashboardEPI = () => {
 
             <ReactModal
                 isOpen={modalIsOpenAddEpi}
-                onRequestClose={() => setModalIsOpenAddEpi(false)}
+                onRequestClose={closeModalAdd}
                 style={customStyles}
             >
                 <S.MainWrapper>
-                    <S.ImageContent onClick={() => closeModal()}>
+                    <S.ImageContent onClick={closeModalAdd}>
                         <S.Image  src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
                     <AdicionarEpi
@@ -260,6 +269,24 @@ export const DashboardEPI = () => {
                         idEpi={idEpi as number}
                         setModalIsOpen={setModalIsOpenAddEpi}
                         setIdEpi={setIdEpi}
+                    />
+                </S.MainWrapper>
+            </ReactModal>
+
+            <ReactModal
+                isOpen={modalIsOpenEditarEpi}
+                onRequestClose={closeModalEdit}
+                style={customStyles}
+            >
+                <S.MainWrapper>
+                    <S.ImageContent onClick={closeModalEdit}>
+                        <S.Image src="../../src/assets/svg/Close.svg" />
+                    </S.ImageContent>
+                    <EditarEPIModal 
+                        modalIsOpen={modalIsOpenEditarEpi}
+                        idEpi={idEpi}
+                        setIdEpi={setIdEpi}
+                        setModalIsOpen={setModalIsOpenEditarEpi}
                     />
                 </S.MainWrapper>
             </ReactModal>

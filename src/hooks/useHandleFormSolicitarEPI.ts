@@ -24,8 +24,8 @@ export const useHandleFormSolicitarEPI = () => {
     const path = redirectPaths[tipoAcesso] || '/login';
 
     const defaultValues = useMemo<SolicitarEpiForm>(() => ({
-        equipamentoId: 0,
-        qtd: 0,
+        equipamentoId: 1,
+        qtd: 1,
         urgencia: Urgencia.MEDIA,
         responsavel: '',
         matricula_responsavel: '',
@@ -42,7 +42,6 @@ export const useHandleFormSolicitarEPI = () => {
         watch,
         formState: { errors },
     } = useForm<SolicitarEpiForm>({
-
         resolver: yupResolver(schemas.solicitarEpiForm),
         defaultValues,
     });
@@ -79,7 +78,7 @@ export const useHandleFormSolicitarEPI = () => {
                 'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);
             toast.error(errorMessage);
-        },
+        }
     });
 
     const handleCreateSolicitacao: SubmitHandler<SolicitarEpiForm> = (data) => {

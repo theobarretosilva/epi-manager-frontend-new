@@ -56,10 +56,12 @@ export const validators = {
     .required(errorMessages.required),
   equipamentoId: yup
     .number()
-    .required(errorMessages.required),
+    .required(errorMessages.required)
+    .min(1, "Selecione um equipamento válido"),
   qtd: yup
     .number()
-    .required(errorMessages.required),
+    .required(errorMessages.required)
+    .min(1, "A quantidade precisa ser pelo menos 1"),
   urgencia: yup
     .string()
     .required(errorMessages.required)
@@ -96,5 +98,5 @@ export const validators = {
     .required(errorMessages.required),
   responsavelEpi: yup
     .string()
-    .optional()
+    .default('')
 }
