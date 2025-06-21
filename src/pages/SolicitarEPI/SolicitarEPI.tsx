@@ -36,7 +36,7 @@ export const SolicitarEPI = () => {
 
     const options: OptionProps[] = (epis ?? []).map((epi: EPIProps) => ({
         label: epi.descricao || '',
-        value: epi.codigo,
+        value: epi.codigo ?? 0,
     }));
 
     const handleItemChange = (option: OptionProps) => {

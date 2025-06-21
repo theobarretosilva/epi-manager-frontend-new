@@ -13,10 +13,8 @@ export const ExcluirModal: React.FC<ExcluirProps> = ({ id, setModalIsOpen, tipo 
 
   const handleDelete = () => {
     if ( tipo == "colaborador") {
-
       deleteColaboradorMutation.mutate(id)
     } else {
-
       deleteEPIMutation.mutate(id)
     }
     setModalIsOpen(false); 

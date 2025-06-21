@@ -62,7 +62,7 @@ export function ConsultarEPI() {
         if (!searchValue) return rows ?? [];
         return (rows ?? []).filter(row =>
 
-            row.id.toString().includes(searchValue.toLowerCase()) ||
+            row.id?.toString().includes(searchValue.toLowerCase()) ||
             row.descricao?.toLowerCase().includes(searchValue.toLowerCase())
         );
     }, [rows, searchValue]);

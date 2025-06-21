@@ -73,12 +73,10 @@ export const useHandleFormSolicitarEPI = () => {
             });
             navigate(path);
         },
-        onError: (error: AxiosError<{ message: string }>) => {
-
-            const errorMessage = error.response?.data?.error?.message
-
-                ? error.response.data.error.message
-                : 'Houve um erro, tente novamente mais tarde.';
+        onError: (error: AxiosError<{ error?: { message: string } }>) => {
+            const errorMessage =
+                error.response?.data?.error?.message ||
+                'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);
             toast.error(errorMessage);
         },

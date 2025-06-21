@@ -5,7 +5,7 @@ import { queryClientInstance } from "../lib/tanstack-query"
 
 export const useDeleteColaborador = () => {
     const deleteColaboradorMutation = useMutation({
-        mutationFn: (id: number) => {
+        mutationFn: (id: number | null) => {
             const deletePromise = axiosInstance.patch(`/colaboradores/${id}/status`);
             toast.promise(deletePromise, {
                 pending: 'Deletando...',
