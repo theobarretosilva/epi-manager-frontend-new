@@ -9,6 +9,7 @@ import { AxiosError } from "axios";
 import { EditColabProps } from "../props/editColabProps";
 import { schemas } from "../lib/yup/schemas";
 import { EditColaboradorForm } from "../types/editColaboradorForm";
+import { queryClientInstance } from "../lib/tanstack-query";
 
 type ResponseError = {
     message: string;
@@ -55,6 +56,9 @@ export const useEditColabForm = ({ setIdColab, setModalIsOpen, idColab }: EditCo
             reset();
             setModalIsOpen(false);
             setIdColab?.(null);
+            queryClientInstance.invalidateQueries({
+                queryKey: ['colaboradores'],
+            })
         }
     });
 

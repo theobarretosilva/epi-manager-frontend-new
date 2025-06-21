@@ -1,6 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGetEPIS } from "../../../hooks/useGetEPIS"
-import { EPIProps } from "../../../props/episProps";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import * as S from './ConsultarEPI.styles'
 import { Box, Modal, Paper } from "@mui/material";
@@ -9,18 +8,20 @@ import { NoDataToShow } from "../../../components/NoDataToShow/NoDataToShow";
 
 export function ConsultarEPI() {
     const { epis } = useGetEPIS();
-
-    const rows = epis
-        ?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
-        .map((epi: EPIProps) => ({
+    const [filteredRows, setFilteredRows] = useState<typeof rows>([]);
+    
+    const rows = useMemo(() =>
+        epis?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
+        .map((epi) => ({
             foto: epi.foto,
             id: epi.id,
             codigo: epi.codigo,
             descricao: epi.descricao,
             qtd: epi.qtd,
             ca: epi.ca,
-            data_validade: new Date(epi.data_validade).toLocaleDateString('pt-BR')
-        })
+            data_validade: new Date(epi.data_validade).toLocaleDateString("pt-BR"),
+        })) ?? [],
+        [epis]
     );
 
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -54,20 +55,38 @@ export function ConsultarEPI() {
         { field: 'data_validade', headerName: 'Validade', width: 130, align: 'center', headerAlign: 'center'},
     ];
 
+    useEffect(() => {
+        setFilteredRows(rows);
+    }, [rows]);
+
     const [searchValue, setSearchValue] = useState("");
+
     const handleSearch = (value: string) => {
         setSearchValue(value);
+
+        if (!value) {
+        setFilteredRows(rows);
+        return;
+        }
+
+        const normalized = (text: string | undefined) =>
+        (text ?? "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        const searchNormalized = normalized(value);
+
+        const filtered = rows?.filter((row) => {
+            return (
+                row.id?.toString().includes(searchNormalized) ||
+                normalized(row.descricao).includes(searchNormalized) ||
+                normalized(row.codigo?.toString()).includes(searchNormalized)
+            );
+        });
+
+        setFilteredRows(filtered);
     };
-    const filteredRows = useMemo(() => {
-        if (!searchValue) return rows ?? [];
-        return (rows ?? []).filter(row =>
-
-            row.id?.toString().includes(searchValue.toLowerCase()) ||
-            row.descricao?.toLowerCase().includes(searchValue.toLowerCase())
-        );
-    }, [rows, searchValue]);
-
-    
 
     return(
         <>

@@ -8,7 +8,7 @@ interface BtnStyledProps {
     children?: React.ReactNode;
 }
 
-export const BtnStyled: React.FC<BtnStyledProps> = ({ text, type = "button", onClick, disabled = false, children }) => {
+export const BtnStyled: React.FC<BtnStyledProps> = ({ text, type, onClick, disabled = false, children }) => {
     return (
         <S.ButtonStyled disabled={disabled} onClick={onClick} type={type}>
             {text || children}

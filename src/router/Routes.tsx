@@ -18,7 +18,7 @@ export const Router = () => {
     return(
         <Routes>
             {/* <Route path="/" element={<Usuarios/>} /> */}
-            <Route index path="/login" element={<Login/>} />
+            <Route index path="/" element={<Login/>} />
             {/* <Route path="/esqueciSenha" element={<EsqueciSenha/>} /> */}
 
             <Route path="/colaborador" element={<ProtectedRoute element={<ColabLayout />} roles={['colaborador']} />}>

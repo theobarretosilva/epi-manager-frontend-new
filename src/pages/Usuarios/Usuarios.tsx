@@ -27,7 +27,7 @@ export const Usuarios = () => {
                     {userOptions.map(({ label, role, img }) => (
                         <S.Button
                             key={role}
-                            onClick={() => navigate("/login")}
+                            onClick={() => navigate("/")}
                         >
                             <S.ImgButton src={img} />
                             <h2>{label}</h2>

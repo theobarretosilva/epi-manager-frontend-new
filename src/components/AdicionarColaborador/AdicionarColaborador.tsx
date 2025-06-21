@@ -23,35 +23,49 @@ const AdicionarColaboradorModal: React.FC<AddColaboradorProps> = ({ setModalIsOp
 
   useEffect(() => {
     const subscription = watch((values) => {
-      if (values.lideranca) {
+      if (values.lideranca && values.nome_lideranca !== "Sem liderança") {
         setValue("nome_lideranca", "Sem liderança");
       }
     });
     return () => subscription.unsubscribe();
   }, [watch, setValue]);
 
-  const lideresList = colaboradores?.filter((c) => c.lideranca).map((c) => c.nome) ?? [];
+  const lideresList = colaboradores
+    ?.filter((c) => c.lideranca && c.status_uso === "ATIVO")
+    .map((c) => c.nome) ?? [];
 
   return (
     <S.FormContainer onSubmit={handleSubmit(onSubmit)}>
       <S.DivWrapper>
         <InputStyled tipo="text" titulo="Nome completo" {...register("nome")} />
-        <p style={{ color: "red" }}>{errors.nome?.message}</p>
+        <p style={{ color: "red", marginTop: '0' }}>{errors.nome?.message}</p>
 
         <S.DivInputs>
           <InputStyled tipo="text" titulo="Matrícula" {...register("matricula")} />
-          <p style={{ color: "red" }}>{errors.matricula?.message}</p>
+          <p style={{ color: "red", marginTop: '0' }}>{errors.matricula?.message}</p>
 
-          <InputStyled tipo="text" titulo="CPF" {...register("cpf")} />
-          <p style={{ color: "red" }}>{errors.cpf?.message}</p>
+          <InputStyled 
+            tipo="text" 
+            titulo="CPF" 
+            {...register("cpf", {
+              onChange: (e) => {
+                let value = e.target.value.replace(/\D/g, "");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                e.target.value = value;
+              },
+            })}
+          />
+          <p style={{ color: "red", marginTop: '0' }}>{errors.cpf?.message}</p>
         </S.DivInputs>
 
         <S.DivInputs>
           <InputStyled tipo="text" titulo="Setor" {...register("setor")} />
-          <p style={{ color: "red" }}>{errors.setor?.message}</p>
+          <p style={{ color: "red", marginTop: '0' }}>{errors.setor?.message}</p>
 
           <InputStyled tipo="text" titulo="Cargo" {...register("cargo")} />
-          <p style={{ color: "red" }}>{errors.cargo?.message}</p>
+          <p style={{ color: "red", marginTop: '0' }}>{errors.cargo?.message}</p>
         </S.DivInputs>
 
         <S.DivInputs style={{ gap: "0" }}>
@@ -66,7 +80,7 @@ const AdicionarColaboradorModal: React.FC<AddColaboradorProps> = ({ setModalIsOp
               <FormControlLabel value="true" control={<Radio />} label="Sim" />
               <FormControlLabel value="false" control={<Radio />} label="Não" />
             </RadioGroup>
-            <p style={{ color: "red" }}>{errors.lideranca?.message}</p>
+            <p style={{ color: "red", marginTop: '0' }}>{errors.lideranca?.message}</p>
           </FormControl>
 
           <FormControl style={{ marginTop: "1vh" }}>
@@ -81,7 +95,7 @@ const AdicionarColaboradorModal: React.FC<AddColaboradorProps> = ({ setModalIsOp
               <FormControlLabel value={TipoPermissao.ALMOXARIFADO} control={<Radio />} label="Almoxarifado" />
               <FormControlLabel value={TipoPermissao.ADMIN} control={<Radio />} label="Administrador" />
             </RadioGroup>
-            <p style={{ color: "red" }}>{errors.permissao?.message}</p>
+            <p style={{ color: "red", marginTop: '0' }}>{errors.permissao?.message}</p>
           </FormControl>
         </S.DivInputs>
 
@@ -93,14 +107,14 @@ const AdicionarColaboradorModal: React.FC<AddColaboradorProps> = ({ setModalIsOp
           onChange={(value) => setValue("nome_lideranca", value ?? "Sem liderança")}
           name="nome_lideranca"
         />
-        <p style={{ color: "red" }}>{errors.nome_lideranca?.message}</p>
+        <p style={{ color: "red", marginTop: '0' }}>{errors.nome_lideranca?.message}</p>
 
         <S.DivInputs>
           <InputStyled tipo="email" titulo="Email" {...register("email")} />
-          <p style={{ color: "red" }}>{errors.email?.message}</p>
+          <p style={{ color: "red", marginTop: '0' }}>{errors.email?.message}</p>
 
           <InputStyled tipo="password" titulo="Senha" {...register("senha")} />
-          <p style={{ color: "red" }}>{errors.senha?.message}</p>
+          <p style={{ color: "red", marginTop: '0' }}>{errors.senha?.message}</p>
         </S.DivInputs>
 
         {!!responseError && <p>{responseError}</p>}

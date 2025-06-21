@@ -8,5 +8,4 @@ export type SolicitarEpiForm = {
     matricula_responsavel: string;
     descricaoItem: string;
     solicitante: string;
-    responsavelEPI: string;
 }

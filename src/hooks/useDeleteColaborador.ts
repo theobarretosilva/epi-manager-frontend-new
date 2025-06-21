@@ -16,7 +16,7 @@ export const useDeleteColaborador = () => {
         },
         onSuccess: () => {
             queryClientInstance.invalidateQueries({
-                queryKey: ['colaboradores/all'],
+                queryKey: ['colaboradores'],
             });
         },
     });

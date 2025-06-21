@@ -1,8 +1,8 @@
 import ReactModal from "react-modal";
 import AdicionarColaborador from "../../../components/AdicionarColaborador/AdicionarColaborador";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as S from './DashboardColab.styles';
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
 import { Searchbar } from "../../../components/Searchbar/Searchbar";
 import { Paper } from "@mui/material";
@@ -20,17 +20,19 @@ import { useGetSolicitacoes } from "../../../hooks/useGetSolicitacoes";
 import EditarColaboradorModal from "../../../components/EditarColaboradorModal/EditarColaboradorModal";
 
 export const DashboardColab = () => {
-    const { colaboradores } = useGetColaboradores();
+    const { colaboradores, refetch } = useGetColaboradores();
     const [modalIsOpenAddColaborador, setModalIsOpenAddColaborador] = useState(false);
     const [modalIsOpenEditarColaborador, setModalIsOpenEditarColaborador] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idColaborador, setIdColaborador] = useState<number | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const { solicitacoes } = useGetSolicitacoes();
+    const [filteredRows, setFilteredRows] = useState<typeof rows>([]);
 
     const closeModalAdd = () => {
         setModalIsOpenAddColaborador(false);
         setIdColaborador(null);
+        refetch();
     };
     const closeModalEdit = () => {
         setModalIsOpenEditarColaborador(false);
@@ -165,9 +167,9 @@ export const DashboardColab = () => {
         },
     ];
 
-    const rows = useMemo(() => 
-        colaboradores?.filter((colab) => colab.status_uso.toLowerCase() === "ativo")
-        .map((colaborador) => ({
+    const rows = useMemo(() =>
+        colaboradores?.filter(colab => colab.status_uso.toLowerCase() === "ativo")
+            .map(colaborador => ({
             id: colaborador.id,
             nome: colaborador.nome,
             cpf: colaborador.cpf,
@@ -175,15 +177,32 @@ export const DashboardColab = () => {
             setor: colaborador.setor,
             permissao: colaborador.permissao.toLowerCase(),
             matricula: colaborador.matricula
-        })) ?? [], [colaboradores]
-    );
+            })) ?? []
+    , [colaboradores]);
 
-    const filteredRows = searchTerm
-        ? rows?.filter((row) =>
-            row.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            row.matricula.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
-        : rows;
+    useEffect(() => {
+        if (rows) setFilteredRows(rows);
+    }, [rows]);
+
+    const handleSearch = (value: string) => {
+        setSearchTerm(value);
+        if (!value) {
+            setFilteredRows(rows);
+            return;
+        }
+
+        const normalized = (text: string | undefined) =>
+            (text ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+        setFilteredRows(
+            rows.filter((row) => {
+            return (
+                normalized(row.nome).includes(normalized(value)) ||
+                row.matricula?.toString().includes(value)
+            );
+            })
+        );
+    };
 
     const exportColabsPDF = () => {
         const doc = new jsPDF({
@@ -205,7 +224,8 @@ export const DashboardColab = () => {
                 "Permissão", 
                 "Liderança", 
                 "Nome da Liderança",
-                "Email"
+                "Email",
+                "Status"
             ]],
             body: colaboradores?.map((colab) => [
                 colab.id,
@@ -217,6 +237,7 @@ export const DashboardColab = () => {
                 colab.lideranca ? "Sim" : "Não",
                 colab.nome_lideranca || "",
                 colab.email,
+                colab.status_uso
             ]),
             styles: {
                 fontSize: 8,
@@ -238,7 +259,7 @@ export const DashboardColab = () => {
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
                                 <S.ButtonStyled onClick={() => openModalAdd()}>+ Adicionar Colaborador</S.ButtonStyled>
-                                <Searchbar onSearch={setSearchTerm} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
+                                <Searchbar onSearch={handleSearch} placeholder="Pesquise pela matrícula ou nome" value={searchTerm} />
                                 <S.DivDownload onClick={exportColabsPDF}>
                                     <DownloadSoliciIcon />
                                     <S.TextDownload>Baixar lista de colaboradores</S.TextDownload>
@@ -273,7 +294,6 @@ export const DashboardColab = () => {
                     </>
                 )}
             </S.MainStyled>
-            <ToastContainer position="top-right" />
             <ReactModal
                 isOpen={modalIsOpenDelete}
                 onRequestClose={() => setModalIsOpenDelete(false)}

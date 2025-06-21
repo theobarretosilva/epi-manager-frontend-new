@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
 import { AxiosError } from 'axios';
 import { useGetUserLogado } from './useGetUserLogado';
+import { queryClientInstance } from '../lib/tanstack-query';
 
 export const useHandleFormSolicitarEPI = () => {
     const { userLogado } = useGetUserLogado();
@@ -21,7 +22,7 @@ export const useHandleFormSolicitarEPI = () => {
         colaborador: '/colaborador/solicitacoes',
         almoxarifado: '/almoxarifado/dashboardAlmox',
     };
-    const path = redirectPaths[tipoAcesso] || '/login';
+    const path = redirectPaths[tipoAcesso] || '/';
 
     const defaultValues = useMemo<SolicitarEpiForm>(() => ({
         equipamentoId: 1,
@@ -31,7 +32,6 @@ export const useHandleFormSolicitarEPI = () => {
         matricula_responsavel: '',
         descricaoItem: '',
         solicitante: '',
-        responsavelEPI: '',
     }), []);
 
     const {
@@ -53,7 +53,6 @@ export const useHandleFormSolicitarEPI = () => {
                 ...data,
                 solicitanteId: userLogado?.id,
             };
-            console.log(dataParaEnviar)
             const createSolicitacaoPromise = axiosInstance.post('/solicitacoes/create', dataParaEnviar);
             toast.promise(createSolicitacaoPromise, {
                 pending: 'Processando...',
@@ -71,6 +70,9 @@ export const useHandleFormSolicitarEPI = () => {
                 qtd: 1
             });
             navigate(path);
+            queryClientInstance.invalidateQueries({
+                queryKey: ['solicitacoes'],
+            })
         },
         onError: (error: AxiosError<{ error?: { message: string } }>) => {
             const errorMessage =

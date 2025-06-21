@@ -20,6 +20,7 @@ import { SolicitacaoModalProps } from '../../../props/solicitacaoModalProps'
 import { ApproveIcon } from '../../../components/ApproveIcon/ApproveIcon'
 import { DenyIcon } from '../../../components/DenyIcon/DenyIcon'
 import { axiosInstance } from '../../../lib/axios'
+import { toast } from 'react-toastify'
 
 export const DashboardAlmox = () => {
     const { solicitacoes } = useGetSolicitacoes();
@@ -52,7 +53,6 @@ export const DashboardAlmox = () => {
 
     const getCAEPI = (cod: number | undefined) => {
         const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
-        console.log(epi)
         return epi ? epi.ca : 'N/A';
     }
 
@@ -80,7 +80,7 @@ export const DashboardAlmox = () => {
         { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
         { field: 'urgencia', headerName: 'Urgência', width: 100, align: 'center', headerAlign: 'center'},
         { field: 'status', headerName: 'Status', width: 100, align: 'center', headerAlign: 'center' },
-        { field: 'validadeEPI', headerName: 'Validade EPI', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'dataAbertura', headerName: 'Data da solicitação', width: 150, align: 'center', headerAlign: 'center' },
         { field: 'solicitante', headerName: 'Solicitante', width: 170, align: 'center', headerAlign: 'center' },
         {
             field: 'deliver',
@@ -121,14 +121,18 @@ export const DashboardAlmox = () => {
     ];
 
     const rows = useMemo(() => 
-        solicitacoes?.map((solicitacao: SolicitacaoProps) => ({
-            id: solicitacao.id,
-            descricaoItem: solicitacao.equipamento.descricao,
-            urgencia: solicitacao.urgencia,
-            status: solicitacao.status,
-            validadeEPI: new Date(solicitacao.equipamento.data_validade).toLocaleDateString('pt-BR'),
-            solicitante: solicitacao.solicitante.nome
-        })) ?? [], [solicitacoes]
+        (solicitacoes ?? [])
+            .slice()
+            .sort((a, b) => new Date(b.dataAbertura).getTime() - new Date(a.dataAbertura).getTime())
+            .map((solicitacao: SolicitacaoProps) => ({
+                id: solicitacao.id,
+                descricaoItem: solicitacao.equipamento.descricao,
+                urgencia: solicitacao.urgencia,
+                status: solicitacao.status,
+                dataAbertura: new Date(solicitacao.dataAbertura).toLocaleDateString('pt-BR'),
+                solicitante: solicitacao.solicitante.nome
+            })), 
+        [solicitacoes]
     );
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -193,15 +197,15 @@ export const DashboardAlmox = () => {
                     id: selectedSolicitacaoId
                 }
             )
-
-            // Depois atualizar lista ou refetch
-            // Por exemplo, chamar a função de busca de solicitações ou mutação do react-query
-            // Aqui só fechar modal e talvez atualizar a lista
             closeApproveDenyModal();
-            // Opcional: refetch das solicitações
+
+            if (actionType === 'aprovada') {
+                toast.success(`Solicitação #${selectedSolicitacaoId} aprovada com sucesso!`);
+            } else {
+                toast.success(`Solicitação #${selectedSolicitacaoId} negada com sucesso!`);
+            }
         } catch (error) {
             console.error('Erro ao atualizar solicitação:', error);
-            // Mostrar mensagem de erro para o usuário, se desejar
         }
     };
 

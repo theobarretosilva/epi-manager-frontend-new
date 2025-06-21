@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AddColaboradorProps } from "../props/addColaboradorProps";
 import { ResponseError } from "../types/responseError";
+import { queryClientInstance } from "../lib/tanstack-query";
 
 export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColaboradorProps) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
@@ -44,11 +45,6 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
         mutationFn: (data: ColaboradorForm) => {
             setResponseError('');
             const createColaboradorPromise = axiosInstance.post('/colaboradores/create', data);
-            toast.promise(createColaboradorPromise, {
-                pending: 'Processando...',
-                success: 'Colaborador criado!',
-                error: 'Houve um erro, tente novamente mais tarde.',
-            });
             return createColaboradorPromise;
         },
         onError: (error: AxiosError<ResponseError>) => {
@@ -59,13 +55,17 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColab
                 setError('cpf', { message: 'Já existe um registro com esse CPF' })
                 return
             };
-
+            toast.error('Houve um erro, tente novamente mais tarde.')
             setResponseError('Houve um erro, tente novamente mais tarde.');
         },
         onSuccess: () => {
             reset();
             setModalIsOpen(false);
             setIdColab?.(null);
+            toast.success('Colaborador criado!');
+            queryClientInstance.invalidateQueries({
+                queryKey: ['colaboradores'],
+            })
         }
     });
     

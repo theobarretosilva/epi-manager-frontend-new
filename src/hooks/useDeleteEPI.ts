@@ -16,7 +16,7 @@ export const useDeleteEPI = () => {
         },
         onSuccess: () => {
             queryClientInstance.invalidateQueries({
-                queryKey: ['equipamentos/all'],
+                queryKey: ['equipamentos'],
             })
         },
     });

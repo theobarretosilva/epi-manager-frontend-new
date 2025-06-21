@@ -24,7 +24,6 @@ import { useNavigate } from 'react-router';
 export const Solicitacoes = () => {
     const { isOpen, solicitacao, openModal, closeModal } = useModalDetalhesSolicitacao();
     const { solicitacoes } = useGetSolicitacoes();
-    console.log(solicitacoes)
     const { epis } = useGetEPIS();
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredRows, setFilteredRows] = useState<typeof rows>([]);
@@ -39,7 +38,6 @@ export const Solicitacoes = () => {
 
     const getCAEPI = (cod: number | undefined) => {
         const epi = epis?.find((epi: EPIProps) => epi.codigo === cod);
-        console.log(epi)
         return epi ? epi.ca : 'N/A';
     }
 
@@ -74,7 +72,6 @@ export const Solicitacoes = () => {
 
         doc.setFontSize(12);
 
-        // Dados da solicitação
         doc.text(`ID da Solicitação: ${solicitacao.id}`, 10, 30);
         doc.text(`Item: ${solicitacao.equipamento.descricao}`, 10, 40);
         doc.text(`Código do EPI: ${solicitacao.equipamento.codigo}`, 10, 50);
@@ -87,7 +84,6 @@ export const Solicitacoes = () => {
         doc.text(`Data de Abertura: ${new Date(solicitacao.dataAbertura).toLocaleDateString('pt-BR')}`, 10, 120);
         doc.text(`Data de Conclusão: ${solicitacao.dataConclusao ? new Date(solicitacao.dataConclusao).toLocaleDateString('pt-BR') : 'Ainda não concluída'}`, 10, 130);
 
-        // Solicitante
         doc.setFontSize(14);
         doc.text('Solicitante:', 10, 145);
         doc.setFontSize(12);
@@ -126,8 +122,8 @@ export const Solicitacoes = () => {
         { field: 'descricaoItem', headerName: 'Descrição do Item', width: 250, align: 'center', headerAlign: 'center' },
         { field: 'urgencia', headerName: 'Urgência', width: 120, align: 'center', headerAlign: 'center'},
         { field: 'status', headerName: 'Status', width: 120, align: 'center', headerAlign: 'center' },
-        { field: 'validadeEPI', headerName: 'Validade EPI', width: 120, align: 'center', headerAlign: 'center' },
-        { field: 'solicitante', headerName: 'Solicitante', width: 250, align: 'center', headerAlign: 'center'},
+        { field: 'dataAbertura', headerName: 'Data da solicitação', width: 150, align: 'center', headerAlign: 'center' },
+        { field: 'solicitante', headerName: 'Solicitante', width: 220, align: 'center', headerAlign: 'center'},
         { 
             field: 'download',
             type: 'actions',
@@ -152,14 +148,18 @@ export const Solicitacoes = () => {
     ];
 
     const rows = useMemo(() => 
-        solicitacoes?.map((solicitacao: SolicitacaoProps) => ({
-            id: solicitacao.id,
-            descricaoItem: solicitacao.equipamento.descricao,
-            urgencia: solicitacao.urgencia,
-            status: solicitacao.status,
-            validadeEPI: new Date(solicitacao.equipamento.data_validade).toLocaleDateString('pt-BR'),
-            solicitante: solicitacao.solicitante.nome
-        })) ?? [], [solicitacoes]
+        (solicitacoes ?? [])
+            .slice()
+            .sort((a, b) => new Date(b.dataAbertura).getTime() - new Date(a.dataAbertura).getTime())
+            .map((solicitacao: SolicitacaoProps) => ({
+                id: solicitacao.id,
+                descricaoItem: solicitacao.equipamento.descricao,
+                urgencia: solicitacao.urgencia,
+                status: solicitacao.status,
+                dataAbertura: new Date(solicitacao.dataAbertura).toLocaleDateString('pt-BR'),
+                solicitante: solicitacao.solicitante.nome
+            })), 
+        [solicitacoes]
     );
 
     useEffect(() => {

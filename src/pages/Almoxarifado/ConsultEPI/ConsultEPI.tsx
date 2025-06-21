@@ -2,7 +2,7 @@ import { Box, Modal, Paper } from '@mui/material'
 import { Searchbar } from '../../../components/Searchbar/Searchbar'
 import * as S from './ConsultEPI.styles'
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from '@mui/x-data-grid'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow'
 import ReactModal from 'react-modal'
 import AdicionarEpi from '../../../components/AdicionarEpi/AdicionarEpi'
@@ -14,18 +14,20 @@ import jsPDF from 'jspdf'
 import { DownloadSoliciIcon } from '../../../components/DownloadSoliciIcon/DownloadSoliciIcon'
 import { ModuloEPIVencProx } from '../../../components/ModuloEPIVencProx/ModuloEPIVencProx'
 import { ModuloEPIEstoBaix } from '../../../components/ModuloEPIEstoBaix/ModuloEPIEstoBaix'
-import { ToastContainer } from 'react-toastify'
 import { DeleteIcon } from '../../../components/DeleteIcon/DeleteIcon'
+import { EditarEPIModal } from '../../../components/EditarEPIModal/EditarEPIModal'
 
 export const ConsultEPI = () => {
     const { epis } = useGetEPIS();
     const [modalIsOpenAddEpi, setModalIsOpenAddEpi] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
+    const [modalIsOpenEditarEpi, setModalIsOpenEditarEpi] = useState(false);
     const [idEpi, setIdEpi] = useState<number | null>(null);
+    const [filteredRows, setFilteredRows] = useState<typeof rows>([]);
 
-    const rows = useMemo(() => 
+    const rows = useMemo(() =>
         epis?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
-        .map((epi: EPIProps) => ({
+        .map((epi) => ({
             foto: epi.foto,
             id: epi.id,
             codigo: epi.codigo,
@@ -33,8 +35,9 @@ export const ConsultEPI = () => {
             preco: epi.preco,
             qtd: epi.qtd,
             ca: epi.ca,
-            data_validade: new Date(epi.data_validade).toLocaleDateString('pt-BR')
-        })) ?? [], [epis]
+            data_validade: new Date(epi.data_validade).toLocaleDateString("pt-BR"),
+        })) ?? [],
+        [epis]
     );
     
     const columns: GridColDef[] = [
@@ -47,7 +50,7 @@ export const ConsultEPI = () => {
                     key={`editar-${params.row.id}`}
                     icon={<EditColabIcon />}
                     label="Editar"
-                    onClick={() => openModal(params.row.id)}
+                    onClick={() => openModalEdit(params.row.id)}
                 />,
             ],
             width: 70,
@@ -91,15 +94,22 @@ export const ConsultEPI = () => {
         }
     ];
 
-    const openModal = (id: number) => {
-        setModalIsOpenAddEpi(true);
-        setIdEpi(id);
-    }
-    const closeModal = () => {
+    const closeModalAdd = () => {
         setModalIsOpenAddEpi(false);
         setIdEpi(0);
     }
-
+    const closeModalEdit = () => {
+        setModalIsOpenEditarEpi(false);
+        setIdEpi(0);
+    }
+    const openModalAdd = () => {
+        setModalIsOpenAddEpi(true);
+        setIdEpi(0);
+    }
+    const openModalEdit = (id: number) => {
+        setModalIsOpenEditarEpi(true);
+        setIdEpi(id);
+    }
     const openModalDelete = (id: number) => {
         setModalIsOpenDelete(true);
         setIdEpi(id);
@@ -132,18 +142,38 @@ export const ConsultEPI = () => {
         },
     };
 
+    useEffect(() => {
+        setFilteredRows(rows);
+    }, [rows]);
+
     const [searchValue, setSearchValue] = useState("");
+
     const handleSearch = (value: string) => {
         setSearchValue(value);
-    };
-    const filteredRows = useMemo(() => {
-        if (!searchValue) return rows ?? [];
-        return (rows ?? []).filter(row =>
 
-            row.id?.toString().includes(searchValue.toLowerCase()) ||
-            row.descricao?.toLowerCase().includes(searchValue.toLowerCase())
-        );
-    }, [rows, searchValue]);
+        if (!value) {
+            setFilteredRows(rows);
+            return;
+        }
+
+        const normalized = (text: string | undefined) =>
+        (text ?? "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        const searchNormalized = normalized(value);
+
+        const filtered = rows.filter((row) => {
+            return (
+                row.id?.toString().includes(searchNormalized) ||
+                normalized(row.descricao).includes(searchNormalized) ||
+                normalized(row.codigo?.toString()).includes(searchNormalized)
+            );
+        });
+
+        setFilteredRows(filtered);
+    };
 
     const generateAllEPIsPDF = () => {
         const doc = new jsPDF();
@@ -191,8 +221,8 @@ export const ConsultEPI = () => {
                     <>
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
-                                <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
-                                <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch}  value={searchValue}/>
+                                <S.ButtonStyled onClick={() => openModalAdd()} >+ Adicionar EPI</S.ButtonStyled>
+                                <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch} value={searchValue}/>
                                 <S.DivDownload onClick={generateAllEPIsPDF}>
                                     <DownloadSoliciIcon />
                                     <S.TextDownload>Baixar lista de EPI's</S.TextDownload>
@@ -221,12 +251,11 @@ export const ConsultEPI = () => {
                     </>
                 ) : (
                     <div style={{justifyContent: 'flex-start', width: '100%'}}>
-                        <S.ButtonStyled onClick={() => setModalIsOpenAddEpi(true)} >+ Adicionar EPI</S.ButtonStyled>
+                        <S.ButtonStyled onClick={() => openModalAdd} >+ Adicionar EPI</S.ButtonStyled>
                         <NoDataToShow mainText="Não foram adicionados EPI's!" />
                     </div>
                 )}
             </S.MainStyled>
-            <ToastContainer position="top-right" />
             <ReactModal
                 isOpen={modalIsOpenDelete}
                 onRequestClose={() => setModalIsOpenDelete(false)}
@@ -246,11 +275,11 @@ export const ConsultEPI = () => {
 
             <ReactModal
                 isOpen={modalIsOpenAddEpi}
-                onRequestClose={() => setModalIsOpenAddEpi(false)}
+                onRequestClose={closeModalAdd}
                 style={customStyles}
             >
                 <S.MainWrapper>
-                    <S.ImageContent onClick={() => closeModal()}>
+                    <S.ImageContent onClick={closeModalAdd}>
                         <S.Image  src="../../src/assets/svg/Close.svg" />
                     </S.ImageContent>
                     <AdicionarEpi
@@ -258,6 +287,24 @@ export const ConsultEPI = () => {
                         idEpi={idEpi as number}
                         setModalIsOpen={setModalIsOpenAddEpi}
                         setIdEpi={setIdEpi}
+                    />
+                </S.MainWrapper>
+            </ReactModal>
+
+            <ReactModal
+                isOpen={modalIsOpenEditarEpi}
+                onRequestClose={closeModalEdit}
+                style={customStyles}
+            >
+                <S.MainWrapper>
+                    <S.ImageContent onClick={closeModalEdit}>
+                        <S.Image src="../../src/assets/svg/Close.svg" />
+                    </S.ImageContent>
+                    <EditarEPIModal 
+                        modalIsOpen={modalIsOpenEditarEpi}
+                        idEpi={idEpi}
+                        setIdEpi={setIdEpi}
+                        setModalIsOpen={setModalIsOpenEditarEpi}
                     />
                 </S.MainWrapper>
             </ReactModal>

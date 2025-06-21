@@ -33,7 +33,6 @@ export const schemas = {
         matricula_responsavel: validators.matricula_responsavel,
         descricaoItem: validators.descricaoItem,
         solicitante: validators.solicitante,
-        responsavelEPI: validators.responsavelEpi
     }),
     epiForm: yup.object().shape({
         descricao: validators.descricaoItem,

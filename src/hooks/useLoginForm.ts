@@ -32,9 +32,6 @@ export const useLoginForm = () => {
     };
 
     const handleLoginSuccess = (data: HandleLoginSuccessProps) => {
-        console.log("Salvando token:", data.token);
-        console.log("Salvando permissão:", data.permissao);
-
         sessionStorage.setItem('EpiManagerToken', data.token);
         sessionStorage.setItem("TipoAcesso", data.permissao);
         axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.token}`;

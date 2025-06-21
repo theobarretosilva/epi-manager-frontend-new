@@ -12,5 +12,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, roles }
         return element;
     }
 
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
 };

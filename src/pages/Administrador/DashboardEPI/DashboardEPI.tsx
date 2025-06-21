@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactModal from "react-modal"
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
 import * as S from "./DashboardEPI.styles"
-import { ToastContainer } from "react-toastify";
 import AdicionarEpi from "../../../components/AdicionarEpi/AdicionarEpi";
 import { Searchbar } from "../../../components/Searchbar/Searchbar";
 import { Box, Modal, Paper } from "@mui/material";
@@ -26,10 +25,11 @@ export const DashboardEPI = () => {
     const [modalIsOpenEditarEpi, setModalIsOpenEditarEpi] = useState(false);
     const [modalIsOpenDelete, setModalIsOpenDelete] = useState(false);
     const [idEpi, setIdEpi] = useState<number | null>(null);
+    const [filteredRows, setFilteredRows] = useState<typeof rows>([]);
 
-    const rows = useMemo(() => 
+    const rows = useMemo(() =>
         epis?.filter((epi) => epi.status_uso.toLowerCase() === "ativo")
-        .map((epi: EPIProps) => ({
+        .map((epi) => ({
             foto: epi.foto,
             id: epi.id,
             codigo: epi.codigo,
@@ -37,8 +37,9 @@ export const DashboardEPI = () => {
             preco: epi.preco,
             qtd: epi.qtd,
             ca: epi.ca,
-            data_validade: new Date(epi.data_validade).toLocaleDateString('pt-BR')
-        })) ?? [], [epis]
+            data_validade: new Date(epi.data_validade).toLocaleDateString("pt-BR"),
+        })) ?? [],
+        [epis]
     );
 
     const closeModalAdd = () => {
@@ -142,18 +143,38 @@ export const DashboardEPI = () => {
         }
     ];
 
+    useEffect(() => {
+        setFilteredRows(rows);
+    }, [rows]);
+
     const [searchValue, setSearchValue] = useState("");
+
     const handleSearch = (value: string) => {
         setSearchValue(value);
-    };
-    const filteredRows = useMemo(() => {
-        if (!searchValue) return rows ?? [];
-        return (rows ?? []).filter(row =>
 
-            row.id?.toString().includes(searchValue.toLowerCase()) ||
-            row.descricao?.toLowerCase().includes(searchValue.toLowerCase())
-        );
-    }, [rows, searchValue]);
+        if (!value) {
+        setFilteredRows(rows);
+        return;
+        }
+
+        const normalized = (text: string | undefined) =>
+        (text ?? "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
+
+        const searchNormalized = normalized(value);
+
+        const filtered = rows.filter((row) => {
+            return (
+                row.id?.toString().includes(searchNormalized) ||
+                normalized(row.descricao).includes(searchNormalized) ||
+                normalized(row.codigo?.toString()).includes(searchNormalized)
+            );
+        });
+
+        setFilteredRows(filtered);
+    };
 
     const generateAllEPIsPDF = () => {
         const doc = new jsPDF();
@@ -202,7 +223,7 @@ export const DashboardEPI = () => {
                         <Paper sx={{ height: '100%', width: '100%', fontSize: 14, mt: 0 }}>
                             <S.DivBtnSearch>
                                 <S.ButtonStyled onClick={() => openModalAdd()} >+ Adicionar EPI</S.ButtonStyled>
-                                <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch}  value={searchValue}/>
+                                <Searchbar placeholder="Pesquise pela descrição ou código" onSearch={handleSearch} value={searchValue}/>
                                 <S.DivDownload onClick={generateAllEPIsPDF}>
                                     <DownloadSoliciIcon />
                                     <S.TextDownload>Baixar lista de EPI's</S.TextDownload>
@@ -237,7 +258,6 @@ export const DashboardEPI = () => {
                     </div>
                 )}
             </S.MainStyled>
-            <ToastContainer position="top-right" />
             <ReactModal
                 isOpen={modalIsOpenDelete}
                 onRequestClose={() => setModalIsOpenDelete(false)}

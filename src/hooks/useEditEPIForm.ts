@@ -9,6 +9,7 @@ import { EditEpiProps } from "../props/editEpiProps";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { ResponseError } from "../types/responseError";
+import { queryClientInstance } from "../lib/tanstack-query";
 
 export const useEditEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: EditEpiProps) => {
     const defaultValues = useMemo<EditEpiForm>(() => ({
@@ -48,6 +49,9 @@ export const useEditEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: EditEpiProps
             reset();
             setModalIsOpen(false);
             setIdEpi?.(null);
+            queryClientInstance.invalidateQueries({
+                queryKey: ['equipamentos'],
+            })
         }
     });
 

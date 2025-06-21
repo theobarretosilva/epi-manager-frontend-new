@@ -9,8 +9,8 @@ export const ModuloEPIEstoBaix = () => {
   const columns: GridColDef[] = [
     { field: 'codigo', headerName: 'Código', width: 100, align: 'center', headerAlign: 'center' },
     { field: 'descricaoItem', headerName: 'Descrição do Item', width: 230, align: 'center', headerAlign: 'center' },
-    { field: 'quantidadeAtual', headerName: 'Qtd Atual', width: 110, align: 'center', headerAlign: 'center' },
-    { field: 'quantidadeMinima', headerName: 'Qtd Mínima', width: 120, align: 'center', headerAlign: 'center' },
+    { field: 'quantidadeAtual', headerName: 'Qtd Atual', width: 100, align: 'center', headerAlign: 'center' },
+    { field: 'quantidadeMinima', headerName: 'Qtd Mínima', width: 100, align: 'center', headerAlign: 'center' },
   ];
 
   const rows = epis?.filter((epi: EPIProps) => epi.qtd <= 20)
@@ -19,6 +19,7 @@ export const ModuloEPIEstoBaix = () => {
       codigo: epi.codigo,
       descricaoItem: epi.descricao,
       quantidadeAtual: epi.qtd,
+      quantidadeMinima: 20
     }));
 
   return (

@@ -5,6 +5,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useState } from 'react'
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow'
 import { useGetColaboradores } from '../../../hooks/useGetColaboradores'
+import { ModuloColabSetDash } from '../../../components/ModuloColabSetDash/ModuloColabSetDash'
+import { ModuloIndicNume } from '../../../components/ModuloIndicNume/ModuloIndicNume'
 
 export const ConsultColab = () => {
     const { colaboradores } = useGetColaboradores();
@@ -12,10 +14,11 @@ export const ConsultColab = () => {
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 100, align: 'center', headerAlign: 'center'},
-        { field: 'matricula', headerName: 'Matrícula', width: 150, align: 'center', headerAlign: 'center' },
-        { field: 'nome', headerName: 'Nome', width: 350, align: 'center', headerAlign: 'center' },
+        { field: 'matricula', headerName: 'Matrícula', width: 100, align: 'center', headerAlign: 'center' },
+        { field: 'nome', headerName: 'Nome', width: 300, align: 'center', headerAlign: 'center' },
         { field: 'cargo', headerName: 'Cargo', width: 200, align: 'center', headerAlign: 'center'},
         { field: 'setor', headerName: 'Setor', width: 200, align: 'center', headerAlign: 'center' },
+        { field: 'permissao', headerName: 'Permissão', width: 180, align: 'center', headerAlign: 'center' },
     ];
 
     const rows = colaboradores
@@ -23,7 +26,6 @@ export const ConsultColab = () => {
         .map((colaborador) => ({
             id: colaborador.id,
             nome: colaborador.nome,
-            cpf: colaborador.cpf,
             cargo: colaborador.cargo,
             setor: colaborador.setor,
             permissao: colaborador.permissao.toLowerCase(),
@@ -61,6 +63,10 @@ export const ConsultColab = () => {
                                 getRowId={(row) => row.id}
                             />
                         </Paper>
+                        <S.DivLayoutDash>
+                            <ModuloColabSetDash />
+                            <ModuloIndicNume />
+                        </S.DivLayoutDash>
                     </>
                 ) : (
                     <NoDataToShow mainText='Não foram adicionados colaboradores!' />

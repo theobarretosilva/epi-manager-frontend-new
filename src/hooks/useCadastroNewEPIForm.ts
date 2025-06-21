@@ -9,6 +9,7 @@ import { AxiosError } from "axios";
 import { AddEpiProps } from "../props/addEpiProps";
 import { EpiForm } from "../types/epiForm";
 import { ResponseError } from "../types/responseError";
+import { queryClientInstance } from "../lib/tanstack-query";
 
 
 export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps) => {
@@ -40,21 +41,21 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen }: AddEpiProps)
         mutationFn: (data: EpiForm) => {
             setResponseError('');
             const createEpiPromise = axiosInstance.post('/equipamentos/create', data);
-            toast.promise(createEpiPromise, {
-                pending: 'Processando...',
-                success: 'EPI criado!',
-                error: 'Houve um erro, tente novamente mais tarde.',
-            });
             return createEpiPromise;
         },
         onError: (error: AxiosError<ResponseError>) => {
             const errorMessage = error.response?.data.message;
             setResponseError(errorMessage + '');
+            toast.error('Houve um erro, tente novamente mais tarde.')
         },
         onSuccess: () => {
             reset();
             setModalIsOpen(false);
             setIdEpi?.(null);
+            toast.success('EPI criado!');
+            queryClientInstance.invalidateQueries({
+                queryKey: ['equipamentos'],
+            })
         }
     });
 
