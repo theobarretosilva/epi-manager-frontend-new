@@ -44,7 +44,6 @@ const AdicionarEpi: React.FC<AddEpiProps> = ({ setModalIsOpen, modalIsOpen, idEp
   }, [defaultValues, epis, idEpi, modalIsOpen, reset, setValue]);
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
     <S.FormContainer onSubmit={handleSubmit(idEpi ? onSubmitEdit : onSubmit)}>
       <S.DivWrapper>

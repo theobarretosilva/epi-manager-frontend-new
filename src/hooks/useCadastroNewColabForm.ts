@@ -36,8 +36,7 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen, idColab }:
         setError,
         formState: { errors }
     } = useForm<ColaboradorForm>({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         resolver: yupResolver(schemas.colaboradorForm),
         defaultValues,
     });

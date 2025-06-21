@@ -32,8 +32,7 @@ export const useCadastroNewEPIForm = ({ setIdEpi, setModalIsOpen, idEpi }: AddEp
         watch,
         formState: { errors }
     } = useForm<EpiForm>({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         resolver: yupResolver(schemas.epiForm),
         defaultValues,
     });

@@ -42,8 +42,7 @@ export const useHandleFormSolicitarEPI = () => {
         watch,
         formState: { errors },
     } = useForm<SolicitarEpiForm>({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         resolver: yupResolver(schemas.solicitarEpiForm),
         defaultValues,
     });
@@ -75,11 +74,9 @@ export const useHandleFormSolicitarEPI = () => {
             navigate(path);
         },
         onError: (error: AxiosError<{ message: string }>) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
             const errorMessage = error.response?.data?.error?.message
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
                 ? error.response.data.error.message
                 : 'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);

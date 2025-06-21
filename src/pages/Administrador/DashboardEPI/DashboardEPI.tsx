@@ -140,8 +140,7 @@ export const DashboardEPI = () => {
     const filteredRows = useMemo(() => {
         if (!searchValue) return rows ?? [];
         return (rows ?? []).filter(row =>
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
             row.id.toString().includes(searchValue.toLowerCase()) ||
             row.descricao?.toLowerCase().includes(searchValue.toLowerCase())
         );

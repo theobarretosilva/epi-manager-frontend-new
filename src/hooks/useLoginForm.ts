@@ -20,8 +20,7 @@ export const useLoginForm = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<LoginForm>({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         resolver: yupResolver(schemas.loginForm),
         defaultValues,
     });
@@ -57,11 +56,9 @@ export const useLoginForm = () => {
         },
         onSuccess: handleLoginSuccess,
         onError: (error: AxiosError<{ message: string }>) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
             const errorMessage = error.response?.data?.error?.message
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
                 ? error.response.data.error.message
                 : 'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);
@@ -72,8 +69,7 @@ export const useLoginForm = () => {
     const handleSignIn: SubmitHandler<LoginForm> = (data) => {
         loginMutation.mutate(data)
     }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
     const onSubmit = handleSubmit(handleSignIn)
 
     return {
