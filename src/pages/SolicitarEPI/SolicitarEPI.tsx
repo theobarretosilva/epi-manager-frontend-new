@@ -33,13 +33,13 @@ export const SolicitarEPI = () => {
     const { colaboradores } = useGetColaboradores();
     const colaboradoresList = colaboradores?.filter((colab) => colab.nome_lideranca == userLogado?.nome);
 
-    const options: OptionProps[] = (epis ?? []).map((epi: EPIProps) => ({
+    const options: OptionProps[] = (epis ?? [])
+    .filter((epi) => epi.status_uso?.toUpperCase() === "ATIVO") // filtro aqui
+    .map((epi: EPIProps) => ({
         label: epi.descricao || '',
         value: epi.codigo ?? 0,
     }));
-useEffect(() => {
-  console.log('Errors:', errors);
-}, [errors]);
+
     const handleItemChange = (option: OptionProps) => {
         setValue('descricaoItem', option.label);
         setValue('equipamentoId', option.value);

@@ -21,6 +21,7 @@ import { ApproveIcon } from '../../../components/ApproveIcon/ApproveIcon'
 import { DenyIcon } from '../../../components/DenyIcon/DenyIcon'
 import { axiosInstance } from '../../../lib/axios'
 import { toast } from 'react-toastify'
+import { queryClientInstance } from '../../../lib/tanstack-query'
 
 export const DashboardAlmox = () => {
     const { solicitacoes } = useGetSolicitacoes();
@@ -77,10 +78,10 @@ export const DashboardAlmox = () => {
             width: 60
         },
         { field: 'id', headerName: 'ID', width: 60, align: 'center', headerAlign: 'center' },
-        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 280, align: 'center', headerAlign: 'center' },
-        { field: 'urgencia', headerName: 'Urgência', width: 100, align: 'center', headerAlign: 'center'},
+        { field: 'descricaoItem', headerName: 'Descrição do Item', width: 270, align: 'center', headerAlign: 'center' },
+        { field: 'urgencia', headerName: 'Urgência', width: 80, align: 'center', headerAlign: 'center'},
         { field: 'status', headerName: 'Status', width: 100, align: 'center', headerAlign: 'center' },
-        { field: 'dataAbertura', headerName: 'Data da solicitação', width: 150, align: 'center', headerAlign: 'center' },
+        { field: 'dataAbertura', headerName: 'Data da solicitação', width: 140, align: 'center', headerAlign: 'center' },
         { field: 'solicitante', headerName: 'Solicitante', width: 170, align: 'center', headerAlign: 'center' },
         {
             field: 'deliver',
@@ -94,7 +95,7 @@ export const DashboardAlmox = () => {
                     onClick={() => deliverEPIMutation.mutate(params.row.id)}
                 />
             ],
-            width: 80
+            width: 75
         },
         {
             field: 'approveDeny',
@@ -193,11 +194,15 @@ export const DashboardAlmox = () => {
 
         try {
             await axiosInstance.put('/solicitacoes/aprove', {
-                    status: actionType.toUpperCase(),
-                    id: selectedSolicitacaoId
-                }
-            )
+                status: actionType.toUpperCase(),
+                id: selectedSolicitacaoId
+            })
+
             closeApproveDenyModal();
+
+            queryClientInstance.invalidateQueries({
+                queryKey: ['solicitacoes'],
+            })
 
             if (actionType === 'aprovada') {
                 toast.success(`Solicitação #${selectedSolicitacaoId} aprovada com sucesso!`);

@@ -11,7 +11,7 @@ export const useDeliverEPI = () => {
         },
         onSuccess: () => {
             queryClientInstance.invalidateQueries({
-                queryKey: ['equipamentos'],
+                queryKey: ['solicitacoes'],
             })
             toast.success('EPI entregue')
         },
