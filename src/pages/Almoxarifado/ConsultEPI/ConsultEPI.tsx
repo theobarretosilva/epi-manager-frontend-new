@@ -5,7 +5,7 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRo
 import { useMemo, useState } from 'react'
 import { NoDataToShow } from '../../../components/NoDataToShow/NoDataToShow'
 import ReactModal from 'react-modal'
-import AdicionarEpi from '../../../components/AdicionarEPI/AdicionarEPI'
+import AdicionarEpi from '../../../components/AdicionarEpi/AdicionarEpi'
 import { EditColabIcon } from '../../../components/EditColabIcon/EditColabIcon'
 import { ExcluirModal } from '../../../components/ModalExcluir/ExcluirModal'
 import { useGetEPIS } from '../../../hooks/useGetEPIS'

@@ -1,6 +1,6 @@
 import React from "react";
 import { BtnStyled } from "../BtnStyled/BtnStyled";
-import * as S from './AdicionarEPI.styles'
+import * as S from './AdicionarEpi.styles.ts'
 import { InputStyled } from "../InputStyled/InputStyled";
 import { AddEpiProps } from "../../props/addEpiProps";
 import { useCadastroNewEPIForm } from "../../hooks/useCadastroNewEPIForm";

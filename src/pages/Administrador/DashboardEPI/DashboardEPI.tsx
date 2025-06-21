@@ -3,7 +3,7 @@ import ReactModal from "react-modal"
 import { ExcluirModal } from "../../../components/ModalExcluir/ExcluirModal";
 import * as S from "./DashboardEPI.styles"
 import { ToastContainer } from "react-toastify";
-import AdicionarEpi from "../../../components/AdicionarEPI/AdicionarEPI";
+import AdicionarEpi from "../../../components/AdicionarEpi/AdicionarEpi";
 import { Searchbar } from "../../../components/Searchbar/Searchbar";
 import { Box, Modal, Paper } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
