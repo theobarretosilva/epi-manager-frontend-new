@@ -9,3 +9,12 @@ export const MainStyled = styled.main`
     padding: 1.5vh 1.5vw 1.5vh 1.5vw;
     margin-left: 25.4vw;
 `
+
+export const DivLayoutDash = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    margin-top: 2vh;
+`

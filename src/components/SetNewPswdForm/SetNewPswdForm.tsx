@@ -73,7 +73,7 @@ export const SetNewPswdForm = ({ email }: SetNewPswdFormProps) => {
                     {responseError && <ErrorMessage>{responseError}</ErrorMessage>}
                 </form>
             </S.BoxForm>
-            <S.PVoltar onClick={() => navigate('/login')}>Voltar</S.PVoltar>
+            <S.PVoltar onClick={() => navigate('/')}>Voltar</S.PVoltar>
         </>
     )
 }

@@ -1,4 +1,9 @@
-import * as yup from 'yup'
-import { schemas } from '../lib/yup/schemas'
+import { TipoPermissao } from "../enums/TipoPermissao";
 
-export type EditColaboradorForm = yup.InferType<typeof schemas.editColaboradorForm>
+export type EditColaboradorForm = {
+  cargo: string;
+  setor: string;
+  lideranca: boolean;
+  nome_lideranca: string;
+  permissao: TipoPermissao;
+};

@@ -63,10 +63,8 @@ export const EsqueciSenha = () => {
             toast.error("As senhas não coincidem.");
             return;
         }
-
-        // Aqui você pode chamar sua API para atualizar a senha, usando o email e a nova senha.
         toast.success("Senha alterada com sucesso!");
-        navigate('/login');
+        navigate('/');
     };
 
     return (
@@ -97,7 +95,7 @@ export const EsqueciSenha = () => {
                     <BtnStyled onClick={handleEnviarEmail}>
                         {isLoading ? <CircularProgress size="1.5rem" color="inherit" /> : "Enviar código"}
                     </BtnStyled>
-                    <S.PVoltar onClick={() => navigate('/login')}>Voltar</S.PVoltar>
+                    <S.PVoltar onClick={() => navigate('/')}>Voltar</S.PVoltar>
                 </S.BoxForm>
             )}
 

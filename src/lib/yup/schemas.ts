@@ -16,7 +16,6 @@ export const schemas = {
         nome_lideranca: validators.nome_lideranca,
         permissao: validators.permissao,
         senha: validators.senha,
-        id: validators.id,
         email: validators.email
     }),
     editColaboradorForm: yup.object().shape({
@@ -34,7 +33,6 @@ export const schemas = {
         matricula_responsavel: validators.matricula_responsavel,
         descricaoItem: validators.descricaoItem,
         solicitante: validators.solicitante,
-        responsavelEPI: validators.responsavelEpi
     }),
     epiForm: yup.object().shape({
         descricao: validators.descricaoItem,
@@ -43,12 +41,9 @@ export const schemas = {
         preco: validators.preco,
         qtd: validators.qtd,
         foto: validators.foto,
-        id: yup.number().optional().nullable(),
-        codigo: yup.number().optional().nullable()
     }),
     editEpiForm: yup.object().shape({
         descricao: validators.descricaoItem,
-        preco: validators.preco,
-        codigo: yup.number().optional().nullable()
+        preco: validators.preco
     })
 }

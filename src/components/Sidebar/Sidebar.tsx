@@ -10,7 +10,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ links }) => {
         toast.success("Fazendo logout em 3.. 2.. 1..", { autoClose: 2000 });
         sessionStorage.removeItem('TipoAcesso');
         sessionStorage.removeItem('EpiManagerToken')
-        setTimeout(() => navigate("/login"), 2500);
+        setTimeout(() => navigate("/"), 2500);
     };
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, onClick?: () => void) => {

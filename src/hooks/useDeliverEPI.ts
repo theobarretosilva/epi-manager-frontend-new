@@ -6,20 +6,18 @@ import { queryClientInstance } from "../lib/tanstack-query";
 export const useDeliverEPI = () => {
     const deliverEPIMutation = useMutation({
         mutationFn: async (idSolicitacao: number) => {
-            console.log(idSolicitacao)
             const deliverPromise = axiosInstance.put('/solicitacoes/delivery', { id: idSolicitacao });
-            toast.promise(deliverPromise, {
-                pending: 'Entregando...',
-                success: 'EPI entregue!',
-                error: 'Não foi possivel entregar, tente novamente mais tarde!',
-            });
             return deliverPromise;
         },
         onSuccess: () => {
             queryClientInstance.invalidateQueries({
-                queryKey: ['equipamentos/all'],
+                queryKey: ['solicitacoes'],
             })
+            toast.success('EPI entregue')
         },
+        onError: () => {
+            toast.error('Não foi possivel entregar, tente novamente mais tarde!')
+        }
     });
 
     return { deliverEPIMutation };

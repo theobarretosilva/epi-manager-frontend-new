@@ -47,7 +47,7 @@ export const ModuloNStatSoli = ({ solicitacoes }: Props) => {
     
     return(
         <S.BoxStyled>
-            <S.TituloBox>N° e urgência de Solicitações</S.TituloBox>
+            <S.TituloBox>N° e Urgência de Solicitações</S.TituloBox>
             <S.LinhaStyled />
             <BarChart
                 dataset={dataset}

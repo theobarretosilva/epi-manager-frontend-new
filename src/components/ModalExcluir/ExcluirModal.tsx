@@ -13,12 +13,8 @@ export const ExcluirModal: React.FC<ExcluirProps> = ({ id, setModalIsOpen, tipo 
 
   const handleDelete = () => {
     if ( tipo == "colaborador") {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
       deleteColaboradorMutation.mutate(id)
     } else {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
       deleteEPIMutation.mutate(id)
     }
     setModalIsOpen(false); 

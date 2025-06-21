@@ -5,6 +5,4 @@ export type EpiForm = {
     preco: number;
     qtd: number;
     foto: string;
-    id?: number | null | undefined; // Tornando opcional
-    codigo?: number | null | undefined; // Tornando opcional
 };

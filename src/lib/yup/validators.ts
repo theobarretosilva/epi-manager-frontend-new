@@ -14,13 +14,9 @@ export const validators = {
     .required(errorMessages.required)
     .email(errorMessages.email),
   senha: yup
-  .string()
-  .min(8, errorMessages.passwordLength)
-  .when('id', {
-    is: (val: unknown) => !val,
-    then: (schema) => schema.required(errorMessages.required),
-    otherwise: (schema) => schema.notRequired(),
-  }),
+    .string()
+    .min(8, errorMessages.passwordLength)
+    .required(errorMessages.required),
   matricula: yup
     .string()
     .required(errorMessages.required),
@@ -45,9 +41,9 @@ export const validators = {
     .number()
     .required(errorMessages.required),
   permissao: yup
-    .string()
-    .required(errorMessages.required)
-    .oneOf(Object.values(TipoPermissao), 'Permissão inválida'),
+    .mixed<TipoPermissao>()
+    .oneOf(Object.values(TipoPermissao), 'Permissão inválida')
+    .required(errorMessages.required),
   cpf: yup
     .string()
     .required(errorMessages.required)
@@ -57,13 +53,15 @@ export const validators = {
     ),
   nome_lideranca: yup
     .string()
-    .optional(),
+    .required(errorMessages.required),
   equipamentoId: yup
     .number()
-    .required(errorMessages.required),
+    .required(errorMessages.required)
+    .min(1, "Selecione um equipamento válido"),
   qtd: yup
     .number()
-    .required(errorMessages.required),
+    .required(errorMessages.required)
+    .min(1, "A quantidade precisa ser pelo menos 1"),
   urgencia: yup
     .string()
     .required(errorMessages.required)
@@ -100,5 +98,5 @@ export const validators = {
     .required(errorMessages.required),
   responsavelEpi: yup
     .string()
-    .optional()
+    .default('')
 }

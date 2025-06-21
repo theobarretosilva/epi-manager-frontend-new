@@ -20,7 +20,6 @@ import { useNavigate } from 'react-router';
 export const SolicitacoesFunc = () => {
   const { isOpen, openModal, closeModal } = useModalDetalhesSolicitacao();
   const { solicitacoesUser } = useGetSolicitacoesUser();
-  console.log(solicitacoesUser)
   const { epis } = useGetEPIS();
   const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<SolicitacaoModalProps | null>(null);
   const navigate = useNavigate();
@@ -59,8 +58,9 @@ export const SolicitacoesFunc = () => {
                 id: solicitacao.id,
                 item: solicitacao.equipamento?.descricao ?? 'Descrição não informada',
                 status: solicitacao.status,
-                // eslint-disable-next-line no-constant-binary-expression
-                dataSolicitacao: new Date(solicitacao.dataAbertura) ?? '-',
+                dataSolicitacao: solicitacao.dataAbertura 
+                  ? new Date(solicitacao.dataAbertura) 
+                  : '-', 
                 dataConclusao: solicitacao.dataConclusao ?? '-',
                 solicitante: solicitacao.solicitante,
                 quantidade: solicitacao.qtd ?? 0,
@@ -167,7 +167,10 @@ export const SolicitacoesFunc = () => {
           </S.DivLayoutDash>
         </>
       ) : (
-        <NoDataToShow mainText='Não foram feitas solicitações!' />
+        <>
+          <S.ButtonStyled onClick={() => navigate('/colaborador/solicitarEPI')}>+ Fazer Solicitação</S.ButtonStyled>
+          <NoDataToShow mainText='Não foram feitas solicitações!' />
+        </>
       )}
 
       {solicitacaoSelecionada && (

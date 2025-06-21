@@ -17,7 +17,6 @@ import { SubmitHandler } from 'react-hook-form';
 
 export const SolicitarEPI = () => {
     const { userLogado } = useGetUserLogado();
-    console.log('userLogado id:', userLogado?.id);
     const { 
         onSubmit,
         handleSubmit,
@@ -34,11 +33,11 @@ export const SolicitarEPI = () => {
     const { colaboradores } = useGetColaboradores();
     const colaboradoresList = colaboradores?.filter((colab) => colab.nome_lideranca == userLogado?.nome);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-    const options: OptionProps[] = (epis ?? []).map((epi: EPIProps) => ({
+    const options: OptionProps[] = (epis ?? [])
+    .filter((epi) => epi.status_uso?.toUpperCase() === "ATIVO")
+    .map((epi: EPIProps) => ({
         label: epi.descricao || '',
-        value: epi.codigo,
+        value: epi.codigo ?? 0,
     }));
 
     const handleItemChange = (option: OptionProps) => {
@@ -61,7 +60,10 @@ export const SolicitarEPI = () => {
     };
     const path = redirectPaths[tipoAcesso] || '/';
 
-console.log('Erros do formulário:', errors);
+    const responsavelOptions = colaboradoresList && colaboradoresList.length > 0
+        ? colaboradoresList.map((colab) => colab.nome) 
+        : [userLogado?.nome || ''];
+
     return (
         <S.MainStyled>
             <S.FormMainSolicitar onSubmit={handleSubmit(onSubmit as SubmitHandler<unknown>)}>
@@ -74,10 +76,10 @@ console.log('Erros do formulário:', errors);
                     />
                     <SelectStyled
                         titulo="Responsável pelo EPI"
-                        value={watch('responsavelEPI')}
-                        options={colaboradoresList?.map(colab => colab.nome) || []}
+                        value={watch('responsavel')}
+                        options={responsavelOptions}
                         onChange={(value) => {
-                            if (value) setValue("responsavelEPI", value);
+                            if (value) setValue("responsavel", value);
                         }}
                         name='responsavelEPI'
                         disabled={!colaboradoresList || colaboradoresList.length === 0}
@@ -103,10 +105,10 @@ console.log('Erros do formulário:', errors);
                 <S.DivFlex>
                     <SelectStyled
                         titulo="Urgência"
-                        value={watch("urgencia")}
-                        options={['Alta', 'Média', 'Baixa']}
+                        value={watch('urgencia')}
+                        options={[Urgencia.ALTA, Urgencia.MEDIA, Urgencia.BAIXA]}
                         onChange={(value) => {
-                            if (value) setValue("urgencia", value as Urgencia);
+                            if (value) setValue('urgencia', value as Urgencia);
                         }}
                         name='urgencia'
                     />

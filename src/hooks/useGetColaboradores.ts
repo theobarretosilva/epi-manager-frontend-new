@@ -15,5 +15,6 @@ export const useGetColaboradores = () => {
   return {
     colaboradores: query.data,
     isError: query.isError,
+    refetch: query.refetch
   };
 };

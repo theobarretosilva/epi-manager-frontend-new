@@ -20,8 +20,7 @@ export const useLoginForm = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<LoginForm>({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         resolver: yupResolver(schemas.loginForm),
         defaultValues,
     });
@@ -33,9 +32,6 @@ export const useLoginForm = () => {
     };
 
     const handleLoginSuccess = (data: HandleLoginSuccessProps) => {
-        console.log("Salvando token:", data.token);
-        console.log("Salvando permissão:", data.permissao);
-
         sessionStorage.setItem('EpiManagerToken', data.token);
         sessionStorage.setItem("TipoAcesso", data.permissao);
         axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.token}`;
@@ -56,14 +52,10 @@ export const useLoginForm = () => {
             return res.data;
         },
         onSuccess: handleLoginSuccess,
-        onError: (error: AxiosError<{ message: string }>) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-            const errorMessage = error.response?.data?.error?.message
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-                ? error.response.data.error.message
-                : 'Houve um erro, tente novamente mais tarde.';
+        onError: (error: AxiosError<{ error?: { message: string } }>) => {
+            const errorMessage =
+                error.response?.data?.error?.message ||
+                'Houve um erro, tente novamente mais tarde.';
             setResponseError(errorMessage);
             toast.error(errorMessage);
         },
@@ -72,8 +64,7 @@ export const useLoginForm = () => {
     const handleSignIn: SubmitHandler<LoginForm> = (data) => {
         loginMutation.mutate(data)
     }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
     const onSubmit = handleSubmit(handleSignIn)
 
     return {
