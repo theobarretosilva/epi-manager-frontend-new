@@ -9,9 +9,9 @@ import { axiosInstance } from "../lib/axios";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { AddColaboradorProps } from "../props/addColaboradorProps";
-import { EditColaboradorForm } from "../types/editColaboradorForm";
+import { ResponseError } from "../types/responseError";
 
-export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen, idColab }: AddColaboradorProps) => {
+export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen }: AddColaboradorProps) => {
     const defaultValues = useMemo<ColaboradorForm>(() => ({
         matricula: "",
         nome: "",
@@ -36,14 +36,9 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen, idColab }:
         setError,
         formState: { errors }
     } = useForm<ColaboradorForm>({
-
         resolver: yupResolver(schemas.colaboradorForm),
         defaultValues,
     });
-
-    type ResponseError = {
-        message: string;
-    };
 
     const createColabMutation = useMutation({
         mutationFn: (data: ColaboradorForm) => {
@@ -70,38 +65,12 @@ export const useCadastroNewColabForm = ({ setIdColab, setModalIsOpen, idColab }:
         onSuccess: () => {
             reset();
             setModalIsOpen(false);
-            setIdColab(null);
+            setIdColab?.(null);
         }
     });
-
-    const editColabMutation = useMutation({
-        mutationFn: (data: EditColaboradorForm) => {
-            setResponseError('');
-            const updateColaboradorPromise = axiosInstance.patch(`/colaboradores/${idColab}`, data);
-            toast.promise(updateColaboradorPromise, {
-                pending: 'Atualizando...',
-                success: 'Colaborador atualizado!',
-                error: 'Erro ao atualizar colaborador.',
-            });
-            return updateColaboradorPromise;
-        },
-        onError: (error: AxiosError<ResponseError>) => {
-            setResponseError(error.response?.data.message + '');
-        },
-        onSuccess: () => {
-            reset();
-            setModalIsOpen(false);
-            setIdColab(null);
-        }
-    })
     
     const handleFormSubmit: SubmitHandler<ColaboradorForm> = (data: ColaboradorForm) => {
-        const isEdit = !!data.id;
-        if (isEdit) {
-            editColabMutation.mutate(data);
-        } else {
-            createColabMutation.mutate(data);
-        }
+        createColabMutation.mutate(data);
     };
     
     return {

@@ -16,7 +16,6 @@ export const schemas = {
         nome_lideranca: validators.nome_lideranca,
         permissao: validators.permissao,
         senha: validators.senha,
-        id: validators.id,
         email: validators.email
     }),
     editColaboradorForm: yup.object().shape({
