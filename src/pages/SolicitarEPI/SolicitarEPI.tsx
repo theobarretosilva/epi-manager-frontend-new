@@ -34,7 +34,7 @@ export const SolicitarEPI = () => {
     const colaboradoresList = colaboradores?.filter((colab) => colab.nome_lideranca == userLogado?.nome);
 
     const options: OptionProps[] = (epis ?? [])
-    .filter((epi) => epi.status_uso?.toUpperCase() === "ATIVO") // filtro aqui
+    .filter((epi) => epi.status_uso?.toUpperCase() === "ATIVO")
     .map((epi: EPIProps) => ({
         label: epi.descricao || '',
         value: epi.codigo ?? 0,

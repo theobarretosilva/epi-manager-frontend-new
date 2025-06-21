@@ -19,7 +19,6 @@ export const EditarEPIModal = ({ idEpi, setModalIsOpen, modalIsOpen}: EditEpiPro
 
     useEffect(() => {
         if (!modalIsOpen || !idEpi || !epis) return;
-        console.log(idEpi)
         const epi = epis.find((epi) => epi.id === idEpi);
         if (epi) {
             setValue('descricao', epi.descricao ?? '');
